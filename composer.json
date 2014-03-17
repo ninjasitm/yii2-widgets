@@ -1,0 +1,22 @@
+{
+    "name": "nitm/yii2-nitm-widgets",
+    "description": "Widgets created for Ninjas in the Machine",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension"],
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "NITM",
+            "email": "admin@nitm.com"
+        }
+    ],	
+	"require": {
+		"yiisoft/yii2": "*",
+		"nitm/yii2-nitm-module": "*"
+	},
+    "autoload": {
+        "psr-4": {
+            "nitm\\widgets\\": ""
+        }
+    }
+}
