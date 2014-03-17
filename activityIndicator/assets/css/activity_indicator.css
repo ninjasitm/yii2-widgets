@@ -1,0 +1,40 @@
+.activity {
+	position: absolute;
+	left: -0.25em;
+	top: auto;
+	padding: 1%;
+	font-size: 1em;
+	color: #FFF;
+}
+
+.activity * {
+	font-size: 1.2em;
+	left: -0.005em;
+	color: inherit;
+	opacity: 1;
+}
+
+.activity-error *, .activity-new * {
+	color: #F30;
+	color: rgba(255, 51, 0, 0.75);
+}
+
+.activity-success * {
+	color: #5CB85C;
+	color: rgba(92, 184, 92, 0.75);
+}
+
+.activity-info * {
+	color: #357EBD;
+	color: rgba(53, 126, 189, 0.75);
+}
+
+.activity-sm * {
+	font-size: 1em;
+	left: -0.0005em;
+}
+
+.activity-lg * {
+	font-size: 2em;
+	left: -0.195em;
+}
