@@ -23,11 +23,5 @@ class Asset extends AssetBundle
 	public $depends = [
 		'yii\web\JqueryAsset',
 		'yii\redactor\widgets\RedactorAsset',
-		/*'yii\redactor\widgets\RedactorPluginClipsAsset',
-		'yii\redactor\widgets\RedactorPluginCodeAsset',
-		'yii\redactor\widgets\RedactorPluginFontfamilyAsset',
-		'yii\redactor\widgets\RedactorPluginFontsizeAsset',
-		//'yii\redactor\widgets\RedactorPluginsFullscreenAsset',
-		'yii\redactor\widgets\RedactorPluginTextdirectionAsset',*/
 	];
 }

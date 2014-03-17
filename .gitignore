@@ -1,2 +1,6 @@
-protected/runtime/
-themes/classic/views/
+config/
+.git/
+*.LCK
+*.DS_Stroe
+*~
+*.lock
