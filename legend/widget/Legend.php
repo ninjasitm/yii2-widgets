@@ -8,6 +8,7 @@
 namespace nitm\widgets\legend\widget;
 
 use yii\helpers\Html;
+use nitm\widgets\models\BaseWidget;
 
 /**
  * Alert widget renders a message from session flash. All flash messages are displayed
@@ -20,7 +21,7 @@ use yii\helpers\Html;
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @author Alexander Makarov <sam@rmcerative.ru>
  */
-class Legend extends \yii\bootstrap\Widget
+class Legend extends BaseWidget
 {
 	/**
 	 * Array containing legend mappint for classes
@@ -33,9 +34,6 @@ class Legend extends \yii\bootstrap\Widget
 	public $options = [
 		'class' => 'label',
 		'role' => 'legend',
-	];
-	
-	public $containerOptions = [
 	];
 	
 	public function init()
@@ -52,6 +50,6 @@ class Legend extends \yii\bootstrap\Widget
 
 			$legend .= Html::tag('span', $message, $options);
 		}
-		echo Html::tag('div', $legend, $this->containerOptions);
+		echo Html::tag('div', $legend, $this->widgetOptions);
 	}
 }

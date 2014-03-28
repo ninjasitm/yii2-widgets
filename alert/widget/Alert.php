@@ -49,7 +49,7 @@ class Alert extends \yii\bootstrap\Widget
 		
 		foreach ($flashes as $type => $message) {
 			/* initialize css class for each alert box */
-			$this->options['class'] = 'alert-' . $this->alertTypes[$type] . $appendCss;
+			$this->options['class'] = 'alert-' . @$this->alertTypes[$type] . $appendCss;
 
 			/* assign unique id to each alert box */
 			$this->options['id'] = $this->getId() . '-' . $type;

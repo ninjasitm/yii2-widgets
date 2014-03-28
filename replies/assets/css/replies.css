@@ -2,7 +2,7 @@
 
 .messages {
 	height: auto;
-	max-height: 640px;
+	max-height: auto;
 	width: 95%;
 	overflow: auto;
 	padding: 6px;

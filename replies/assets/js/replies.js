@@ -2,6 +2,7 @@
 function Replies(items)
 {	
 	var self = this;
+	var editor;
 	this.classes = {
 		warning: 'bg-warning',
 		success: 'bg-success',
@@ -81,7 +82,7 @@ function Replies(items)
 				$(this).off('submit');
 				$(this).on('submit', function (e) {
 					e.preventDefault();
-					$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), this));
+					$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
 					self.operation(this);
 				});
 			})
@@ -112,8 +113,8 @@ function Replies(items)
 					var form = $('#'+self.views.containers.replyForm+$(this).data('parent'));
 					form.find("[id='"+self.forms.inputs.reply_to+"']").val($(this).data('reply-to'));
 					form.find("[id='"+self.forms.inputs.message+"']").val('').focus();
-					self.setEditorValue(self.forms.inputs.message+$(this).data('parent'), '', true);
-					self.setEditorFocus(self.forms.inputs.message+$(this).data('parent'));
+					self.setEditorValue(self.forms.inputs.message+$(this).data('parent'), '', false, self.editor);
+					self.setEditorFocus(self.forms.inputs.message+$(this).data('parent'), self.editor);
 				});
 			});
 		});
@@ -136,8 +137,8 @@ function Replies(items)
 					var quoteString = "<blockquote>";
 					quoteString += quote.author+" said:<br>"+quote.message;
 					quoteString += "</blockquote><br>";
-					self.setEditorValue(self.forms.inputs.message+quote.parent, quoteString, true);
-					self.setEditorFocus(self.forms.inputs.message+quote.parent);
+					self.setEditorValue(self.forms.inputs.message+quote.parent, quoteString, true, self.editor);
+					self.setEditorFocus(self.forms.inputs.message+quote.parent, self.editor);
 				});
 			});
 		});
@@ -215,7 +216,7 @@ function Replies(items)
 	this.startEditor = function (containerId, value) {
 		$(function()
 		{
-			var container = $(containerId);
+			var container = $('#'+containerId);
 			var textarea = $("<textarea id='"+containerId+"editor' role='editor' class='form-control' name='Replies[message]'>");
 			var actions = container.find("[role='"+self.elements.replyActions+"']");
 			actions.removeClass('hidden');
@@ -223,12 +224,16 @@ function Replies(items)
 			$(textarea).redactor({
 				focus: true,
 				autoresize: false,
-				initCallback: function()
-				{
-					if(value)
+				initCallback: function(){
+					if(value != undefined)
 					{
 						this.set(value);
 					}
+				},
+				setCode: function(html){
+					html = this.preformater(html);
+					this.$editor.html(html).focus();
+					this.syncCode();
 				}
 			});
 			if(container.find('.modal').get(0) == undefined)
@@ -252,27 +257,39 @@ function Replies(items)
 	}
 	
 	this.closeEditor = function (containerId) {
-		var container = (containerId == undefined) ? 'body' : containerId;
-		var content = $(container).find('.modal-content');
+		var containerId = (containerId == undefined) ? 'body' : '#'+containerId;
+		var content = $(containerId).find('.modal-content');
 		switch(content.get(0) == undefined) 
 		{
 			//if there is a modal
 			case false:
 			//destroy the editor
-			content.find("textarea").redactor('destroy');
+			var container = $(containerId);
+			//alert('#'+content.find("textarea"));
+			var textarea = content.find("textarea");
+			//textarea.redactor('destroy');
+			container.find('.redactor_box').remove();
+			//unhide the actions
+			var actions = container.find("[role='"+self.elements.replyActions+"']");
+			actions.addClass('hidden');
+			//reset the html
 			container.html(content.html());
 			break;
 		}
 		this.elements.allowEditor.map(function (v) {
-			$(container+" "+"[role='"+v+"']").map(function() {
+			$(containerId+" "+"[role='"+v+"']").map(function() {
 				$(this).removeClass('hidden');
-			})
+			});
 		});
+		//need to reinit click to reply button since not doing so casues form to submit
+		self.initEditor(containerId);
 	}
 	
-	this.setEditorValue = function (field, value, quote) {
-		try {
-			editor = CKEDITOR.instances[field];
+	this.setEditorValue = function (field, value, quote, type) {
+		switch(type)
+		{
+			case 'ckeditor':
+			var editor = CKEDITOR.instances[field];
 			switch(quote)
 			{
 				case true:
@@ -285,74 +302,62 @@ function Replies(items)
 			}
 			editor.resize("100%", editor.config.height, true);
 			editor.focus();
-		}
-		catch (error)
-		{
+			break;
+			
+			case 'redactor':
+			ret_val = getObj(field).redactor('set', value, false);
+			break;
+			
+			default:
 			var msgField = getObj(field);
 			msgField.val(value);
 			msgField.get(0).focus();
-		}
-	}
-	
-	this.setEditorFocus = function (e) {
-		obj = getObj(e);
-		switch(typeof obj)
-		{
-			case 'object':
-			try {
-				editor = CKEDITOR.instances[obj.get(0).id];
-				editor.focus();
-			}
-			catch (error)
-			{
-				msgField.get(0).focus();
-			}
 			break;
 		}
 	}
 	
-	this.getEditorValue = function (field, _form) {
-		try 
+	this.getEditorValue = function (field, type) {
+		var ret_val = '';
+		switch(type)
 		{
-			switch(typeof _form)
-			{
-				case 'string':
-				case 'object':
-				case 'number':
-				try {
-					var ret_val = getObj('#'+getObj(_form).attr('id')+' [name='+field+']', null, false, false).val();
-				} catch(error) {};
-				break;
-			}
-			switch((typeof ret_val == undefined) || !ret_val)
-			{
-				case true:
-				try {
-					editor = CKEDITOR.instances[field];
-					var ret_val = editor.getData();
-					ret_val = (!ret_val) ? getObj(field).val() : ret_val;
-				} catch(error) {
-					var ret_val = getObj(field).val();
-				}
-				if(ret_val == undefined)
-				{
-					try {
-					} catch(error) {
-					}
-				}
-				break;
-				
-				default:
-				var ret_val = getObj(field).val();
-				break;
-			}
-			return ret_val;
-		} catch(error) {}
+			case 'ckeditor':
+			var editor = CKEDITOR.instances[field];
+			ret_val = editor.getData();
+			break;
+			
+			case 'redactor':
+			alert(getObj(field).attr('id'));
+			ret_val = getObj(field).redactor('get');
+			break;
+			
+			default:
+			ret_val = getObj(field).val();
+			break;
+		}
+		return ret_val;
 	}
-
+	
+	this.setEditorFocus = function (field) {
+		switch(type)
+		{
+			case 'ckeditor':
+			var editor = CKEDITOR.instances[field];
+			editor.focus();
+			break;
+			
+			case 'redactor':
+			getObj(field).redactor('focus');
+			break;
+			
+			default:
+			ret_val = getObj(field).get(0).focus();
+			break;
+		}
+	}
 }
 
 addOnLoadEvent(function () {
 	var r = new Replies();
+	r.editor = 'redactor';
 	r.init();
 });

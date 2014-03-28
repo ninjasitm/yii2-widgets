@@ -8,21 +8,15 @@
 namespace nitm\widgets\replies\widget;
 
 use Yii;
-use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use yii\base\Widget;
 use yii\widgets\ActiveForm;
 use yii\redactor\widgets\Redactor;
-use nitm\module\models\User;
+use nitm\widgets\models\BaseWidget;
 use nitm\module\models\Replies as RepliesModel;
+use kartik\icons\Icon;
 
-class RepliesForm extends Widget
-{
-	/*
-	 * The options used to constraing the replies
-	 */
-	public $constrain;
-	
+class RepliesForm extends BaseWidget
+{	
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -31,19 +25,6 @@ class RepliesForm extends Widget
 		'role' => 'replyForm',
 		'id' => 'messagesForm'
 	];
-	
-	/*
-	 * Options for replies
-	 */
-	public $replyOptions = [
-		'class' => '',
-		'id' => ''
-	];
-	
-	/*
-	 * The number of replies to get on each select query
-	 */
-	public $limit = 10;
 	
 	/**
 	 * The actions that are supported
@@ -82,19 +63,9 @@ class RepliesForm extends Widget
 		],
 	];
 	
-	/**
-	 * Does the user exist?
-	 */
-	private $_userExists = false;
-	
-	/**
-	 * Active form
-	 */
-	private $_form = false;
-	
 	public function init()
 	{	
-		if ($this->constrain === null) {
+		if (($this->parentId === null) || ($this->parentType == null)) {
 			throw new InvalidConfigException('The "constain" property must be set.');
 		}
 	}
@@ -102,14 +73,14 @@ class RepliesForm extends Widget
 	public function run()
 	{
 		$model = new RepliesModel();
-		$this->options['id'] .= $this->constrain['one'];
+		$this->options['id'] .= $this->parentId;
 		
 		$model->setScenario('validateNew');
 		$this->_form = ActiveForm::begin([
-					'id' => 'reply_form'.$this->constrain['one'],
+					'id' => 'reply_form'.$this->parentId,
 					"action" => "/reply/new",
 					"options" => [
-									'data-parent' => 'messages'.$this->constrain['one'],
+									'data-parent' => 'messages'.$this->parentId,
 									"class" => "form-inline",
 									"role" => "replyForm",
 									],
@@ -119,15 +90,19 @@ class RepliesForm extends Widget
 					"enableAjaxValidation" => true
 					]);
 						
-		$formBody = Html::activeHiddenInput($model, 'constrain[unique]', ['value' => $this->constrain['one']]);
-		$formBody .= Html::activeHiddenInput($model, "constrain[for]", ['value' =>  $this->constrain['three']]);
+		$formBody = Html::activeHiddenInput($model, 'constrain[unique]', ['value' => $this->parentId]);
+		$formBody .= Html::activeHiddenInput($model, "constrain[for]", ['value' =>  $this->parentType]);
 		$formBody .= Html::activeHiddenInput($model, "reply_to", ['value' =>  null]);
+		/*$formBody .= $this->_form->field($model, 'message')->textarea([
+			'class' => 'hidden',
+			'id' => 'reply-message'.$this->parentId
+		])->label('Message', ['class' => 'sr-only']);*/
 		$formBody .= Html::button(
 			'Click to Reply',
 			[
 				'role' => "startEditor",
-				'data-container' => '#'.$this->options['id'],
-				'data-id' => $this->constrain['one'],
+				'data-container' => $this->options['id'],
+				'data-id' => $this->parentId,
 				'class' => 'btn btn-default center-block'
 			]
 		);

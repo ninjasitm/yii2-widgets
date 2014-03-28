@@ -8,24 +8,14 @@
 namespace nitm\widgets\replies\widget;
 
 use Yii;
-use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use yii\base\Widget;
+use nitm\widgets\models\BaseWidget;
 use nitm\module\models\User;
 use nitm\module\models\Replies as RepliesModel;
+use kartik\icons\Icon;
 
-class Replies extends Widget
-{
-	/*
-	 * The options used to constraing the replies
-	 */
-	public $constrain;
-	
-	/**
-	 * The actions to enable
-	 */
-	public $actions;
-	
+class Replies extends BaseWidget
+{	
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -36,37 +26,10 @@ class Replies extends Widget
 		'data-parent' => 'replyFormParent'
 	];
 	
-	/*
-	 * Options for replies
-	 */
-	public $replyOptions = [
-		'class' => '',
-		'id' => ''
-	];
-	
-	/*
-	 * The number of replies to get on each select query
-	 */
-	public $limit = 10;
-	
 	/**
 	 * \commond\models\Reply $reply
 	 */
 	public $reply;
-	
-	/**
-	 * Does the user exist?
-	 */
-	private $_userExists = false;
-	
-	/**
-	 * The current user
-	 */
-	private $_user;
-	/**
-	 * The current users
-	 */
-	private $_users;
 	
 	/**
 	 * The actions that are supported
@@ -104,45 +67,53 @@ class Replies extends Widget
 				'id' => 'hide_message',
 				'title' => 'Hide this message'
 			],
-			'aadminOnly' => true
+			'adminOnly' => true
 		],
 	];
 	
 	public function init()
 	{	
-		if ($this->constrain === null) {
-			throw new InvalidConfigException('The "constain" property must be set.');
+		if (($this->parentType == null) || ($this->parentId == null) || ($this->parentKey == null)) {
+			throw new InvalidConfigException('The parentType, parentKey and parentId properties must be set.');
 		}
 	}
 	
 	public function run()
 	{
-		$this->constrain['three'] = array_pop(explode('\\', $this->constrain['three']));
-		$r = new RepliesModel($this->constrain);
-		$replies = '';
-		switch(\nitm\module\models\User::isAdmin())
+		$r = new RepliesModel([$this->parentId, $this->parentType, $this->parentKey]);
+		switch($r->hasAny())
 		{
 			case true:
-			break;
-		}
-		$arrow = Html::tag('div', '', ['class' => 'arrow']);
-		foreach($r->getObjects() as $reply)
-		{
-			switch(empty($reply->author))
+			$replies = '';
+			switch(\nitm\module\models\User::isAdmin())
 			{
-				case false:
-				switch($this->userExists($reply))
-				{
-					case true:
-					$this->reply = $reply;
-					$replies .= $this->getReply();
-					$this->_userExists = false;
-					break;
-				}
+				case true:
 				break;
 			}
+			$arrow = Html::tag('div', '', ['class' => 'arrow']);
+			foreach($r->getModels() as $reply)
+			{
+				switch(empty($reply->author))
+				{
+					case false:
+					switch($this->userExists($reply))
+					{
+						case true:
+						$this->reply = $reply;
+						$replies .= $this->getReply();
+						$this->_userExists = false;
+						break;
+					}
+					break;
+				}
+			}
+			break;
+			
+			default:
+			$replies = Html::tag('h3', "No comments", ['class' => 'text-error']);
+			break;
 		}
-		$this->options['id'] .= $this->constrain['one'];
+		$this->options['id'] .= $this->parentId;
 		echo Html::tag('div', $replies, $this->options);
 	}
 	
@@ -259,7 +230,7 @@ class Replies extends Widget
 				switch($this->_user->isAdmin())
 				{
 					case true:
-					$action['options']['data-parent'] = $this->constrain['one'];
+					$action['options']['data-parent'] = $this->parentId;
 					$action['options']['data-reply-to'] = $this->reply->unique;
 					$action['options']['id'] = $action['options']['id'].$this->reply->unique;
 					$ret_val .= Html::tag($action['tag'], $action['text'], $action['options']);
@@ -279,7 +250,7 @@ class Replies extends Widget
 					$action['options']['data-author'] = $this->_user->username;
 					break;
 				}
-				$action['options']['data-parent'] = $this->constrain['one'];
+				$action['options']['data-parent'] = $this->parentId;
 				$action['options']['data-reply-to'] = $this->reply->unique;
 				$action['options']['id'] = $action['options']['id'].$this->reply->unique;
 				$ret_val .= Html::a(Html::tag($action['tag'], $action['text']), $action['action'].'/'.$this->reply->unique, $action['options']);

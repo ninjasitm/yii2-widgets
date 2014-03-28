@@ -5,15 +5,17 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets;
+namespace nitm\widgets\tokens\widget;
 
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use yii\base\Widget;
-use nitm\models\User;
+use nitm\module\models\User;
+use nitm\module\models\Revisions as RevisionsModel;
+use nitm\widgets\models\BaseWidget;
+use kartik\icons\Icon;
 
-class Tokens extends Widget
+class Tokens extends BaseWidget
 {
 	/*
 	 * Either a user object or a userid
@@ -28,11 +30,6 @@ class Tokens extends Widget
 		'role' => 'entityMessages',
 		'id' => 'messages'
 	];
-	
-	/*
-	 * The number of replies to get on each select query
-	 */
-	public $limit = 10;
 	
 	
 	public function init()
@@ -54,7 +51,7 @@ class Tokens extends Widget
 			echo \yii\grid\GridView::widget([
 				'dataProvider' => $dataProvider,
 				'columns' => [
-					'tokenid',
+					'id',
 					'token:ntext',
 					'added',
 					'active:boolean',
