@@ -42,7 +42,7 @@ class Revisions extends BaseWidget
 				'id' => 'revision-view',
 				'title' => 'View this version',
 				'data-toggle' => 'modal',
-				'data-target' => '#revisionsViewModal'
+				'data-target' => '#revisions-view-modal'
 			]
 		],
 		'restore' => [
@@ -59,7 +59,7 @@ class Revisions extends BaseWidget
 		'delete' => [
 			'tag' => 'span',
 			'action' => '/revisions/delete',
-			'text' => 'delete',
+			'text' => 'trash-o',
 			'options' => [
 				'class' => 'col-lg-4 col-md-4',
 				'role' => 'dynamicAction',
@@ -84,6 +84,7 @@ class Revisions extends BaseWidget
 			$this->parentId,
 			$this->parentType
 		]);
+		$r->queryFilters['order_by'] = ['id' => SORT_DESC];
 		switch(\nitm\module\models\User::isAdmin())
 		{
 			case true:
@@ -131,22 +132,7 @@ class Revisions extends BaseWidget
 			],
 		]);
 		$this->options['id'] .= $this->parentId;
-		
-		$modalView = Html::tag('div',
-			Html::tag('div', 
-				'',
-				[
-					'class' => "modal-content"
-				]
-			),
-			[
-				"role" => "dialog",
-				"class" => "col-md-6 col-lg-6 col-sm-12 col-xs-12 col-md-offset-3 col-lg-offset-3 modal fade",
-				"id" => "revisionsViewModal",
-				"style" => "z-index: 10001"
-			]
-		);
-		echo Html::tag('div', $revisions, $this->options).$modalView;
+		echo Html::tag('div', $revisions, $this->options);
 	}
 	
 	public function getActions()

@@ -40,8 +40,7 @@ class RevisionsCount extends BaseWidget
 	{
 		$this->model = RevisionsModel::findModel([$this->parentId, $this->parentType]);
 		$this->options['id'] .= $this->parentId;
-		$info = 'Revisions: '.Html::tag('span', $this->model->count, $this->options);
-		echo "HERE:";
+		$info = 'Revisions: '.Html::tag('span', (int)$this->model->count, $this->options);
 		switch($this->model->count >= 1)
 		{
 			case true:
@@ -72,7 +71,22 @@ class RevisionsCount extends BaseWidget
 			);
 			break;
 		}
-		echo Html::tag('div', $info, $this->countOptions);
+		
+		$modalView = Html::tag('div',
+			Html::tag('div', 
+				'',
+				[
+					'class' => "modal-content"
+				]
+			),
+			[
+				"role" => "dialog",
+				"class" => "col-md-6 col-lg-6 col-sm-12 col-xs-12 col-md-offset-3 col-lg-offset-3 modal fade",
+				"id" => "revisionsViewModal",
+				"style" => "z-index: 10001"
+			]
+		);
+		echo Html::tag('div', $info, $this->countOptions).$modalView;
 	}
 }
 ?>

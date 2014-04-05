@@ -66,15 +66,16 @@ function Revisions(items)
 						self.afterCreate(result, container);
 					}
 				};
+				var redactorObject = $('#'+object.prop('id'));
 				self.events.map(function (e, i) {
 					callbacks[e+'Callback'] = function () {
 						$(this).attr('revisionRecentActivity', true);
 						var data = {};
-						data[$(this).attr('name')] = $(this).redactor('get');
-						object.on(e, self.operation(data, null, container));
+						data[$(this).attr('name')] = redactorObject.redactor('get');
+						//object.on(e, self.operation(data, null, container));
 					};
 				});
-				object.redactor(callbacks);
+				redactorObject.redactor(callbacks);
 				break;
 				
 				default:

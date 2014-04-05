@@ -221,7 +221,7 @@ function Replies(items)
 			var actions = container.find("[role='"+self.elements.replyActions+"']");
 			actions.removeClass('hidden');
 			textarea.insertBefore(actions);
-			$(textarea).redactor({
+			$('#'+textarea.prop('id')).redactor({
 				focus: true,
 				autoresize: false,
 				initCallback: function(){
@@ -238,17 +238,25 @@ function Replies(items)
 			});
 			if(container.find('.modal').get(0) == undefined)
 			{
-				var content = $("<div class='modal col-md-5 col-lg-5 center-block' role='dialog' aria-hidden='true'>");
+				var content = $("<div class='modal fade in modal-sm' role='dialog' aria-hidden='true'>");
+				var modalDialog = $("<div class='modal-dialog'>");
 				var modalContent = $("<div class='modal-content'>");
-				modalContent.append(container.html());
-				container.html('').append(content.append(modalContent));
+				var modalBody = $("<div class='modal-body'>");
+				var modalTitle = $("<div class='modal-title'>").html("<h3>Your message:</h3>");
+				//var modalHeader = $("<div class='modal-header'>");
+				//var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
+				//modalHeader.append(modalClose);
+				//modalBody.append(modalHeader);
+				modalBody.append(modalTitle);
+				modalBody.append(container.html());
+				container.html('').append(content.append(modalDialog.append(modalContent.append(modalBody))));
 			}
 			else
 			{
 				content = container;
 			}
 			content.modal({
-				keyboard: false
+				keyboard: true
 			});
 			content.on('hidden.bs.modal', function () {
 				self.closeEditor(containerId);
@@ -258,17 +266,16 @@ function Replies(items)
 	
 	this.closeEditor = function (containerId) {
 		var containerId = (containerId == undefined) ? 'body' : '#'+containerId;
-		var content = $(containerId).find('.modal-content');
+		var content = $(containerId).find('.modal-dialog');
 		switch(content.get(0) == undefined) 
 		{
 			//if there is a modal
 			case false:
 			//destroy the editor
 			var container = $(containerId);
-			//alert('#'+content.find("textarea"));
-			var textarea = content.find("textarea");
-			//textarea.redactor('destroy');
-			container.find('.redactor_box').remove();
+			var textarea = content.find("textarea"); 
+			$('#'+textarea.prop('id')).redactor('getObject').destroyEditor();
+			//container.find('.redactor_box').remove();
 			//unhide the actions
 			var actions = container.find("[role='"+self.elements.replyActions+"']");
 			actions.addClass('hidden');
@@ -305,7 +312,7 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			ret_val = getObj(field).redactor('set', value, false);
+			ret_val = getObj(field).redactor('getObject').set(value, false);
 			break;
 			
 			default:
@@ -326,8 +333,7 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			alert(getObj(field).attr('id'));
-			ret_val = getObj(field).redactor('get');
+			ret_val = $('#'+getObj(field).attr('id')).redactor('getObject').get();
 			break;
 			
 			default:

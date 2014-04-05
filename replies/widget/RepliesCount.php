@@ -34,7 +34,7 @@ class RepliesCount extends BaseWidget
 	{
 		$this->model = RepliesModel::findModel([$this->parentId, $this->parentType]);
 		$this->options['id'] .= $this->parentId;
-		$info = 'Replies: '.Html::tag('span', $this->model->count, $this->options);
+		$info = 'Replies: '.Html::tag('span', (int)$this->model->count, $this->options);
 		$new = $this->model->hasNew();
 		switch($new)
 		{
@@ -42,7 +42,7 @@ class RepliesCount extends BaseWidget
 			$info .= " New: ".Html::tag('span', $new, $this->options);
 			break;
 		}
-		switch($this->model->count >= 1)
+		switch(((int)$this->model->count >= 1) && ($this->model->authorUser instanceof User))
 		{
 			case true:
 			$info .= " Last Reply by ".Html::tag('span', $this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
