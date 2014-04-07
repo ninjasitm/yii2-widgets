@@ -121,7 +121,7 @@ function Vote(items)
 	}
 }
 
-addOnLoadEvent(function () {
-	var r = new Vote();
-	r.init();
+$nitm.addOnLoadEvent(function () {
+	$nitm.vote = new Vote();
+	$nitm.vote.init();
 });

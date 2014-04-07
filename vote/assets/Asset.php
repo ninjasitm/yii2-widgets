@@ -18,6 +18,6 @@ class Asset extends AssetBundle
 		'js/vote.js'
 	];	
 	public $depends = [
-		'yii\web\JqueryAsset',
+		'nitm\module\assets\AppAsset',
 	];
 }

@@ -362,8 +362,8 @@ function Replies(items)
 	}
 }
 
-addOnLoadEvent(function () {
-	var r = new Replies();
-	r.editor = 'redactor';
-	r.init();
+$nitm.addOnLoadEvent(function () {
+	%nitm.replies = new Replies();
+	$nitm.replies.editor = 'redactor';
+	$nitm.replies.init();
 });

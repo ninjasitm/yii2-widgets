@@ -18,6 +18,6 @@ class Asset extends AssetBundle
 		'js/rating.js'
 	];	
 	public $depends = [
-		'yii\web\JqueryAsset',
+		'nitm\module\assets\AppAsset',
 	];
 }

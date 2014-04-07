@@ -118,7 +118,7 @@ function Rating(items)
 	}
 }
 
-addOnLoadEvent(function () {
-	var r = new Rating();
-	r.init();
+$nitm.addOnLoadEvent(function () {
+	$nitm.rating = new Rating();
+	$nitm.rating.init();
 });

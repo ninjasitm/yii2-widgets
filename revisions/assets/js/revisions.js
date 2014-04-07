@@ -3,6 +3,7 @@ function Revisions(items)
 {	
 	var self = this;
 	var useRedactor = true;
+	var useCke = false;
 	var saveInterval = 5; //In seconds
 	var saveUrl = "/revisions/new/";
 	this.classes = {
@@ -57,10 +58,9 @@ function Revisions(items)
 		var container = (container == undefined) ? 'body' : container;
 		self.roles.map(function (role, k) {
 			var object = $(container+" "+"[role='"+role+"']");
-			switch(self.useRedactor)
+			switch(1)
 			{
-				case true:
-				case 1:
+				case self.useRedactor == true:
 				var callbacks = {
 					autosaveCallback: function (result) {
 						self.afterCreate(result, container);
@@ -76,6 +76,30 @@ function Revisions(items)
 					};
 				});
 				redactorObject.redactor(callbacks);
+				break;
+				
+				case self.UseCke == true:
+				CKEDITOR.on('instanceCreated', function(i) {
+					switch($.inArray(i.editor.name, ids) != -1)
+					{
+						case true:
+						i.editor.on('contentDom', function() {
+							events.map(function (e, idx) {
+								i.editor.document.on(e, function(event) {
+									getObj(i.editor.name).attr('recentActivity', true);
+								});
+								switch(event_handler)
+								{
+									case true:
+									var f = (typeof functions[idx] == 'function') ? functions[idx] : functions[0];
+									getObj(i.editor.name).on(e, f);
+									break;
+								}
+							});
+						});
+						break;
+					}
+				});
 				break;
 				
 				default:
@@ -100,7 +124,7 @@ function Revisions(items)
 		switch(!self.saveUrl)
 		{
 			case false:
-			var request = doRequest(self.saveUrl, 
+			var request = $nitm.doRequest(self.saveUrl, 
 					data,
 					function (result) {
 						switch(result.action)
