@@ -20,7 +20,7 @@ class Asset extends AssetBundle
 		'js/revisions.js'
 	];	
 	public $depends = [
-		'nitm\module\assets\AppAsset',
+		'nitm\assets\AppAsset',
 		'yii\redactor\widgets\RedactorAsset',
 	];
 }

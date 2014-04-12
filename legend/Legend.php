@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace nitm\widgets\legend\widget;
+namespace nitm\widgets\legend;
 
 use yii\helpers\Html;
 use nitm\widgets\models\BaseWidget;

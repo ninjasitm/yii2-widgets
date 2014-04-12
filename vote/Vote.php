@@ -5,13 +5,13 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\vote\widget;
+namespace nitm\widgets\vote;
 
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use nitm\module\models\User;
-use nitm\module\models\Vote as VoteModel;
+use nitm\models\User;
+use nitm\models\Vote as VoteModel;
 use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 
@@ -84,21 +84,20 @@ class Vote extends BaseWidget
 	
 	public function init()
 	{
-		if (($this->parentType == null) || ($this->parentId == null)) {
-			throw new InvalidConfigException('The parentType and parentId properties must be set.');
+		if (!($this->model instanceof VoteModel) && ($this->parentType == null) || ($this->parentId == null)) {
+			$this->model = null;
 		}
-		Icon::map($this->getView());
+		else 
+		{
+			$this->model = ($this->model instanceof VoteModel) ? $this->model : VoteModel::findModel([$this->parentId, $this->parentType]);
+		}
+		parent::init();
 	}
 	
 	public function run()
 	{
-		$this->model = new VoteModel();
-		$this->model->constrain([
-			$this->parentId, 
-			$this->parentType, 
-		]);
 		$vote = '';
-		switch(\nitm\module\models\User::isAdmin())
+		switch(\nitm\models\User::isAdmin())
 		{
 			case true:
 			break;

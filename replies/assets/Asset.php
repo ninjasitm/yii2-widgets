@@ -21,7 +21,7 @@ class Asset extends AssetBundle
 		'js/replies.js'
 	];	
 	public $depends = [
-		'nitm\module\assets\AppAsset',
+		'nitm\assets\AppAsset',
 		'yii\redactor\widgets\RedactorAsset',
 	];
 }

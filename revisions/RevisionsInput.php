@@ -5,13 +5,13 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\revisions\widget;
+namespace nitm\widgets\revisions;
 
 use Yii;
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
 use yii\redactor\widgets\Redactor;
-use nitm\module\models\Revisions as RevisionsModel;
+use nitm\models\Revisions as RevisionsModel;
 use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 use nitm\widgets\revisions\assets\Asset as RevisionsAsset;
@@ -63,19 +63,25 @@ class RevisionsInput extends BaseWidget
 	
 	public function init()
 	{	
-		if (($this->parentId === null) || ($this->parentType == null)) {
-			$this->_enableRevisions = false;
+		if (!($this->model instanceof RevisionsModel) && (($this->parentType == null) && ($this->parentId == null))) {
+			throw new \yii\base\InvalidConfigException("No model or parentType & parentId set");
 		}
+		else 
+		{
+			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : new RevisionsModel([
+				"constrain" => [$this->parentId, $this->parentType]
+			]);
+		}
+		parent::init();
 	}
 	
 	public function run()
 	{
-		$model = new RevisionsModel();
 		$this->autoSavePath .= $this->parentType.'/'.$this->parentId;
 		$this->options['id'] .= $this->parentId;
 		$this->widgetOptions['id'] .= $this->parentId;
 		
-		$model->setScenario('validateNew');
+		$this->model->setScenario('validateNew');
 		switch($this->_enableRevisions)
 		{
 			case true:

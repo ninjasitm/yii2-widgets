@@ -5,7 +5,7 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\revisions\widget;
+namespace nitm\widgets\revisions;
 
 use Yii;
 use yii\base\InvalidConfigException;
@@ -23,7 +23,7 @@ class RevisionsModal extends Widget
 	
 	public function run()
 	{
-		echo \nitm\widgets\modal\widget\Modal::widget([
+		echo \nitm\widgets\modal\Modal::widget([
 			'options' => $this->options
 		]);
 	}

@@ -363,7 +363,7 @@ function Replies(items)
 }
 
 $nitm.addOnLoadEvent(function () {
-	%nitm.replies = new Replies();
+	$nitm.replies = new Replies();
 	$nitm.replies.editor = 'redactor';
 	$nitm.replies.init();
 });

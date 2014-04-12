@@ -5,13 +5,13 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\replies\widget;
+namespace nitm\widgets\replies;
 
 use Yii;
 use yii\helpers\Html;
 use nitm\widgets\models\BaseWidget;
-use nitm\module\models\User;
-use nitm\module\models\Replies as RepliesModel;
+use nitm\models\User;
+use nitm\models\Replies as RepliesModel;
 use kartik\icons\Icon;
 
 class Replies extends BaseWidget
@@ -73,25 +73,31 @@ class Replies extends BaseWidget
 	
 	public function init()
 	{	
-		if (($this->parentType == null) || ($this->parentId == null) || ($this->parentKey == null)) {
-			throw new InvalidConfigException('The parentType, parentKey and parentId properties must be set.');
+		if (!($this->model instanceof RepliesModel) && ($this->parentType == null) || ($this->parentId == null) || ($this->parentKey == null)) {
+			$this->model = null;
 		}
+		else 
+		{
+			$this->model = ($this->model instanceof RepliesModel) ? $this->model : new RepliesModel([
+				"constrain" => [$this->parentId, $this->parentType, $this->parentKey]
+			]);
+		}
+		parent::init();
 	}
 	
 	public function run()
 	{
-		$r = new RepliesModel([$this->parentId, $this->parentType, $this->parentKey]);
-		switch($r->hasAny())
+		switch(($this->model instanceof RepliesModel) && ($this->model->hasAny()))
 		{
 			case true:
 			$replies = '';
-			switch(\nitm\module\models\User::isAdmin())
+			switch(\nitm\models\User::isAdmin())
 			{
 				case true:
 				break;
 			}
 			$arrow = Html::tag('div', '', ['class' => 'arrow']);
-			foreach($r->getModels() as $reply)
+			foreach($this->model->getModels() as $reply)
 			{
 				switch(empty($reply->author))
 				{
@@ -110,7 +116,8 @@ class Replies extends BaseWidget
 			break;
 			
 			default:
-			$replies = Html::tag('h3', "No comments", ['class' => 'text-error']);
+			//$replies = Html::tag('h3', "No comments", ['class' => 'text-error']);
+			$replies = '';
 			break;
 		}
 		$this->options['id'] .= $this->parentId;
@@ -120,11 +127,11 @@ class Replies extends BaseWidget
 	/**
 	 * Does the user for this reply exist?
 	 * @param Replies $repoly
-	 * @return bolean user exists
+	 * @return boolean user exists
 	 */
 	public function userExists($reply)
 	{
-		$this->_users[$reply->author] = (isset($this->_users[$reply->author]) &&  ($this->_users[$reply->author] instanceof User)) ? $this->_users[$reply->author] : User::find($reply->author);
+		$this->_users[$reply->author] = (isset($this->_users[$reply->author]) &&  ($this->_users[$reply->author] instanceof User)) ? $this->_users[$reply->author] : User::find($reply->author)->one();
 		$this->_user = $this->_users[$reply->author];
 		$this->_userExists = $this->_user instanceof User;
 		return $this->_userExists;
@@ -169,7 +176,7 @@ class Replies extends BaseWidget
 		{
 			case true:
 			$avatar = Html::tag('div', 
-				$this->_user->getAvatar(),
+				Html::img($this->_user->getAvatar(), ['class' => 'avatar avatar-small']),
 				[
 					'class' => 'avatar',
 					'id' => 'messageAvatar'.$this->reply->unique

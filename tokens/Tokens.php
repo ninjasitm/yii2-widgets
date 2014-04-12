@@ -5,13 +5,13 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\tokens\widget;
+namespace nitm\widgets\tokens;
 
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use nitm\module\models\User;
-use nitm\module\models\Revisions as RevisionsModel;
+use nitm\models\User;
+use nitm\models\Revisions as RevisionsModel;
 use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 

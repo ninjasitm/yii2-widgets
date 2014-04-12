@@ -5,13 +5,13 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\rating\widget;
+namespace nitm\widgets\rating;
 
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use nitm\module\models\User;
-use nitm\module\models\Rating as RatingModel;
+use nitm\models\User;
+use nitm\models\Rating as RatingModel;
 use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 
@@ -116,7 +116,7 @@ class Rating extends BaseWidget
 	{
 		$r = new RatingModel(['parent_id' => $this->parentId, 'parent_type' => $this->parentType]);
 		$rating = '';
-		switch(\nitm\module\models\User::isAdmin())
+		switch(\nitm\models\User::isAdmin())
 		{
 			case true:
 			break;

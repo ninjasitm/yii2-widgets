@@ -18,6 +18,6 @@ class Asset extends AssetBundle
 		'js/vote.js'
 	];	
 	public $depends = [
-		'nitm\module\assets\AppAsset',
+		'nitm\assets\AppAsset',
 	];
 }

@@ -5,15 +5,15 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\revisions\widget;
+namespace nitm\widgets\revisions;
 
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\data\ArrayDataProvider;
-use nitm\module\models\User;
-use nitm\module\models\Revisions as RevisionsModel;
+use nitm\models\User;
+use nitm\models\Revisions as RevisionsModel;
 use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 
@@ -71,21 +71,22 @@ class Revisions extends BaseWidget
 	
 	public function init()
 	{
-		if (($this->parentType == null) || ($this->parentId == null)) {
-			throw new InvalidConfigException('The parentType and parentId properties must be set.');
+		if (!($this->model instanceof RevisionsModel) && ($this->parentType == null) || ($this->parentId == null)) {
+			$this->model = null;
 		}
-		Icon::map($this->getView());
+		else 
+		{
+			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : new RevisionsModel([
+				"constrain" => [$this->parentId, $this->parentType]
+			]);
+		}
+		parent::init();
 	}
 	
 	public function run()
 	{
-		$r = new RevisionsModel();
-		$r->constrain([
-			$this->parentId,
-			$this->parentType
-		]);
 		$r->queryFilters['order_by'] = ['id' => SORT_DESC];
-		switch(\nitm\module\models\User::isAdmin())
+		switch(\nitm\models\User::isAdmin())
 		{
 			case true:
 			break;

@@ -5,7 +5,7 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\modal\widget;
+namespace nitm\widgets\modal;
 
 use Yii;
 use yii\base\InvalidConfigException;

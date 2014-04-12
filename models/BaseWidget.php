@@ -10,6 +10,7 @@ namespace nitm\widgets\models;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Widget;
+use kartik\icons\Icon;
 
 class BaseWidget extends Widget
 {
@@ -43,6 +44,10 @@ class BaseWidget extends Widget
 		'class' => '',
 		'id' => ''
 	];
+	/**
+	 * Options for use in a modal
+	 */
+	public $modalOptions = [];
 	
 	/**
 	 * Active form
@@ -63,4 +68,10 @@ class BaseWidget extends Widget
 	 * The current users
 	 */
 	protected $_users;
+	
+	public function init()
+	{
+		//Map kartick-v icons
+		Icon::map($this->getView());
+	}
 }

@@ -5,13 +5,13 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\revisions\widget;
+namespace nitm\widgets\revisions;
 
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use nitm\module\models\User;
-use nitm\module\models\Revisions as RevisionsModel;
+use nitm\models\User;
+use nitm\models\Revisions as RevisionsModel;
 use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 
@@ -31,14 +31,20 @@ class RevisionsCount extends BaseWidget
 	
 	public function init()
 	{	
-		if (($this->parentId === null) || ($this->parentType == null)) {
-			throw new InvalidConfigException('The parentId and parentType properties must be set.');
+		if (!($this->model instanceof RevisionsModel) && ($this->parentType == null) || ($this->parentId == null)) {
+			$this->model = null;
 		}
+		else 
+		{
+			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : new RevisionsModel([
+				"constrain" => [$this->parentId, $this->parentType]
+			]);
+		}
+		parent::init();
 	}
 	
 	public function run()
 	{
-		$this->model = RevisionsModel::findModel([$this->parentId, $this->parentType]);
 		$this->options['id'] .= $this->parentId;
 		$info = 'Revisions: '.Html::tag('span', (int)$this->model->count, $this->options);
 		switch($this->model->count >= 1)

@@ -4,7 +4,7 @@
 * @copyright Copyright (c) 2013 NITM Inc
 */
 
-namespace nitm\widgets\activityIndicator\widget;
+namespace nitm\widgets\activityIndicator;
 
 use Yii;
 use yii\base\InvalidConfigException;

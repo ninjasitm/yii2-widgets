@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace nitm\widgets\alert\widget;
+namespace nitm\widgets\alert;
 
 /**
  * Alert widget renders a message from session flash. All flash messages are displayed
