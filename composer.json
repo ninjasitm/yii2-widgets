@@ -1,5 +1,5 @@
 {
-    "name": "nitm/yii2-nitm-widgets",
+    "name": "nitm/yii2-widgets",
     "description": "Widgets created for Ninjas in the Machine",
     "type": "yii2-extension",
     "keywords": ["yii2","extension"],
@@ -7,7 +7,7 @@
     "authors": [
         {
             "name": "NITM",
-            "email": "admin@nitm.com"
+            "email": "admin@ninjasitm.com"
         }
     ],	
 	"require": {
