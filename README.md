@@ -11,13 +11,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist nitm/yii2-nitm-widgets "*"
+php composer.phar require --prefer-dist nitm/yii2-widgets "*"
 ```
 
 or add
 
 ```
-"nitm/yii2-nitm-widgets": "*"
+"nitm/yii2-widgets": "*"
 ```
 
 to the require section of your `composer.json` file.
