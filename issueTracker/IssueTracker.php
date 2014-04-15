@@ -18,6 +18,12 @@ use nitm\widgets\models\BaseWidget;
  */
 class IssueTracker extends BaseWidget
 {
+	/*
+	 * HTML options for generating the widget
+	 */
+	public $modalOptions = [
+		'id' => 'issue-tracker-modal'
+	];
 	
 	/*
 	 * HTML options for generevision the widget
@@ -30,14 +36,17 @@ class IssueTracker extends BaseWidget
 	
 	public function init()
 	{	
-		if (!($this->model instanceof IssueModel) && ($this->parentType == null) || ($this->parentId == null)) {
-			$this->model = null;
-		}
-		else 
+		switch(1)
 		{
+			case !($this->model instanceof IssueModel) && (($this->parentType == null) || ($this->parentId == null)):
+			$this->model = null;
+			break;
+			
+			default:
 			$this->model = ($this->model instanceof IssueModel) ? $this->model : new IssueModel([
 				"constrain" => [$this->parentId, $this->parentType]
 			]);
+			break;
 		}
 		parent::init();
 	}
@@ -47,6 +56,17 @@ class IssueTracker extends BaseWidget
 		switch(($this->model instanceof IssueModel))
 		{
 			case true:
+			switch(empty($this->parentId))
+			{
+				/**
+				 * This issue model was initialed through a model
+				 * We need to set the parentId and parentType from the constraints values
+				 */
+				case true:
+				$this->parentId = $this->model->constrain[0];
+				$this->parentType = $this->model->constrain[1];
+				break;
+			}
 			$searchModel = new IssueSearch;
 			$get = \Yii::$app->request->getQueryParams();
 			$params = array_merge($get, $this->model->constraints);
@@ -55,6 +75,8 @@ class IssueTracker extends BaseWidget
 			$issues = $this->getView()->render('@nitm/views/issue/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
+				'parentId' => $this->parentId,
+				'parentType' => $this->parentType
 			]);
 			break;
 			
@@ -65,5 +87,8 @@ class IssueTracker extends BaseWidget
 		}
 		$this->options['id'] .= $this->parentId;
 		echo Html::tag('div', $issues, $this->options);
+		echo \nitm\widgets\modal\Modal::widget([
+			'options' => $this->modalOptions
+		]);
 	}
 }

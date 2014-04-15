@@ -71,14 +71,17 @@ class Revisions extends BaseWidget
 	
 	public function init()
 	{
-		if (!($this->model instanceof RevisionsModel) && ($this->parentType == null) || ($this->parentId == null)) {
-			$this->model = null;
-		}
-		else 
+		switch(1)
 		{
+			case !($this->model instanceof RevisionsModel) && (($this->parentType == null) || ($this->parentId == null)):
+			$this->model = null;
+			break;
+			
+			default:
 			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : new RevisionsModel([
 				"constrain" => [$this->parentId, $this->parentType]
 			]);
+			break;
 		}
 		parent::init();
 	}

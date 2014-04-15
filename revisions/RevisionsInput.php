@@ -62,15 +62,18 @@ class RevisionsInput extends BaseWidget
 	private $_enableRevisions = true;
 	
 	public function init()
-	{	
-		if (!($this->model instanceof RevisionsModel) && (($this->parentType == null) && ($this->parentId == null))) {
-			throw new \yii\base\InvalidConfigException("No model or parentType & parentId set");
-		}
-		else 
+	{
+		switch(1)
 		{
+			case !($this->model instanceof RevisionsModel) && (($this->parentType == null) || ($this->parentId == null)):
+			$this->_enableRevisions = false;
+			break;
+			
+			default:
 			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : new RevisionsModel([
 				"constrain" => [$this->parentId, $this->parentType]
 			]);
+			break;
 		}
 		parent::init();
 	}
@@ -118,13 +121,11 @@ class RevisionsInput extends BaseWidget
 		}
 		$result = Html::tag('div', '', ['role' => 'revisionStatus']);
 		echo Html::tag('div', $input.$result, $this->widgetOptions);
-		echo Html::script("
-			setTimeout(function () {
-				var r = new Revisions();
-				r.useRedactor = ".$this->enableRedactor.";
-				r.saveUrl = '".$this->autoSavePath."';
-				r.init('#".$this->widgetOptions['id']."');
-			}, 3000);
+		echo Html::script("setTimeout(function () {
+				\$nitm.revisions.useRedactor = ".$this->enableRedactor.";
+				\$nitm.revisions.saveUrl = '".$this->autoSavePath."';
+				\$nitm.revisions.init('#".$this->widgetOptions['id']."');
+			}, 10000);
 		");
 	}
 }

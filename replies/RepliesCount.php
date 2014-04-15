@@ -24,13 +24,18 @@ class RepliesCount extends BaseWidget
 	];
 	
 	public function init()
-	{	
-		if (!($this->model instanceof RepliesModel) && ($this->parentType == null) || ($this->parentId == null) || ($this->parentKey == null)) {
-			$this->model = null;
-		}
-		else 
+	{
+		switch(1)
 		{
-			$this->model = ($this->model instanceof RepliesModel) ? $this->model : RepliesModel::findModel([$this->parentId, $this->parentType, $this->parentKey]);
+			case !($this->model instanceof RepliesModel) && (($this->parentType == null) || ($this->parentId == null) || ($this->parentKey == null)):
+			$this->model = null;
+			break;
+			
+			default:
+			$this->model = ($this->model instanceof RepliesModel) ? $this->model : new RepliesModel([
+				"constrain" => [$this->parentId, $this->parentType, $this->parentKey]
+			]);
+			break;
 		}
 		parent::init();
 	}

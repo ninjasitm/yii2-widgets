@@ -157,3 +157,7 @@ function Revisions(items)
 		}
 	}
 }
+
+$nitm.addOnloadEvent(function () {
+	$nitm.revisions = new Revisions();
+});
