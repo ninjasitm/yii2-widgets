@@ -30,7 +30,7 @@ class RevisionsCount extends BaseWidget
 	];
 	
 	public function init()
-	{
+	{ 
 		switch(1)
 		{
 			case !($this->model instanceof RevisionsModel) && (($this->parentType == null) || ($this->parentId == null)):
@@ -38,9 +38,7 @@ class RevisionsCount extends BaseWidget
 			break;
 			
 			default:
-			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : new RevisionsModel([
-				"constrain" => [$this->parentId, $this->parentType]
-			]);
+			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : RevisionsModel::findModel([$this->parentId, $this->parentType]);
 			break;
 		}	
 		parent::init();

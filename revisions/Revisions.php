@@ -88,7 +88,7 @@ class Revisions extends BaseWidget
 	
 	public function run()
 	{
-		$r->queryFilters['order_by'] = ['id' => SORT_DESC];
+		$this->model->queryFilters['order_by'] = ['id' => SORT_DESC];
 		switch(\nitm\models\User::isAdmin())
 		{
 			case true:
@@ -96,7 +96,7 @@ class Revisions extends BaseWidget
 		}
 		
 		$dataProvider = new ArrayDataProvider([
-			'allModels' => $r->getModels(),
+			'allModels' => $this->model->getModels(),
 			'pagination' => false,
 		]);
 		$revisions = GridView::widget([

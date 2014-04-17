@@ -18,12 +18,7 @@ use nitm\widgets\models\BaseWidget;
  */
 class IssueTracker extends BaseWidget
 {
-	/*
-	 * HTML options for generating the widget
-	 */
-	public $modalOptions = [
-		'id' => 'issue-tracker-modal'
-	];
+	public $useModal = true;
 	
 	/*
 	 * HTML options for generevision the widget
@@ -72,11 +67,12 @@ class IssueTracker extends BaseWidget
 			$params = array_merge($get, $this->model->constraints);
 			$dataProvider = $searchModel->search($params);
 	
-			$issues = $this->getView()->render('@nitm/views/issue/index', [
+			$issues = $this->getView()->renderAjax('@nitm/views/issue/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
 				'parentId' => $this->parentId,
-				'parentType' => $this->parentType
+				'parentType' => $this->parentType,
+				'useModal' => $this->useModal
 			]);
 			break;
 			
@@ -86,9 +82,6 @@ class IssueTracker extends BaseWidget
 			break;
 		}
 		$this->options['id'] .= $this->parentId;
-		echo Html::tag('div', $issues, $this->options);
-		echo \nitm\widgets\modal\Modal::widget([
-			'options' => $this->modalOptions
-		]);
+		return Html::tag('div', $issues, $this->options);
 	}
 }

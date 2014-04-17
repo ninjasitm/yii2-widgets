@@ -5,6 +5,7 @@
 	padding: 1%;
 	font-size: 1em;
 	color: #FFF;
+	z-index: 100000;
 }
 
 .activity * {
