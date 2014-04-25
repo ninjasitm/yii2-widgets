@@ -21,13 +21,18 @@ class issueTrackerModal extends Widget
 	 */
 	public $options = [
 		'id' => 'issue-tracker-modal',
-		'style' => 'z-index: 100001'
+		'style' => 'z-index: 100001',
+	];
+	
+	public $dialogOptions = [
+		'class' => 'modal-vertical-centered'
 	];
 	
 	public function run()
 	{
 		echo \nitm\widgets\modal\Modal::widget([
 			'options' => $this->options,
+			'dialogOptions' => $this->dialogOptions,
 			'size' => $this->size,
 		]);
 	}

@@ -70,9 +70,7 @@ class RevisionsInput extends BaseWidget
 			break;
 			
 			default:
-			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : new RevisionsModel([
-				"constrain" => [$this->parentId, $this->parentType]
-			]);
+			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : RevisionsModel::findModel([$this->parentId, $this->parentType]);
 			break;
 		}
 		parent::init();
@@ -121,11 +119,11 @@ class RevisionsInput extends BaseWidget
 		}
 		$result = Html::tag('div', '', ['role' => 'revisionStatus']);
 		echo Html::tag('div', $input.$result, $this->widgetOptions);
-		echo Html::script("setTimeout(function () {
+		echo Html::script("\$nitm.addOnLoadEvent(function () {
 				\$nitm.revisions.useRedactor = ".$this->enableRedactor.";
 				\$nitm.revisions.saveUrl = '".$this->autoSavePath."';
 				\$nitm.revisions.init('#".$this->widgetOptions['id']."');
-			}, 10000);
+			});
 		");
 	}
 }

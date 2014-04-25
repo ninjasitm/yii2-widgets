@@ -8,28 +8,20 @@ function IssueTracker(items)
 		success: 'bg-success',
 		information: 'bg-info',
 		error: 'bg-danger',
-		hidden: 'message-hidden',
+		hidden: 'hidden',
 	};
 	this.views = {
-		containers: {
-				replyForm: 'reply_form',
-				messages: 'messages',
-				message: 'message',
-		}
-	};
-	this.elements = {
-		allowEditor: ['startEditor'],
-		replyActions: 'replyActions'
+		issue: 'issue',
+		issues: 'issues',
+		issueForm: 'issues-form',
 	};
 	this.forms = {
-		allowCreate: ['replyForm'],
-		allowQuoting: ['quoteReply'],
-		allowHiding: ['hideReply'],
-		allowReplying: ['replyTo'],
+		allowCreateUpdate: ['createIssue', 'updateIssue'],
 		actions : {
-			add: '/reply/new',
-			replyTo: '/reply/to',
-			hide: '/reply/hide',
+			create: '/issue/create',
+			resolve: '/issue/resolve',
+			close: '/issue/close',
+			duplicate: '/flag/duplicate',
 		},
 		inputs : {
 			unique: 'issueTracker-unique',
@@ -39,18 +31,18 @@ function IssueTracker(items)
 		},
 	};
 	this.actions = {
-		ids: {
-			hide: 'hide_message',
-			reply: 'reply_to_message',
-			quote: 'quote_message',
-		}
+		allowMeta: ['resolveIssue', 'closeIssue', 'duplicateIssue'],
+	};
+	this.roles = {
+		updateIssue: 'updateIssue',
+		resolveIssue: 'resolveIssue',
+		closeIssue: 'closeIssue',
+		duplicateIssue: 'duplicateIssue',
 	};
 	this.defaultInit = [
-					'initCreating',
-					'initResolving',
-					'initClosing',
-					'initDuplicating'
-				];
+		'initCreateUpdate',
+		'initMeta',
+	];
 
 	this.init = function () {
 		this.defaultInit.map(function (method, key) {
@@ -61,59 +53,41 @@ function IssueTracker(items)
 		});
 	}
 	
-	this.initCreating = function (container) {
-		var container = (container == undefined) ? 'body' : container;
-		this.forms.allowCreate.map(function (v) {
-			$(container+" "+"form[role='"+v+"']").map(function() {
+	this.initCreateUpdate = function (container) {
+		var container = $((container == undefined) ? 'body' : container);
+		this.forms.allowCreateUpdate.map(function (v) {
+			container.find("form[role='"+v+"']").map(function() {
 				$(this).off('submit');
 				$(this).on('submit', function (e) {
 					e.preventDefault();
-					$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
 					self.operation(this);
 				});
 			})
 		});
 	}
 	
-	this.initResolving = function (container) {
-		var container = (container == undefined) ? 'body' : container;
-		this.forms.allowResolve.map(function (v) {
-			$(container+" "+"[role='"+v+"']").map(function() {
+	this.initMeta = function (container) {
+		var container = $((container == undefined) ? 'body' : container);
+		this.actions.allowMeta.map(function (v) {
+			container.find("[role='"+v+"']").map(function() {
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					$.post($(this).attr('href'), 
 						function (result) { 
-							self.afterResolve(result);
-						}, 'json');
-				});
-			});
-		});
-	}
-	
-	this.initClosing = function (container) {
-		var container = (container == undefined) ? 'body' : container;
-		this.forms.allowClose.map(function (v) {
-			$(container+" "+"[role='"+v+"']").map(function() {
-				$(this).on('click', function (e) {
-					e.preventDefault();
-					$.post($(this).attr('href'), 
-						function (result) { 
-							self.afterClose(result);
-						}, 'json');
-				});
-			});
-		});
-	}
-	
-	this.initDuplicating = function (container) {
-		var container = (container == undefined) ? 'body' : container;
-		this.forms.allowHiding.map(function (v) {
-			$(container+" "+"[role='"+v+"']").map(function() {
-				$(this).on('click', function (e) {
-					e.preventDefault();
-					$.post($(this).attr('href'), 
-						function (result) { 
-							self.afterDuplicate(result);
+							switch(result.action)
+							{
+								case 'close':
+								self.afterClose(result);
+								break;
+								
+								case 'resolve':
+								self.afterResolve(result);
+								break;
+								
+								case 'duplicate':
+								self.afterDuplicate(result);
+								break;
+							}
 						}, 'json');
 				});
 			});
@@ -129,30 +103,22 @@ function IssueTracker(items)
 		switch(!$(form).attr('action'))
 		{
 			case false:
-			var request = doRequest($(form).attr('action'), 
+			var request = $nitm.doRequest($(form).attr('action'), 
 					data,
 					function (result) {
 						switch(result.action)
-						{
-							case 'close':
-							self.afterClose(result);
-							break;
-							
-							case 'resolve':
-							self.afterResolve(result);
-							break;
-							
-							case 'duplicate':
-							self.afterDuplicate(result);
-							break;
-								
+						{		
 							case 'create':
 							self.afterCreate(result, form);
+							break;
+								
+							case 'update':
+							self.afterUpdate(result, form);
 							break;
 						}
 					},
 					function () {
-						notify('Error Could not perform IssueTracker action. Please try again', self.classes.error, false);
+						$nitm.notify('Error Could not perform IssueTracker action. Please try again', self.classes.error, false);
 					}
 				);
 				break;
@@ -160,71 +126,67 @@ function IssueTracker(items)
 	}
 	
 	this.afterCreate = function(result, form) {
-		switch(result.success)
+		if(result.success)
 		{
-			case true:
-			ret_val = false;
-			var _form = $(form);
-			$('#'+_form.data('parent')).append($(result.data));
-			self.initResolving('#'+result.unique_id);
-			self.initClosing('#'+result.unique_id);
-			self.initDuplicating('#'+result.unique_id);
-			break;
-			
-			default:
-			alert('Unable to add reply');
-			break;
+			$(form).get(0).reset();
+			$nitm.notify("Added new issue. You can add another or view the newly added one", $nitm.classes.success, self.views.issueForm);
+			if(result.data)
+			{
+				$nitm.place({append:true, index:0}, result.data, self.views.issues);
+			}
+		}
+		else
+		{
+			$nitm.notify("Couldn't create new issue", $nitm.classes.error, self.views.issueForm);
+		}
+	}
+	
+	this.afterUpdate = function (result) {
+		if(result.success)
+		{
+			$nitm.notify("Updated issue sucessfully", $nitm.classes.success, self.views.issueForm);
+			if(result.data)
+			{
+				$nitm.getObj('#'+self.views.issue+result.id).replaceWith(result.data);
+			}
+		}
+		else
+		{
+			$nitm.notify("Couldn't update the issue", $nitm.classes.error, self.views.issueForm);
 		}
 	}
 	
 	this.afterClose = function (result) {
 		if(result.success)
 		{
-			switch(result.action)
-			{
-				case 'close':
-				getObj('#'+self.views.containers.message+result.id).addClass(self.classes.hidden);
-				break;
-				
-				default:
-				getObj('#'+self.views.containers.message+result.id).removeClass(self.classes.hidden);
-				break;
-			}
-			getObj('#'+self.actions.ids.hide+result.id).html(result.action);
+			var container = $nitm.getObj('#'+self.views.issue+result.id);
+			container.find("[role='"+self.roles.updateIssue+"']").toggleClass(self.classes.hidden, result.data);
+			var actionElem = container.find("[role='"+self.roles.closeIssue+"']");
+			actionElem.attr('title', result.title);
+			actionElem.find(':first-child').replaceWith(result.actionHtml);
+			container.removeClass().addClass(result.class);
 		}
 	}
 	
 	this.afterResolve = function (result) {
 		if(result.success)
 		{
-			switch(result.action)
-			{
-				case 'resolve':
-				getObj('#'+self.views.containers.message+result.id).addClass(self.classes.hidden);
-				break;
-				
-				default:
-				getObj('#'+self.views.containers.message+result.id).removeClass(self.classes.hidden);
-				break;
-			}
-			getObj('#'+self.actions.ids.hide+result.id).html(result.action);
+			var container = $nitm.getObj('#'+self.views.issue+result.id);
+			container.removeClass().addClass(result.class);
+			var actionElem = container.find("[role='"+self.roles.resolveIssue+"']");
+			actionElem.attr('title', result.title);
+			actionElem.find(':first-child').replaceWith(result.actionHtml);
 		}
 	}
 	
 	this.afterDuplicate = function (result) {
 		if(result.success)
 		{
-			switch(result.action)
-			{
-				case 'duplicate':
-				getObj('#'+self.views.containers.message+result.id).addClass(self.classes.hidden);
-				break;
-				
-				default:
-				getObj('#'+self.views.containers.message+result.id).removeClass(self.classes.hidden);
-				break;
-			}
-			getObj('#'+self.actions.ids.hide+result.id).html(result.action);
+			var container = $nitm.getObj('#'+self.views.issue+result.id);
+			container.removeClass().addClass(result.class);
+			var actionElem = container.find("[role='"+self.roles.duplicateIssue+"']");
+			actionElem.attr('title', result.title);
+			actionElem.find(':first-child').replaceWith(result.actionHtml);
 		}
 	}
 }

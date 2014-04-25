@@ -74,7 +74,7 @@ class Modal extends Widget
 			break;
 		}
 		return Html::tag('div',
-			Html::tag('div', Html::tag('div', $this->content,$this->contentOptions), $this->dialogOptions),
+			Html::tag('div', Html::tag('div', $this->content, $this->contentOptions), $this->dialogOptions),
 			$this->options
 		);
 	}

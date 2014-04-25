@@ -11,6 +11,7 @@ use Yii;
 use yii\helpers\Html;
 use nitm\widgets\models\BaseWidget;
 use nitm\models\Replies as RepliesModel;
+use nitm\models\User;
 
 class RepliesCount extends BaseWidget
 {	
@@ -40,7 +41,7 @@ class RepliesCount extends BaseWidget
 	
 	public function run()
 	{
-		switch(is_null($this->model))
+		switch(is_null($this->model) || ($this->model->count == 0))
 		{
 			case true:
 			$info = 'Replies: '.Html::tag('span', 0, $this->options);
@@ -48,15 +49,27 @@ class RepliesCount extends BaseWidget
 			
 			default:
 			$this->options['id'] .= $this->parentId;
-			$info = 'Replies: '.Html::tag('span', (int)$this->model->count, $this->options);
+			$info = 'Replies: '.Html::a(
+				Html::tag('span', (int)$this->model->count, $this->options),
+				"#",
+				[
+					'class' => 'btn btn-xs btn-primary'
+				]
+			);
 			$new = $this->model->hasNew();
 			switch($new)
 			{
 				case true:
-				$info .= " New: ".Html::tag('span', $new, $this->options);
+				$info .= " New: ".Html::a(
+					Html::tag('span', $new, $this->options),
+					"#",
+					[
+						'class' => 'btn btn-xs btn-primary'
+					]
+				);
 				break;
 			}
-			switch(((int)$this->model->count >= 1) && ($this->model->authorUser instanceof User))
+			switch(((int)$this->model->count >= 1) && ($this->model->last->authorUser instanceof User))
 			{
 				case true:
 				$info .= " Last Reply by ".Html::tag('span', $this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);

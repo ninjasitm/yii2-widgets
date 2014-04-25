@@ -13,6 +13,7 @@ use kartik\icons\Icon;
 use nitm\models\Issues as IssueModel;
 use nitm\models\search\Issues as IssueSearch;
 use nitm\widgets\models\BaseWidget;
+use nitm\widgets\issueTracker\assets\Asset as IssueAsset;
 
 /**the issues associated with a request with support for solving them
  */
@@ -38,9 +39,7 @@ class IssueTracker extends BaseWidget
 			break;
 			
 			default:
-			$this->model = ($this->model instanceof IssueModel) ? $this->model : new IssueModel([
-				"constrain" => [$this->parentId, $this->parentType]
-			]);
+			$this->model = ($this->model instanceof IssueModel) ? $this->model : IssueModel::findModel([$this->parentId, $this->parentType]);
 			break;
 		}
 		parent::init();
@@ -58,22 +57,25 @@ class IssueTracker extends BaseWidget
 				 * We need to set the parentId and parentType from the constraints values
 				 */
 				case true:
-				$this->parentId = $this->model->constrain[0];
-				$this->parentType = $this->model->constrain[1];
+				//$this->parentId = $this->model->constraints['parent_id'];
+				//$this->parentType = $this->model->constrain['parent_type'];
 				break;
 			}
 			$searchModel = new IssueSearch;
 			$get = \Yii::$app->request->getQueryParams();
 			$params = array_merge($get, $this->model->constraints);
-			$dataProvider = $searchModel->search($params);
 	
+			$dataProviderOpen = $searchModel->search(array_merge($params, ['closed' => 0]));
+			$dataProviderClosed = $searchModel->search(array_merge($params, ['closed' => 1]));
 			$issues = $this->getView()->renderAjax('@nitm/views/issue/index', [
-				'dataProvider' => $dataProvider,
+				'dataProviderOpen' => $dataProviderOpen,
+				'dataProviderClosed' => $dataProviderClosed,
 				'searchModel' => $searchModel,
 				'parentId' => $this->parentId,
 				'parentType' => $this->parentType,
 				'useModal' => $this->useModal
 			]);
+			IssueAsset::register($this->getView());
 			break;
 			
 			default:

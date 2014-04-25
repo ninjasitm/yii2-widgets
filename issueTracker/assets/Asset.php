@@ -21,5 +21,8 @@ class Asset extends AssetBundle
 	];	
 	public $depends = [
 		'nitm\assets\AppAsset',
+		'nitm\widgets\replies\assets\Asset',
+		'nitm\widgets\activityIndicator\assets\Asset',
+		'nitm\widgets\vote\assets\Asset'
 	];
 }

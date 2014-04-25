@@ -47,19 +47,21 @@ class RevisionsCount extends BaseWidget
 	public function run()
 	{
 		$this->options['id'] .= $this->parentId;
-		$info = 'Revisions: '.Html::tag('span', (int)$this->model->count, $this->options);
+		$info = 'Revisions: ';
 		switch($this->model->count >= 1)
 		{
 			case true:
+			$this->options['class'] .= " bg-success";
 			$info .= " ".Html::a(
-				Icon::show('eye'), 
+				Html::tag('span', (int)$this->model->count.' '.Icon::show('eye'), $this->options), 
 				'/revisions/index/'.$this->parentType."/".$this->parentId,
 				[
 					'data-toggle' => 'modal',
 					'data-target' => '#revisions'.$this->parentId,
-					'title' => 'View revisions'
+					'title' => 'View revisions',
+					'class' => 'btn btn-xs btn-primary'
 				]
-			)."<br>";
+			);
 			$info .= " Last Revision by ".Html::tag('span', $this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
 			$info .= " on ".Html::tag('span', $this->model->last->created_at, $this->options);
 			
@@ -76,6 +78,10 @@ class RevisionsCount extends BaseWidget
 				), 
 				['class' => 'modal fade', 'id' => 'revisions'.$this->parentId]
 			);
+			break;
+			
+			default:
+			$info .= Html::tag('span', 0, $this->options);
 			break;
 		}
 		

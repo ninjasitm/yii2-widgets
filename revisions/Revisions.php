@@ -78,9 +78,7 @@ class Revisions extends BaseWidget
 			break;
 			
 			default:
-			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : new RevisionsModel([
-				"constrain" => [$this->parentId, $this->parentType]
-			]);
+			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : RevisionsModel::findModel([$this->parentId, $this->parentType]);
 			break;
 		}
 		parent::init();
@@ -88,55 +86,24 @@ class Revisions extends BaseWidget
 	
 	public function run()
 	{
-		$this->model->queryFilters['order_by'] = ['id' => SORT_DESC];
 		switch(\nitm\models\User::isAdmin())
 		{
 			case true:
 			break;
 		}
-		
-		$dataProvider = new ArrayDataProvider([
-			'allModels' => $this->model->getModels(),
-			'pagination' => false,
-		]);
-		$revisions = GridView::widget([
-			'dataProvider' => $dataProvider,
-			//'filterModel' => $searchModel,
-			'columns' => [
-				[
-					'attribute' => 'author',
-					'label' => 'Author',
-					'format' => 'html',
-					'value' => function ($model, $index, $widget) {
-						return Html::a($model->authorUser->getFullName(true, $model->authorUser), \Yii::$app->urlManager->createUrl(['', 'Revisions[author]' => $model->authorUser->id]));
-					}
-				],
-				'created_at',
-				'parent_type',
-				[
-					'class' => 'yii\grid\ActionColumn',
-					'buttons' => $this->getActions(),
-					'template' => "{view} {restore} {delete}",
-					'urlCreator' => function($action, $model, $key, $index) {
-						return \Yii::$app->controller->id.'/'.$action.'/'.$model->getId();
-					},
-					'options' => [
-						'rowspan' => 3
-					]
-				],
-			],
-			'rowOptions' => function ($model, $key, $index, $grid)
-			{
-				return [
-					"class" => \Yii::$app->controller->getStatusIndicator($model),
-				];
-			},
-			"tableOptions" => [
-					'class' => 'table'
-			],
-		]);
+		$revisionsTabs = Html::tag('ul', 
+			Html::tag('li', Html::a('Open', '#open-issues', ['data-toggle' => 'tab'], ['class' => 'active']), 
+			Html::tag('li', Html::a('Closed', '#closed-issues', ['data-toggle' => 'tab']), 
+		);
+		$revisionsOpen = $this->getIssues('open');
+		$revisionsClosed = $this->getIssues('closed');
+		$revisions = Html::tag('div',
+			Html::tag('div', $revisionsOpen, ['class' => 'tab-pane fade in active', 'id' => 'open-issues']),
+			Html::tag('div', $revisionsClosed, ['class' => 'tab-pane fade in', 'id' => 'closed-issues'])
+			['class' => 'tab-content']
+		);
 		$this->options['id'] .= $this->parentId;
-		echo Html::tag('div', $revisions, $this->options);
+		return Html::tag('div', $revisionsTabs.$revisions, $this->options);
 	}
 	
 	public function getActions()
@@ -169,6 +136,65 @@ class Revisions extends BaseWidget
 			
 		}
 		return $ret_val;
+	}
+	
+	protected function getIssues($status='open')
+	{
+		switch($status)
+		{
+			case 'closed':
+			$this->model->queryFilters['closed'] = 1;
+			break;
+			
+			default:
+			$this->model->queryFilters['closed'] = 0;
+			break;
+		}
+		
+		$dataProvider = new ArrayDataProvider([
+			'allModels' => $this->model->getModels(),
+			'pagination' => false,
+		]);
+		$this->model->queryFilters['order_by'] = ['id' => SORT_DESC];
+		return GridView::widget([
+			'dataProvider' => $dataProvider,
+			//'filterModel' => $searchModel,
+			'columns' => [
+				[
+					'attribute' => 'author',
+					'label' => 'Author',
+					'format' => 'html',
+					'value' => function ($model, $index, $widget) {
+						return Html::a($model->authorUser->getFullName(true, $model->authorUser), \Yii::$app->urlManager->createUrl(['', 'Revisions[author]' => $model->authorUser->id]));
+					}
+				],
+				'created_at',
+				[
+					'attribute' => 'parent_type',
+					'label' => 'Type',
+				],
+				[
+					'class' => 'yii\grid\ActionColumn',
+					'buttons' => $this->getActions(),
+					'template' => "{view} {restore} {delete}",
+					'urlCreator' => function($action, $model, $key, $index) {
+						return \Yii::$app->controller->id.'/'.$action.'/'.$model->getId();
+					},
+					'options' => [
+						'rowspan' => 3
+					]
+				],
+			],
+			'rowOptions' => function ($model, $key, $index, $grid)
+			{
+				return [
+					"class" => \nitm\helpers\Statuses::getIndicator($model->getStatus()),
+				];
+			},
+			"tableOptions" => [
+					'class' => 'table'
+			],
+		]);
 	}
 }
 ?>
