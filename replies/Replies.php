@@ -12,6 +12,7 @@ use yii\helpers\Html;
 use nitm\widgets\models\BaseWidget;
 use nitm\models\User;
 use nitm\models\Replies as RepliesModel;
+use nitm\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
 class Replies extends BaseWidget
@@ -20,7 +21,6 @@ class Replies extends BaseWidget
 	 * HTML options for generating the widget
 	 */
 	public $options = [
-		'class' => 'messages',
 		'role' => 'entityMessages',
 		'id' => 'messages',
 		'data-parent' => 'replyFormParent'
@@ -88,185 +88,53 @@ class Replies extends BaseWidget
 	
 	public function run()
 	{
-		switch(($this->model instanceof RepliesModel) && ($this->model->hasAny()))
+		switch(($this->model instanceof RepliesModel))
 		{
 			case true:
-			$replies = '';
-			switch(\nitm\models\User::isAdmin())
+			switch(empty($this->parentId))
 			{
+				/**
+				 * This issue model was initialed through a model
+				 * We need to set the parentId and parentType from the constraints values
+				 */
 				case true:
+				//$this->parentId = $this->model->constraints['parent_id'];
+				//$this->parentType = $this->model->constrain['parent_type'];
 				break;
 			}
-			$arrow = Html::tag('div', '', ['class' => 'arrow']);
-			foreach($this->model->getModels() as $reply)
-			{
-				switch(empty($reply->author))
-				{
-					case false:
-					switch($this->userExists($reply))
-					{
-						case true:
-						$this->reply = $reply;
-						$replies .= $this->getReply();
-						$this->_userExists = false;
-						break;
-					}
-					break;
-				}
-			}
+			$searchModel = new RepliesSearch;
+			$searchModel->withThese = ['replyToAuthor', 'authorUser'];
+			$get = \Yii::$app->request->getQueryParams();
+			$params = array_merge($get, $this->model->constraints);
+			unset($params['type']);
+			unset($params['id']);
+	
+			$dataProvider = $searchModel->search(array_merge($params));
+			$dataProvider->setSort([
+				'defaultOrder' => [
+					'id' => SORT_DESC,
+				]
+			]);
+		$this->options['id'] .= $this->parentId;
+			$replies = $this->getView()->render('@nitm/views/replies/index', [
+				'dataProvider' => $dataProvider,
+				'searchModel' => $searchModel,
+				'parentId' => $this->parentId,
+				'parentType' => $this->parentType,
+				'useModal' => $this->useModal,
+				'widget' => $this,
+				'options' => $this->options
+			]);
+			//RepliesAsset::register($this->getView());
 			break;
 			
 			default:
 			//$replies = Html::tag('h3', "No comments", ['class' => 'text-error']);
-			$replies = '';
+			$replies = 'No Replies';
 			break;
 		}
 		$this->options['id'] .= $this->parentId;
-		echo Html::tag('div', $replies, $this->options);
-	}
-	
-	/**
-	 * Does the user for this reply exist?
-	 * @param Replies $repoly
-	 * @return boolean user exists
-	 */
-	public function userExists($reply)
-	{
-		$this->_users[$reply->author] = (isset($this->_users[$reply->author]) &&  ($this->_users[$reply->author] instanceof User)) ? $this->_users[$reply->author] : User::find($reply->author)->one();
-		$this->_user = $this->_users[$reply->author];
-		$this->_userExists = $this->_user instanceof User;
-		return $this->_userExists;
-	}
-	
-	public function getFooter()
-	{
-		$ret_val = '';
-		switch($this->_userExists)
-		{
-			case true:
-			$actions = Html::tag('div', 
-				$this->getActions(),
-				[
-					'class' => 'message-actions',
-					'id' => 'messageActions'.$this->reply->unique
-				]
-			);
-			$meta = Html::tag('div', 
-				"posted on ".$this->reply->added_hr.' by '.Html::tag('strong', $this->_user->username), 
-				[
-					'class' => 'message-meta'
-				]
-			);
-			$ret_val = Html::tag('div', Html::tag('hr').$meta.$actions, [
-				'class' => 'message-footer',
-				'id' => 'messageFooter'.$this->reply->unique
-			]);
-			break;
-		}
-		return $ret_val;
-	}
-	
-	/**
-	 * Return the avatar, user info and date info for user
-	 * @return string $ret_val
-	 */
-	public function getHeader()
-	{
-		$ret_val = '';
-		switch($this->_userExists)
-		{
-			case true:
-			$avatar = Html::tag('div', 
-				Html::img($this->_user->getAvatar(), ['class' => 'avatar avatar-small']),
-				[
-					'class' => 'avatar',
-					'id' => 'messageAvatar'.$this->reply->unique
-				]
-			);
-			$title = empty($title) ? '' : Html::tag('div', Html::tag('h4', $ths->reply->title), [
-				'class' => 'message-title',
-				'id' => 'messageTitle'.$this->reply->unique
-			]);
-			$title .= empty($this->reply->reply_to_author) ? '' : Html::a('@'.$this->reply->getReplyToAuthor(), '#'.'messageTitle'.$this->reply->reply_to, ['class' => 'message-reply-to']);
-			$ret_val = $avatar.$title;
-			break;
-		}
-		return $ret_val;
-	}
-	
-	public function getBody()
-	{
-		$ret_val = '';
-		switch($this->_userExists)
-		{
-			case true:
-			$ret_val = Html::tag('div', 
-				Html::tag('p', $this->reply->message, ['role' => 'message']),
-				[
-					'class' => 'message-body',
-					'id' => 'messageBody'.$this->reply->unique
-				]
-			);
-			break;
-		}
-		return $ret_val;
-	}
-	
-	public function getReply()
-	{
-		$reply = $this->getHeader().$this->getBody().$this->getFooter();
-		$class = 'message';
-		if($this->reply->hidden)
-		{
-			$class .= ' message-hidden';
-		}
-		return Html::tag('div', $reply, [
-					'class' => $class,
-					'id' => 'message'.$this->reply->unique
-				]);
-	}
-	
-	public function getActions()
-	{
-		$actions = is_null($this->actions) ? $this->_actions : array_intersect_key($this->_actions, $this->actions);
-		$ret_val = '';
-		foreach($actions as $name=>$action)
-		{
-			switch(isset($action['adminOnly']) && ($action['adminOnly'] == true))
-			{
-				case true:
-				switch($this->_user->isAdmin())
-				{
-					case true:
-					$action['options']['data-parent'] = $this->parentId;
-					$action['options']['data-reply-to'] = $this->reply->unique;
-					$action['options']['id'] = $action['options']['id'].$this->reply->unique;
-					$ret_val .= Html::tag($action['tag'], $action['text'], $action['options']);
-					break;
-				}
-				break;
-				
-				default:
-				switch($name)
-				{
-					case 'hide':
-					//$action['options']['class'] .= ($this->reply->hidden) ? 'glyphicon-eye-open' : 'glyphicon-eye-close';
-					$action['text'] = ($this->reply->hidden) ? 'unhide' : 'hide';
-					break;
-					
-					case 'quote':
-					$action['options']['data-author'] = $this->_user->username;
-					break;
-				}
-				$action['options']['data-parent'] = $this->parentId;
-				$action['options']['data-reply-to'] = $this->reply->unique;
-				$action['options']['id'] = $action['options']['id'].$this->reply->unique;
-				$ret_val .= Html::a(Html::tag($action['tag'], $action['text']), $action['action'].'/'.$this->reply->unique, $action['options']);
-				break;
-			}
-			
-		}
-		return $ret_val;
+		return $replies;
 	}
 }
 ?>

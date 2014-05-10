@@ -17,12 +17,16 @@ use kartik\icons\Icon;
 
 class RepliesForm extends BaseWidget
 {	
+	public $inline = true;
+	public $useModal = false;
+	public $hidden = false;
+	
 	/*
 	 * HTML options for generating the widget
 	 */
 	public $options = [
 		'class' => 'messages',
-		'role' => 'replyForm',
+		'role' => 'replyFormContainer',
 		'id' => 'messagesForm'
 	];
 	
@@ -83,51 +87,26 @@ class RepliesForm extends BaseWidget
 		switch(is_null($this->model))
 		{
 			case true:
-			$formBody = '';
+			return '';
 			break;
 			
-			default:
-			$this->options['id'] .= $this->parentId;			
+			default:		
 			$this->model->setScenario('validateNew');
-			$this->_form = ActiveForm::begin([
-						'id' => 'reply_form'.$this->parentId,
-						"action" => "/reply/new",
-						"options" => [
-										'data-parent' => 'messages'.$this->parentId,
-										"class" => "form-inline",
-										"role" => "replyForm",
-										],
-						"fieldConfig" => [
-								"inputOptions" => ["class" => "form-control"]
-								],
-						"enableAjaxValidation" => true
-						]);
-							
-			$formBody = Html::activeHiddenInput($this->model, 'constrain[unique]', ['value' => $this->parentId]);
-			$formBody .= Html::activeHiddenInput($this->model, "constrain[for]", ['value' =>  $this->parentType]);
-			$formBody .= Html::activeHiddenInput($this->model, "reply_to", ['value' =>  null]);
-			/*$formBody .= $this->_form->field($this->model, 'message')->textarea([
-				'class' => 'hidden',
-				'id' => 'reply-message'.$this->parentId
-			])->label('Message', ['class' => 'sr-only']);*/
-			$formBody .= Html::button(
-				'Click to Reply',
-				[
-					'role' => "startEditor",
-					'data-container' => $this->options['id'],
-					'data-id' => $this->parentId,
-					'class' => 'btn btn-default center-block'
-				]
-			);
-			$formBody .= $this->getActions(true);
-			echo Html::tag('div', $formBody, $this->options);
-			ActiveForm::end();
+			return $this->getView()->render('@nitm/views/replies/form/_form', [
+				'model' => $this->model,
+				'parentId' => $this->parentId,
+				'parentType' => $this->parentType,
+				'parentKey' => $this->parentKey,
+				'useModal' => $this->useModal,
+				'widget' => $this,
+				'inline' => $this->inline
+			]);
 			break;
 		}
 	}
 	
 	/**
-	 * Get teh actions supported for replying
+	 * Get the actions supported for replying
 	 */
 	public function getActions($hidden=false)
 	{

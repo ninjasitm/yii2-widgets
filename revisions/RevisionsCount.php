@@ -47,17 +47,17 @@ class RevisionsCount extends BaseWidget
 	public function run()
 	{
 		$this->options['id'] .= $this->parentId;
-		$info = 'Revisions: ';
+		$info = '';
 		switch($this->model->count >= 1)
 		{
 			case true:
 			$this->options['class'] .= " bg-success";
-			$info .= " ".Html::a(
+			$info = "Revisions: ".Html::a(
 				Html::tag('span', (int)$this->model->count.' '.Icon::show('eye'), $this->options), 
 				'/revisions/index/'.$this->parentType."/".$this->parentId,
 				[
 					'data-toggle' => 'modal',
-					'data-target' => '#revisions'.$this->parentId,
+					'data-target' => '#revisions-view-modal',
 					'title' => 'View revisions',
 					'class' => 'btn btn-xs btn-primary'
 				]
@@ -78,28 +78,28 @@ class RevisionsCount extends BaseWidget
 				), 
 				['class' => 'modal fade', 'id' => 'revisions'.$this->parentId]
 			);
+			$modalView = Html::tag('div',
+				Html::tag('div', 
+					'',
+					[
+						'class' => "modal-content"
+					]
+				),
+				[
+					"role" => "dialog",
+					"class" => "col-md-6 col-lg-6 col-sm-12 col-xs-12 col-md-offset-3 col-lg-offset-3 modal fade",
+					"id" => "revisionsViewModal",
+					"style" => "z-index: 10001"
+				]
+			);
+			$info = Html::tag('div', $info, $this->countOptions).$modalView;
 			break;
 			
 			default:
-			$info .= Html::tag('span', 0, $this->options);
+			$info = $this->showEmptyCount ? 'Revisions: '.Html::tag('span', 0, $this->options) : '';
 			break;
 		}
-		
-		$modalView = Html::tag('div',
-			Html::tag('div', 
-				'',
-				[
-					'class' => "modal-content"
-				]
-			),
-			[
-				"role" => "dialog",
-				"class" => "col-md-6 col-lg-6 col-sm-12 col-xs-12 col-md-offset-3 col-lg-offset-3 modal fade",
-				"id" => "revisionsViewModal",
-				"style" => "z-index: 10001"
-			]
-		);
-		echo Html::tag('div', $info, $this->countOptions).$modalView;
+		echo $info;
 	}
 }
 ?>

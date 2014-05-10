@@ -121,7 +121,5 @@ function Vote(items)
 	}
 }
 
-$nitm.addOnLoadEvent(function () {
-	$nitm.vote = new Vote();
-	$nitm.vote.init();
-});
+$nitm.vote = new Vote();
+$nitm.vote.init();

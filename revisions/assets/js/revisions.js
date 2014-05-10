@@ -2,10 +2,7 @@
 function Revisions(items)
 {	
 	var self = this;
-	var useRedactor = true;
-	var useCke = false;
-	var saveInterval = 5; //In seconds
-	var saveUrl = "/revisions/new/";
+	var saveInterval = 10; //In seconds
 	this.classes = {
 		success: 'bg-success',
 		error: 'bg-danger',
@@ -13,14 +10,14 @@ function Revisions(items)
 	this.events = [
 		'blur',
 	];
-	this.roles = [
-		'createRevision',
-		'revisionStatus'
-	];
+	this.roles = {
+		create: 'createRevision',
+		checkStatus: 'revisionStatus'
+	};
 	this.defaultInit = [
-					'initActivity',
-					'initInterval',
-				];
+		'initActivity',
+		'initInterval',
+	];
 
 	this.init = function (container) {
 		var container = (container == undefined) ? 'body' : container;
@@ -60,7 +57,7 @@ function Revisions(items)
 			var object = $(container+" "+"[role='"+role+"']");
 			switch(1)
 			{
-				case self.useRedactor == true:
+				case object.data('use-redactor') == true:
 				var callbacks = {
 					autosaveCallback: function (result) {
 						self.afterCreate(result, container);
@@ -124,7 +121,7 @@ function Revisions(items)
 		switch(!self.saveUrl)
 		{
 			case false:
-			var request = $nitm.doRequest(self.saveUrl, 
+			var request = $nitm.doRequest($(element).data('save-path'), 
 					data,
 					function (result) {
 						switch(result.action)
@@ -158,6 +155,6 @@ function Revisions(items)
 	}
 }
 
-$nitm.addOnloadEvent(function () {
+$nitm.addOnLoadEvent(function () {
 	$nitm.revisions = new Revisions();
 });

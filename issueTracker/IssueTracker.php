@@ -19,7 +19,6 @@ use nitm\widgets\issueTracker\assets\Asset as IssueAsset;
  */
 class IssueTracker extends BaseWidget
 {
-	public $useModal = true;
 	
 	/*
 	 * HTML options for generevision the widget
@@ -62,12 +61,15 @@ class IssueTracker extends BaseWidget
 				break;
 			}
 			$searchModel = new IssueSearch;
+			$searchModel->withThese = ['closeUser', 'resolveUser'];
 			$get = \Yii::$app->request->getQueryParams();
 			$params = array_merge($get, $this->model->constraints);
+			unset($params['type']);
+			unset($params['id']);
 	
 			$dataProviderOpen = $searchModel->search(array_merge($params, ['closed' => 0]));
 			$dataProviderClosed = $searchModel->search(array_merge($params, ['closed' => 1]));
-			$issues = $this->getView()->renderAjax('@nitm/views/issue/index', [
+			$issues = $this->getView()->render('@nitm/views/issue/index', [
 				'dataProviderOpen' => $dataProviderOpen,
 				'dataProviderClosed' => $dataProviderClosed,
 				'searchModel' => $searchModel,
@@ -75,7 +77,7 @@ class IssueTracker extends BaseWidget
 				'parentType' => $this->parentType,
 				'useModal' => $this->useModal
 			]);
-			IssueAsset::register($this->getView());
+			//IssueAsset::register($this->getView());
 			break;
 			
 			default:

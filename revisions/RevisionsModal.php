@@ -18,7 +18,8 @@ class RevisionsModal extends Widget
 	 * HTML options for generating the widget
 	 */
 	public $options = [
-		'id' => 'revisions-view-modal'
+		'id' => 'revisions-view-modal',
+		'style' => 'z-index: 100003',
 	];
 	
 	public function run()

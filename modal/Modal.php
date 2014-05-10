@@ -37,7 +37,7 @@ class Modal extends Widget
 	public $content = '';
 	
 	private $_defaultOptions = [
-		'class' => 'modal fade',
+		'class' => 'modal fade in',
 		'role' => 'dialog',
 		'id' => 'modal'
 	];
@@ -62,15 +62,15 @@ class Modal extends Widget
 		switch($this->size)
 		{
 			case 'x-large':
-			$this->options['class'] .= " modal-xlg";
+			$this->dialogOptions['class'] .= " modal-xlg";
 			break;
 			
 			case 'large':
-			$this->options['class'] .= " modal-lg";
+			$this->dialogOptions['class'] .= " modal-lg";
 			break;
 			
 			case 'small':
-			$this->options['class'] .= " modal-sm";
+			$this->dialogOptions['class'] .= " modal-sm";
 			break;
 		}
 		return Html::tag('div',

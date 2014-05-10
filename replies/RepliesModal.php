@@ -5,14 +5,14 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\issueTracker;
+namespace nitm\widgets\replies;
 
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use yii\base\Widget;
 
-class issueTrackerModal extends Widget
+class RepliesModal extends Widget
 {
 	public $size = 'large';
 	
@@ -20,7 +20,7 @@ class issueTrackerModal extends Widget
 	 * HTML options for generating the widget
 	 */
 	public $options = [
-		'id' => 'issue-tracker-modal',
+		'id' => 'replies-modal',
 		'style' => 'z-index: 100001',
 	];
 	

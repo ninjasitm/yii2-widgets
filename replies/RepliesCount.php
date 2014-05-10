@@ -12,9 +12,10 @@ use yii\helpers\Html;
 use nitm\widgets\models\BaseWidget;
 use nitm\models\Replies as RepliesModel;
 use nitm\models\User;
+use kartik\icons\Icon;
 
 class RepliesCount extends BaseWidget
-{	
+{
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -44,15 +45,18 @@ class RepliesCount extends BaseWidget
 		switch(is_null($this->model) || ($this->model->count == 0))
 		{
 			case true:
-			$info = 'Replies: '.Html::tag('span', 0, $this->options);
+			$info = $this->showEmptyCount ? 'Replies: '.Html::tag('span', 0, $this->options) : '';
 			break;
 			
 			default:
 			$this->options['id'] .= $this->parentId;
 			$info = 'Replies: '.Html::a(
-				Html::tag('span', (int)$this->model->count, $this->options),
-				"#",
+				Html::tag('span', (int)$this->model->count.' '.Icon::show('eye'), $this->options),
+				'/reply/index/'.$this->parentType."/".$this->parentId."/".urlencode($this->parentKey)."?__format=modal",
 				[
+					'data-toggle' => 'modal',
+					'data-target' => '#replies-modal',
+					'title' => 'View issue',
 					'class' => 'btn btn-xs btn-primary'
 				]
 			);
@@ -76,9 +80,10 @@ class RepliesCount extends BaseWidget
 				$info .= " on ".Html::tag('span', $this->model->last->created_at, $this->options);
 				break;
 			}
+			$info = Html::tag('div', $info, $this->widgetOptions);
 			break;
 		}
-		echo Html::tag('div', $info, $this->widgetOptions);
+		echo $info;
 	}
 }
 ?>

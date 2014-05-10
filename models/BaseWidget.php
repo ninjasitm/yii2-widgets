@@ -14,6 +14,12 @@ use kartik\icons\Icon;
 
 class BaseWidget extends Widget
 {
+	public $useModal = true;
+	/**
+	 * Show the count even if the number is 0
+	 */
+	public $showEmptyCount = false;	
+	
 	/*
 	 * The options used to constrain the Revisions
 	 */
@@ -71,7 +77,22 @@ class BaseWidget extends Widget
 	
 	public function init()
 	{
-		//Map kartick-v icons
-		Icon::map($this->getView());
+		switch(empty($this->parentType) && !is_null($this->model))
+		{
+			/**
+			 * This issue model was initialized through a model
+			 * We need to set the parentId and parentType from the constraints values
+			 */
+			case true:
+			$this->parentId = $this->model->parent_id;
+			$this->parentType = $this->model->parent_type;
+			switch($this->model->hasAttribute('parent_key'))
+			{
+				case true:
+				$this->parentKey = $this->model->parent_key;
+				break;
+			}
+			break;
+		}
 	}
 }

@@ -22,7 +22,7 @@ function Replies(items)
 		replyActions: 'replyActions'
 	};
 	this.forms = {
-		allowAdd: ['replyForm'],
+		allowCreate: ['replyForm'],
 		allowQuoting: ['quoteReply'],
 		allowHiding: ['hideReply'],
 		allowReplying: ['replyTo'],
@@ -40,13 +40,13 @@ function Replies(items)
 	};
 	this.actions = {
 		ids: {
-			hide: 'hide_message',
-			reply: 'reply_to_message',
-			quote: 'quote_message',
+			hide: 'hideMessage',
+			reply: 'replyToMessage',
+			quote: 'quoteMessage',
 		}
 	};
 	this.defaultInit = [
-					'initAdding',
+					'initCreating',
 					'initEditor',
 					'initHiding',
 					'initReplying',
@@ -65,20 +65,21 @@ function Replies(items)
 	this.initEditor = function (container) {
 		var container = (container == undefined) ? 'body' : container;
 		this.elements.allowEditor.map(function (v) {
-			$(container+" "+"[role='"+v+"']").map(function() {
+			$(container).find("[role='"+v+"']").map(function() {
+				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					$(this).addClass('hidden');
-					self.startEditor($(this).data('container'));
+					self.startEditor($(this).data('container'), '', this);
 				});
 			})
 		});
 	}
 	
-	this.initAdding = function (container) {
+	this.initCreating = function (container) {
 		var container = (container == undefined) ? 'body' : container;
-		this.forms.allowAdd.map(function (v) {
-			$(container+" "+"form[role='"+v+"']").map(function() {
+		this.forms.allowCreate.map(function (v) {
+			$(container).find("form[role='"+v+"']").map(function() {
 				$(this).off('submit');
 				$(this).on('submit', function (e) {
 					e.preventDefault();
@@ -92,7 +93,8 @@ function Replies(items)
 	this.initHiding = function (container) {
 		var container = (container == undefined) ? 'body' : container;
 		this.forms.allowHiding.map(function (v) {
-			$(container+" "+"[role='"+v+"']").map(function() {
+			$(container).find("[role='"+v+"']").map(function() {
+				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					$.post($(this).attr('href'), 
@@ -107,9 +109,11 @@ function Replies(items)
 	this.initReplying = function (container) {
 		var container = (container == undefined) ? 'body' : container;
 		this.forms.allowReplying.map(function (v) {
-			$(container+" "+"[role='"+v+"']").map(function() {
+			$(container).find("[role='"+v+"']").map(function() {
+				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
+					self.startEditor($(this).data('container'));
 					var form = $('#'+self.views.containers.replyForm+$(this).data('parent'));
 					form.find("[id='"+self.forms.inputs.reply_to+"']").val($(this).data('reply-to'));
 					form.find("[id='"+self.forms.inputs.message+"']").val('').focus();
@@ -123,9 +127,10 @@ function Replies(items)
 	this.initQuoting = function (container) {
 		var container = (container == undefined) ? 'body' : container;
 		this.forms.allowQuoting.map(function (v) {
-			$(container+" "+"[role='"+v+"']").map(function() {
+			$(container).find("[role='"+v+"']").map(function() {
 				$(this).on('click', function (e) {
 					e.preventDefault();
+					self.startEditor($(this).data('container'));
 					var form = $('#'+self.views.containers.replyForm+$(this).data('parent'));
 					form.find("[id="+self.forms.inputs.reply_to+"]").val($(this).data('reply-to'));
 					var quote = {
@@ -153,7 +158,7 @@ function Replies(items)
 		switch(!$(form).attr('action'))
 		{
 			case false:
-			var request = doRequest($(form).attr('action'), 
+			var request = $nitm.doRequest($(form).attr('action'), 
 					data,
 					function (result) {
 						switch(result.action)
@@ -162,32 +167,32 @@ function Replies(items)
 							self.afterHide(result);
 							break;
 								
-							case 'add':
+							case 'create':
 							case 'quote':
-							self.afterAdd(result, form);
+							self.afterCreate(result, form);
 							break;
 						}
 					},
 					function () {
-						notify('Error Could not perform Replies action. Please try again', self.classes.error, false);
+						$nitm.notify('Error Could not perform Replies action. Please try again', 'alert '+self.classes.error, false);
 					}
 				);
 				break;
 		}
 	}
 	
-	this.afterAdd = function(result, form) {
+	this.afterCreate = function(result, form) {
 		switch(result.success)
 		{
 			case true:
 			ret_val = false;
 			var _form = $(form);
-			$('#'+_form.data('parent')).append($(result.data));
+			$nitm.place({append:true, index:0}, result.data, _form.data('parent'));
 			self.initHiding('#'+result.unique_id);
 			self.initQuoting('#'+result.unique_id);
 			self.initReplying('#'+result.unique_id);
 			_form.find('#'+self.forms.inputs.reply_to).val('');
-			self.setEditorValue(_form.find('textarea').attr('id'), '');
+			self.setEditorValue(_form.find('textarea').attr('id'), '', false, self.editor);
 			break;
 			
 			default:
@@ -199,57 +204,44 @@ function Replies(items)
 	this.afterHide = function (result) {
 		if(result.success)
 		{
-			switch(result.action)
+			switch(result.value)
 			{
-				case 'unhide':
-				getObj('#'+self.views.containers.message+result.id).addClass(self.classes.hidden);
+				case true:
+				$nitm.getObj('#'+self.views.containers.message+result.id).addClass(self.classes.hidden);
 				break;
 				
-				default:
-				getObj('#'+self.views.containers.message+result.id).removeClass(self.classes.hidden);
+				default:  
+				$nitm.getObj('#'+self.views.containers.message+result.id).removeClass(self.classes.hidden);
 				break;
 			}
-			getObj('#'+self.actions.ids.hide+result.id).html(result.action);
+			$nitm.getObj('#'+self.actions.ids.hide+result.id).html(result.action);
 		}
 	}
 	
-	this.startEditor = function (containerId, value) {
-		$(function()
+	this.startEditor = function (containerId, value, button) {
+		var activator = $(button);
+		var container = $('#'+containerId);
+		var textarea = $("<textarea id='"+containerId+"editor' role='editor' class='form-control' name='Replies[message]' rows=10>");
+		var actions = container.find("[role='"+self.elements.replyActions+"']");
+		actions.removeClass('hidden');
+		switch(activator.data('use-modal'))
 		{
-			var container = $('#'+containerId);
-			var textarea = $("<textarea id='"+containerId+"editor' role='editor' class='form-control' name='Replies[message]'>");
-			var actions = container.find("[role='"+self.elements.replyActions+"']");
-			actions.removeClass('hidden');
-			textarea.insertBefore(actions);
-			$('#'+textarea.prop('id')).redactor({
-				focus: true,
-				autoresize: false,
-				initCallback: function(){
-					if(value != undefined)
-					{
-						this.set(value);
-					}
-				},
-				setCode: function(html){
-					html = this.preformater(html);
-					this.$editor.html(html).focus();
-					this.syncCode();
-				}
-			});
+			case true:
 			if(container.find('.modal').get(0) == undefined)
 			{
-				var content = $("<div class='modal fade in modal-sm' role='dialog' aria-hidden='true'>");
+				var content = $("<div class='modal fade in' role='dialog' aria-hidden='true'>");
 				var modalDialog = $("<div class='modal-dialog'>");
 				var modalContent = $("<div class='modal-content'>");
 				var modalBody = $("<div class='modal-body'>");
 				var modalTitle = $("<div class='modal-title'>").html("<h3>Your message:</h3>");
-				//var modalHeader = $("<div class='modal-header'>");
-				//var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
-				//modalHeader.append(modalClose);
-				//modalBody.append(modalHeader);
+				var modalHeader = $("<div class='modal-header'>");
+				var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
+				modalHeader.append(modalClose);
+				modalBody.append(modalHeader);
 				modalBody.append(modalTitle);
-				modalBody.append(container.html());
-				container.html('').append(content.append(modalDialog.append(modalContent.append(modalBody))));
+				modalBody.append(textarea);
+				modalBody.append(actions);
+				$('body').append(content.append(modalDialog.append(modalContent.append(modalBody))));
 			}
 			else
 			{
@@ -261,7 +253,28 @@ function Replies(items)
 			content.on('hidden.bs.modal', function () {
 				self.closeEditor(containerId);
 			});
+			break;
+			
+			default:
+			textarea.insertBefore(actions);
+			break;
+		}
+		$('#'+textarea.prop('id')).redactor({
+			focus: true,
+			autoresize: true,
+			initCallback: function(){
+				if(value != undefined)
+				{
+					this.set(value);
+				}
+			},
+			setCode: function(html){
+				html = this.preformater(html);
+				this.$editor.html(html).focus();
+				this.syncCode();
+			}
 		});
+		self.initCreating('#'+containerId);
 	}
 	
 	this.closeEditor = function (containerId) {
@@ -312,11 +325,11 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			ret_val = getObj(field).redactor('getObject').set(value, false);
+			ret_val = $nitm.getObj(field).redactor('getObject').set(value, false);
 			break;
 			
 			default:
-			var msgField = getObj(field);
+			var msgField = $nitm.getObj(field);
 			msgField.val(value);
 			msgField.get(0).focus();
 			break;
@@ -333,11 +346,11 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			ret_val = $('#'+getObj(field).attr('id')).redactor('getObject').get();
+			ret_val = $('#'+$nitm.getObj(field).attr('id')).redactor('getObject').get();
 			break;
 			
 			default:
-			ret_val = getObj(field).val();
+			ret_val = $nitm.getObj(field).val();
 			break;
 		}
 		return ret_val;
@@ -352,18 +365,16 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			getObj(field).redactor('focus');
+			$nitm.getObj(field).redactor('focus');
 			break;
 			
 			default:
-			ret_val = getObj(field).get(0).focus();
+			ret_val = $nitm.getObj(field).get(0).focus();
 			break;
 		}
 	}
 }
 
-$nitm.addOnLoadEvent(function () {
-	$nitm.replies = new Replies();
-	$nitm.replies.editor = 'redactor';
-	$nitm.replies.init();
-});
+$nitm.replies = new Replies();
+$nitm.replies.editor = 'redactor';
+$nitm.replies.init();

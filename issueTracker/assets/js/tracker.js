@@ -70,6 +70,7 @@ function IssueTracker(items)
 		var container = $((container == undefined) ? 'body' : container);
 		this.actions.allowMeta.map(function (v) {
 			container.find("[role='"+v+"']").map(function() {
+				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					$.post($(this).attr('href'), 
@@ -133,6 +134,8 @@ function IssueTracker(items)
 			if(result.data)
 			{
 				$nitm.place({append:true, index:0}, result.data, self.views.issues);
+				self.initCreateUpdate($(result.data).attr('id'));
+				self.initMeta($(result.data).attr('id'));
 			}
 		}
 		else
@@ -191,7 +194,5 @@ function IssueTracker(items)
 	}
 }
 
-$nitm.addOnLoadEvent(function () {
-	$nitm.issueTracker = new IssueTracker();
-	$nitm.issueTracker.init();
-});
+$nitm.issueTracker = new IssueTracker();
+$nitm.issueTracker.init();

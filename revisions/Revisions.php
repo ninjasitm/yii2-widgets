@@ -86,68 +86,10 @@ class Revisions extends BaseWidget
 	
 	public function run()
 	{
+		$this->model->queryFilters['order_by'] = ['id' => SORT_DESC];
 		switch(\nitm\models\User::isAdmin())
 		{
 			case true:
-			break;
-		}
-		$revisionsTabs = Html::tag('ul', 
-			Html::tag('li', Html::a('Open', '#open-issues', ['data-toggle' => 'tab'], ['class' => 'active']), 
-			Html::tag('li', Html::a('Closed', '#closed-issues', ['data-toggle' => 'tab']), 
-		);
-		$revisionsOpen = $this->getIssues('open');
-		$revisionsClosed = $this->getIssues('closed');
-		$revisions = Html::tag('div',
-			Html::tag('div', $revisionsOpen, ['class' => 'tab-pane fade in active', 'id' => 'open-issues']),
-			Html::tag('div', $revisionsClosed, ['class' => 'tab-pane fade in', 'id' => 'closed-issues'])
-			['class' => 'tab-content']
-		);
-		$this->options['id'] .= $this->parentId;
-		return Html::tag('div', $revisionsTabs.$revisions, $this->options);
-	}
-	
-	public function getActions()
-	{
-		$actions = is_null($this->actions) ? $this->_actions : array_intersect_key($this->_actions, $this->actions);
-		$ret_val = '';
-		foreach($actions as $name=>$action)
-		{
-			switch(isset($action['adminOnly']) && ($action['adminOnly'] == true))
-			{
-				case true:
-				switch(\Yii::$app->userMeta->isAdmin())
-				{
-					case true:
-					$action['options']['id'] = $action['options']['id'].$this->parentId;
-					$ret_val[$name] = function ($url, $model) use($action) {
-						return Html::a(Icon::show($action['text']), $action['action'].'/'.$model->getId(), $action['options']);
-					};
-					break;
-				}
-				break;
-				
-				default:
-				$action['options']['id'] = $action['options']['id'].$this->parentId;
-				$ret_val[$name] = function ($url, $model) use($action) {
-					return Html::a(Icon::show($action['text']), $action['action'].'/'.$model->getId(), $action['options']);
-				};
-				break;
-			}
-			
-		}
-		return $ret_val;
-	}
-	
-	protected function getIssues($status='open')
-	{
-		switch($status)
-		{
-			case 'closed':
-			$this->model->queryFilters['closed'] = 1;
-			break;
-			
-			default:
-			$this->model->queryFilters['closed'] = 0;
 			break;
 		}
 		
@@ -156,7 +98,7 @@ class Revisions extends BaseWidget
 			'pagination' => false,
 		]);
 		$this->model->queryFilters['order_by'] = ['id' => SORT_DESC];
-		return GridView::widget([
+		$revisions = GridView::widget([
 			'dataProvider' => $dataProvider,
 			//'filterModel' => $searchModel,
 			'columns' => [
@@ -195,6 +137,40 @@ class Revisions extends BaseWidget
 					'class' => 'table'
 			],
 		]);
+		$this->options['id'] .= $this->parentId;
+		echo Html::tag('div', $revisions, $this->options);
+	}
+	
+	public function getActions()
+	{
+		$actions = is_null($this->actions) ? $this->_actions : array_intersect_key($this->_actions, $this->actions);
+		$ret_val = '';
+		foreach($actions as $name=>$action)
+		{
+			switch(isset($action['adminOnly']) && ($action['adminOnly'] == true))
+			{
+				case true:
+				switch(\Yii::$app->userMeta->isAdmin())
+				{
+					case true:
+					$action['options']['id'] = $action['options']['id'].$this->parentId;
+					$ret_val[$name] = function ($url, $model) use($action) {
+						return Html::a(Icon::show($action['text']), $action['action'].'/'.$model->getId(), $action['options']);
+					};
+					break;
+				}
+				break;
+				
+				default:
+				$action['options']['id'] = $action['options']['id'].$this->parentId;
+				$ret_val[$name] = function ($url, $model) use($action) {
+					return Html::a(Icon::show($action['text']), $action['action'].'/'.$model->getId(), $action['options']);
+				};
+				break;
+			}
+			
+		}
+		return $ret_val;
 	}
 }
 ?>

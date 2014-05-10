@@ -89,6 +89,8 @@ class RevisionsInput extends BaseWidget
 			$revisionOptions =  [
 				'role' => $this->options['role'],
 				'id' => $this->options['id'].$this->parentId,
+				'data-dave-path' => $this->autoSavePath,
+				'data-use-redactor' => $this->enableRedactor,
 			];
 			RevisionsAsset::register($this->getView());
 			break;
@@ -119,12 +121,6 @@ class RevisionsInput extends BaseWidget
 		}
 		$result = Html::tag('div', '', ['role' => 'revisionStatus']);
 		echo Html::tag('div', $input.$result, $this->widgetOptions);
-		echo Html::script("\$nitm.addOnLoadEvent(function () {
-				\$nitm.revisions.useRedactor = ".$this->enableRedactor.";
-				\$nitm.revisions.saveUrl = '".$this->autoSavePath."';
-				\$nitm.revisions.init('#".$this->widgetOptions['id']."');
-			});
-		");
 	}
 }
 ?>
