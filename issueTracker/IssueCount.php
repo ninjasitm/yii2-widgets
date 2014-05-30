@@ -26,7 +26,12 @@ class IssueCount extends BaseWidget
 		'id' => 'issue-count'
 	];
 	
-	public $countOptions = [
+	public $widgetOptions = [
+		'class' => 'list-group'
+	];
+	
+	public $itemOptions = [
+		'class' => 'list-group-item'
 	];
 	
 	public function init()
@@ -62,9 +67,10 @@ class IssueCount extends BaseWidget
 					'class' => 'btn btn-xs btn-primary'
 				]
 			);
-			$info .= " Last Issue by ".Html::tag('span', $this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
-			$info .= " on ".Html::tag('span', $this->model->last->created_at, $this->options);
-			$info = Html::tag('div', $info, $this->countOptions);
+			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
+			$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
+			$info = Html::tag('li', $info, $this->itemOptions);
+			$info = Html::tag('ul', $info, $this->widgetOptions);
 			break;
 			
 			default:

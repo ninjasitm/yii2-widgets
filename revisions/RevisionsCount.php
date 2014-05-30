@@ -26,7 +26,12 @@ class RevisionsCount extends BaseWidget
 		'id' => 'revisions-count'
 	];
 	
-	public $countOptions = [
+	public $widgetOptions = [
+		'class' => 'list-group'
+	];
+	
+	public $itemOptions = [
+		'class' => 'list-group-item'
 	];
 	
 	public function init()
@@ -62,8 +67,10 @@ class RevisionsCount extends BaseWidget
 					'class' => 'btn btn-xs btn-primary'
 				]
 			);
-			$info .= " Last Revision by ".Html::tag('span', $this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
-			$info .= " on ".Html::tag('span', $this->model->last->created_at, $this->options);
+			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
+			$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
+			
+			$info = Html::tag('li', $info, $this->itemOptions);
 			
 			$info .= Html::tag(
 				'div', 
@@ -92,14 +99,14 @@ class RevisionsCount extends BaseWidget
 					"style" => "z-index: 10001"
 				]
 			);
-			$info = Html::tag('div', $info, $this->countOptions).$modalView;
+			$info .= $modalView;
 			break;
 			
 			default:
-			$info = $this->showEmptyCount ? 'Revisions: '.Html::tag('span', 0, $this->options) : '';
+			$info = $this->showEmptyCount ? Html::tag('li', 'Revisions: '.Html::tag('span', 0, $this->options), $this->itemOptions) : '';
 			break;
 		}
-		echo $info;
+		echo $info = Html::tag('ul', $info, $this->widgetOptions);
 	}
 }
 ?>

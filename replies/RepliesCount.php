@@ -25,6 +25,14 @@ class RepliesCount extends BaseWidget
 		'id' => 'reply-count'
 	];
 	
+	public $widgetOptions = [
+		'class' => 'list-group'
+	];
+	
+	public $itemOptions = [
+		'class' => 'list-group-item'
+	];
+	
 	public function init()
 	{
 		switch(1)
@@ -45,7 +53,7 @@ class RepliesCount extends BaseWidget
 		switch(is_null($this->model) || ($this->model->count == 0))
 		{
 			case true:
-			$info = $this->showEmptyCount ? 'Replies: '.Html::tag('span', 0, $this->options) : '';
+			$info = $this->showEmptyCount ? Html::tag('li', 'Replies: '.Html::tag('span', 0, $this->options), $this->itemOptions) : '';
 			break;
 			
 			default:
@@ -76,14 +84,14 @@ class RepliesCount extends BaseWidget
 			switch(((int)$this->model->count >= 1) && ($this->model->last->authorUser instanceof User))
 			{
 				case true:
-				$info .= " Last Reply by ".Html::tag('span', $this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
-				$info .= " on ".Html::tag('span', $this->model->last->created_at, $this->options);
+				$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
+				$info .= Html::tag('span', " Last by ".$this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
 				break;
 			}
-			$info = Html::tag('div', $info, $this->widgetOptions);
+			$info = Html::tag('li', $info, $this->itemOptions);
 			break;
 		}
-		echo $info;
+		echo $info = Html::tag('ul', $info, $this->widgetOptions);
 	}
 }
 ?>
