@@ -86,7 +86,6 @@ class ActivityIndicator extends Widget
 		$this->options = array_merge($this->_defaultOptions, $this->options);
 		$this->options['class'] .= ' '.$size.' '.$type;
 		$this->indicator = array_merge($this->indicator, $this->_indicatorOptions);
-		assets\Asset::register($this->getView());
 		echo Html::tag('div', 
 			Html::tag($this->indicator['tag'], 
 				$this->indicator['content'], 

@@ -10,6 +10,7 @@
 	margin-right: auto;
 }
 
+.chat .message,
 .messages .message {
 	float: left;
 	width: 100%;
@@ -17,6 +18,11 @@
 	border-radius: 6px;
 	background-color: rgba(153,153,153,0.5);
 	margin: 6px 0px 6px 0px;
+}
+
+.chat .message {
+	background-color: transparent;
+	border-radius: 0;
 }
 
 .message .avatar {
@@ -93,4 +99,39 @@
 
 .message-hidden {
 	opacity: 0.3;
+}
+
+/**
+* Chat section
+*/
+
+.chat {
+	position: fixed;
+	top: 0;
+	bottom: 180px;
+	overflow: auto;
+	z-index: 10000;
+	background-color: rgba(153,153,153,0.9);
+}
+
+.chat-form {
+	width: 32.33%;
+	position: fixed;
+	bottom: 40px; right: 0;
+	overflow: auto;
+	z-index: 10000;
+	background-color: rgba(0,0,0, 0.9);
+	padding:15px;
+	color: white;
+}
+
+.chat-form-btn {
+	background-color: transparent;
+	border: none;
+}
+
+.chat-form-header {
+}
+
+.chat-form-container {
 }

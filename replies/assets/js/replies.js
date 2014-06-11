@@ -22,7 +22,7 @@ function Replies(items)
 		replyActions: 'replyActions'
 	};
 	this.forms = {
-		allowCreate: ['replyForm'],
+		allowCreate: ['replyForm', 'chatForm'],
 		allowQuoting: ['quoteReply'],
 		allowHiding: ['hideReply'],
 		allowReplying: ['replyTo'],
@@ -80,6 +80,7 @@ function Replies(items)
 		var container = (container == undefined) ? 'body' : container;
 		this.forms.allowCreate.map(function (v) {
 			$(container).find("form[role='"+v+"']").map(function() {
+				$(this).find("[data-toggle='buttons'] .btn").button();
 				$(this).off('submit');
 				$(this).on('submit', function (e) {
 					e.preventDefault();
@@ -145,6 +146,21 @@ function Replies(items)
 					self.setEditorValue(self.forms.inputs.message+quote.parent, quoteString, true, self.editor);
 					self.setEditorFocus(self.forms.inputs.message+quote.parent, self.editor);
 				});
+			});
+		});
+	}
+	
+	this.initChatTabs = function (container) {
+		var container = (container == undefined) ? 'body' : container;
+		$nitm.getObj(container).find('[data-toggle="tab"]').map(function() {
+			$(this).on('click', function (e) {
+				var tab = $(this);
+				if(tab.parent('li').hasClass('active')){
+					window.setTimeout(function(){
+						$(".tab-pane").toggleClass('active', false, 500, 'linear');
+						tab.parent('li').toggleClass('active', false, 500, 'linear');
+					},1);
+				}
 			});
 		});
 	}
