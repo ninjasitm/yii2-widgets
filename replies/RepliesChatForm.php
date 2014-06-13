@@ -94,7 +94,7 @@ class RepliesChatForm extends BaseWidget
 				'parentKey' => $this->parentKey,
 				'useModal' => $this->useModal,
 				'widget' => $this,
-				'inline' => $this->inline
+				'inline' => $this->inline,
 			]);
 			break;
 		}

@@ -29,7 +29,7 @@ class RepliesChat extends BaseWidget
 	];
 	
 	/**
-	 * \commond\models\Reply $reply
+	 * \common\models\Reply $reply
 	 */
 	public $reply;
 	
@@ -77,7 +77,7 @@ class RepliesChat extends BaseWidget
 	{
 		$this->model = ($this->model instanceof RepliesModel) ? $this->model : new RepliesModel([
 			'constrain' => [
-				'type' => 'notes'
+				'type' => 'chat'
 			]
 		]);
 		parent::init();

@@ -77,7 +77,7 @@ class Priority extends BaseWidget
 			'title' => 'Important'
 		],
 		'normal' => [
-			'class' => 'normal',
+			'class' => 'default',
 			'id' => 'priority-normal',
 			'data-toggle' => 'tooltip',
 			'data-placement' => 'top',
@@ -150,9 +150,10 @@ class Priority extends BaseWidget
 		$ret_val = '';
 		$items = [];
 		$itemsLabels = [];
-		$model = $this->model;
 		$form = $this->form;
 		$fieldName = $this->fieldName;
+		$this->model->$fieldName = !$this->model->$fieldName ? 'normal' : $this->model->$fieldName;
+		echo $this->model->$fieldName;
 		foreach($this->priorities as $name=>$priority)
 		{
 			$text = isset($priority['text']) ? $priority['text'] : ucfirst($name);
@@ -189,6 +190,7 @@ class Priority extends BaseWidget
 				'url' => '#'
 			];
 		}
+		$itemsLabels[$this->model->$fieldName]['options']['class'] .= ' active';
 		$this->options['inline'] = $this->inputsInline;
 		switch($this->addonType)
 		{
@@ -204,13 +206,13 @@ class Priority extends BaseWidget
 			
 			case 'radiolist':
 			$this->options['data-toggle'] = 'buttons';
+			$this->options['class'] = 'btn-group';
 			$this->options['item'] = function ($index, $label, $name, $checked, $value) use ($itemsLabels) {
-				//$itemOptions = [
-				//	'labelOptions' => $itemsLabels[$value]['options']
-				//];
-				//$itemOptions['container'] = ['class' => 'radio-inline'];
-				$itemOptions = [];
-				return Html::label(Html::input('radio', $name, $value, $itemOptions).' '. $label['label'], null, $itemsLabels[$value]['options']);
+				$itemOptions = [
+					'value' => $value	
+				];
+				//return Html::label(Html::input('radio', $name, $value, $itemOptions).' '. $label['label'], null, $itemsLabels[$value]['options']);
+				return Html::label(Html::radio($name, $checked, $itemOptions).' '. $label['label'], null, $itemsLabels[$value]['options']);
 			};
 			$ret_val = $this->form->field($this->model, $this->fieldName)->radioList($itemsLabels, $this->options)->label("Priority", ['class' => 'sr-only']);
 			break;

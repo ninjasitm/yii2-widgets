@@ -62,10 +62,10 @@ function Replies(items)
 		});
 	}
 	
-	this.initEditor = function (container) {
-		var container = (container == undefined) ? 'body' : container;
+	this.initEditor = function (containerId) {
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		this.elements.allowEditor.map(function (v) {
-			$(container).find("[role='"+v+"']").map(function() {
+			container.find("[role='"+v+"']").map(function() {
 				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
@@ -76,10 +76,10 @@ function Replies(items)
 		});
 	}
 	
-	this.initCreating = function (container) {
-		var container = (container == undefined) ? 'body' : container;
+	this.initCreating = function (containerId) {
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		this.forms.allowCreate.map(function (v) {
-			$(container).find("form[role='"+v+"']").map(function() {
+			container.find("form[role='"+v+"']").map(function() {
 				$(this).find("[data-toggle='buttons'] .btn").button();
 				$(this).off('submit');
 				$(this).on('submit', function (e) {
@@ -91,10 +91,10 @@ function Replies(items)
 		});
 	}
 	
-	this.initHiding = function (container) {
-		var container = (container == undefined) ? 'body' : container;
+	this.initHiding = function (containerId) {
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		this.forms.allowHiding.map(function (v) {
-			$(container).find("[role='"+v+"']").map(function() {
+			container.find("[role='"+v+"']").map(function() {
 				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
@@ -107,10 +107,10 @@ function Replies(items)
 		});
 	}
 	
-	this.initReplying = function (container) {
-		var container = (container == undefined) ? 'body' : container;
+	this.initReplying = function (containerId) {
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		this.forms.allowReplying.map(function (v) {
-			$(container).find("[role='"+v+"']").map(function() {
+			container.find("[role='"+v+"']").map(function() {
 				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
@@ -125,10 +125,10 @@ function Replies(items)
 		});
 	}
 	
-	this.initQuoting = function (container) {
-		var container = (container == undefined) ? 'body' : container;
+	this.initQuoting = function (containerId) {
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		this.forms.allowQuoting.map(function (v) {
-			$(container).find("[role='"+v+"']").map(function() {
+			container.find("[role='"+v+"']").map(function() {
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					self.startEditor($(this).data('container'));
@@ -150,19 +150,63 @@ function Replies(items)
 		});
 	}
 	
-	this.initChatTabs = function (container) {
-		var container = (container == undefined) ? 'body' : container;
-		$nitm.getObj(container).find('[data-toggle="tab"]').map(function() {
+	this.initChatActivity = function(containerId, url) {
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		setInterval(function () {
+			$.post(url, 
+				function (result) {
+					switch((result != false))
+					{
+						case true:
+						self.chatStatus(true, result, container);
+						break;
+					}
+				}, 'json');
+		}, 5000);
+	}
+	
+	this.initChatTabs = function (containerId) {
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		$nitm.getObj(containerId).find('[data-toggle="tab"]').map(function() {
 			$(this).on('click', function (e) {
 				var tab = $(this);
+				self.chatStatus(false, null, container);
 				if(tab.parent('li').hasClass('active')){
 					window.setTimeout(function(){
 						$(".tab-pane").toggleClass('active', false, 500, 'linear');
 						tab.parent('li').toggleClass('active', false, 500, 'linear');
-					},1);
+					}, 1);
 				}
 			});
 		});
+	}
+	
+	this.chatStatus = function (update, result, container){
+		var tab = container.find('[id="chat\-messages-nav"]');
+		switch(update)
+		{
+			case false:
+			container.find('[id="chat\-messages\-nav"]').find('[class="badge"]').remove();
+			container.find('[id="chat\-updates"]').html('');
+			tab.removeClass('bg-success');
+			break;
+			
+			default:
+			var badge = tab.find('[class="badge"]');
+			tab.addClass('bg-success');
+			if(badge.get(0) != undefined){
+				badge.html(result.count);
+			}
+			else {
+				tab.append("<span class='badge'>"+result.count+"</span>");
+			}
+			container.find('[id="chat\-updates"]').html(result.message);
+			if(tab.parent().hasClass('active'))
+			{
+				self.afterCreate(result, 'form\[role="chatForm"\]');
+			}
+			break;
+		}
 	}
 	
 	this.operation = function (form) {
@@ -201,7 +245,7 @@ function Replies(items)
 		switch(result.success)
 		{
 			case true:
-			ret_val = false;
+			var ret_val = false;
 			var _form = $(form);
 			$nitm.place({append:true, index:0}, result.data, _form.data('parent'));
 			self.initHiding('#'+result.unique_id);
@@ -212,7 +256,17 @@ function Replies(items)
 			break;
 			
 			default:
-			alert('Unable to add reply');
+			var notifyPane = $(form).find("#alert");
+			switch(notifyPane != undefined)
+			{
+				case true:
+				$nitm.notify('Unable to add message', 'alert '+self.classes.error, "#alert").delay(5000).fadeOut();
+				break;
+				
+				default:
+				alert('Unable to add message');
+				break;
+			}
 			break;
 		}
 	}
@@ -275,21 +329,27 @@ function Replies(items)
 			textarea.insertBefore(actions);
 			break;
 		}
-		$('#'+textarea.prop('id')).redactor({
-			focus: true,
-			autoresize: true,
-			initCallback: function(){
-				if(value != undefined)
-				{
-					this.set(value);
+		var type = textarea.parent('form').data('editor');
+		switch(type)
+		{
+			case 'redactor':
+			$('#'+textarea.prop('id')).redactor({
+				focus: true,
+				autoresize: true,
+				initCallback: function(){
+					if(value != undefined)
+					{
+						this.set(value);
+					}
+				},
+				setCode: function(html){
+					html = this.preformater(html);
+					this.$editor.html(html).focus();
+					this.syncCode();
 				}
-			},
-			setCode: function(html){
-				html = this.preformater(html);
-				this.$editor.html(html).focus();
-				this.syncCode();
-			}
-		});
+			});
+			break;
+		}
 		self.initCreating('#'+containerId);
 	}
 	
@@ -303,7 +363,13 @@ function Replies(items)
 			//destroy the editor
 			var container = $(containerId);
 			var textarea = content.find("textarea"); 
-			$('#'+textarea.prop('id')).redactor('getObject').destroyEditor();
+			var type = $nitm.getObj(field).parents('form').data('editor');
+			switch(type)
+			{
+				case 'redactor':
+				$('#'+textarea.prop('id')).redactor('getObject').destroyEditor();
+				break;
+			}
 			//container.find('.redactor_box').remove();
 			//unhide the actions
 			var actions = container.find("[role='"+self.elements.replyActions+"']");
@@ -321,7 +387,8 @@ function Replies(items)
 		self.initEditor(containerId);
 	}
 	
-	this.setEditorValue = function (field, value, quote, type) {
+	this.setEditorValue = function (field, value, quote) {
+		var type = $nitm.getObj(field).parents('form').data('editor');
 		switch(type)
 		{
 			case 'ckeditor':
@@ -352,8 +419,9 @@ function Replies(items)
 		}
 	}
 	
-	this.getEditorValue = function (field, type) {
+	this.getEditorValue = function (field) {
 		var ret_val = '';
+		var type = $nitm.getObj(field).parent('form').data('editor');
 		switch(type)
 		{
 			case 'ckeditor':
@@ -373,6 +441,7 @@ function Replies(items)
 	}
 	
 	this.setEditorFocus = function (field) {
+		var type = $nitm.getObj(field).parent('form').data('editor');
 		switch(type)
 		{
 			case 'ckeditor':
@@ -392,5 +461,4 @@ function Replies(items)
 }
 
 $nitm.replies = new Replies();
-$nitm.replies.editor = 'redactor';
 $nitm.replies.init();

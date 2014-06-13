@@ -45,7 +45,7 @@ class Chat extends BaseWidget
 	{
 		$this->model = new RepliesModel([
 			'constrain' => [
-				'type' => 'notes'
+				'type' => 'chat'
 			]
 		]);
 		parent::init();
@@ -77,8 +77,9 @@ class Chat extends BaseWidget
 	
 	protected function getNavigation() {
 		$ret_val = Html::tag('ul', 
-			Html::tag('li', Html::a('Messages', '#chat-messages', ['data-toggle' => 'tab']), []).
-			Html::tag('li', Html::a('Information', '#chat-misc', ['data-toggle' => 'tab']), ['id' => 'chat-meta']),
+			Html::tag('li', Html::a('Messages', '#chat-messages', ['data-toggle' => 'tab', 'id' => 'chat-messages-nav']), []).
+			Html::tag('li', Html::a('Information', '#chat-misc', ['data-toggle' => 'tab']), ['id' => 'chat-meta-nav']).
+			Html::tag('li', Html::a('', '#', ['id' => 'chat-updates', 'class' => 'text-warning'])),
 			$this->navigationOptions
 		);
 		return $ret_val;

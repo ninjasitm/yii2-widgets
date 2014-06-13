@@ -12,17 +12,37 @@
 
 .chat .message,
 .messages .message {
-	float: left;
 	width: 100%;
 	height: auto;
 	border-radius: 6px;
-	background-color: rgba(153,153,153,0.5);
-	margin: 6px 0px 6px 0px;
+	padding: 6px;
+	border-bottom: solid thin gray;
 }
 
 .chat .message {
-	background-color: transparent;
 	border-radius: 0;
+}
+
+.message .header {
+	width: auto;
+	font-size: 12px;
+	font-weight: bold;
+	position: absolute;
+	right: 6px;
+	margin-top: 6px;
+}
+
+.message .date {
+	font-size: 11px;
+	float: right;
+	line-height: 12px;
+	padding-bottom: 6px;
+	text-align: right;
+}
+
+.message .author, .message .reply-to-author {
+	font-size: 14px;
+	color: black;
 }
 
 .message .avatar {
@@ -31,6 +51,14 @@
 	font-size: 6px;
 	padding: 6px;
 	float: left;
+	display: block;
+	position: relative;
+	display: block;
+}
+
+.chat .avatar {
+	width: 78px;
+	height: 78px;
 }
 
 .message .avatar img {
@@ -43,16 +71,26 @@
 	margin-right: auto;
 }
 
+.chat .avatar img {
+	max-width: 72px;
+	max-height: 72px;
+}
+
 .message .message-body {
 	text-align: left;
 	border: none;
+	display: block;
 	position: relative;
 	float: left;
 	padding: 6px;
+	margin-top: 18px;
 }
 
-.message .message-body p[role=message] {
-	width: 100%;
+.message .message-body *[role=message] {
+	width: auto;
+	float: left;
+	word-wrap: break-word;
+	clear: both;
 }
 
 .message * blockquote, .cke_editable blockquote {
@@ -71,6 +109,9 @@
 	width: 50%;
 	float: left;
 	padding-right: 6px;
+	font-size: 11px;
+	display: table-cell;
+	vertical-align: bottom;
 }
 .message .message-actions {
 	width: 50%;
@@ -122,7 +163,6 @@
 	z-index: 10000;
 	background-color: rgba(0,0,0, 0.9);
 	padding:15px;
-	color: white;
 }
 
 .chat-form-btn {
@@ -134,4 +174,13 @@
 }
 
 .chat-form-container {
+}
+
+.chat-form-body {
+	color: white;
+}
+
+.input-group .btn-group > .btn, .btn-group-vertical > .btn {
+    position: relative;
+	float: none;
 }
