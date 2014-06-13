@@ -17,6 +17,15 @@ use kartik\icons\Icon;
 
 class RepliesChat extends BaseWidget
 {	
+	/*
+	 * Interval for updating new chat and chat info
+	 */
+	public $updateOptions = [
+		"interval" => 60000,
+		"enabled" => true,
+		'url' => 'reply/get-new/chat/0'
+	];
+	
 	public $withForm = false;
 	/*
 	 * HTML options for generating the widget
@@ -122,7 +131,8 @@ class RepliesChat extends BaseWidget
 				'widget' => $this,
 				'options' => $this->options,
 				'withForm' => $this->withForm,
-				'chatModel' => $this->model
+				'chatModel' => $this->model,
+				'updateOptions' => $this->updateOptions
 			]);
 			//RepliesAsset::register($this->getView());
 			break;

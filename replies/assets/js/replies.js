@@ -150,7 +150,7 @@ function Replies(items)
 		});
 	}
 	
-	this.initChatActivity = function(containerId, url) {
+	this.initChatActivity = function(containerId, url, interval) {
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		setInterval(function () {
 			$.post(url, 
@@ -162,7 +162,7 @@ function Replies(items)
 						break;
 					}
 				}, 'json');
-		}, 5000);
+		}, interval);
 	}
 	
 	this.initChatTabs = function (containerId) {

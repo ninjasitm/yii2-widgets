@@ -18,6 +18,15 @@ use kartik\icons\Icon;
 class Chat extends BaseWidget
 {	
 	/*
+	 * Interval for updating new chat and chat info
+	 */
+	public $updateOptions = [
+		"interval" => 60000,
+		"enabled" => true,
+		'url' => 'reply/get-new/chat/0'
+	];
+	 
+	/*
 	 * HTML options for generating the widget
 	 */
 	public $options = [
@@ -62,7 +71,11 @@ class Chat extends BaseWidget
 	protected function getContent() {
 		$ret_val = Html::tag('div', 
 			Html::tag('div', 
-				\nitm\widgets\replies\RepliesChat::widget(['model' => $this->model, 'withForm' => true]), [
+				\nitm\widgets\replies\RepliesChat::widget([
+					'model' => $this->model, 
+					'withForm' => true,
+					'updateOptions' => $this->updateOptions
+				]), [
 				'class' => 'tab-pane fade in',
 				'id' => 'chat-messages'
 			]).
@@ -76,10 +89,25 @@ class Chat extends BaseWidget
 	}
 	
 	protected function getNavigation() {
+		$new = $this->model->hasNew();
+		switch($new >= 1)
+		{
+				case true:
+				$newBadge = Html::tag('span', $new, ['class' => 'badge']);
+				$newMessage = $new." new messages";
+				$newClass = "bg-success";
+				break;
+				
+				default:
+				$newBadge = '';
+				$newMessage = '';
+				$newClass = "";
+				break;
+		}
 		$ret_val = Html::tag('ul', 
-			Html::tag('li', Html::a('Messages', '#chat-messages', ['data-toggle' => 'tab', 'id' => 'chat-messages-nav']), []).
+			Html::tag('li', Html::a('Messages'.$newBadge, '#chat-messages', ['data-toggle' => 'tab', 'id' => 'chat-messages-nav', 'class' => $newClass]), []).
 			Html::tag('li', Html::a('Information', '#chat-misc', ['data-toggle' => 'tab']), ['id' => 'chat-meta-nav']).
-			Html::tag('li', Html::a('', '#', ['id' => 'chat-updates', 'class' => 'text-warning'])),
+			Html::tag('li', Html::a($newMessage, '#', ['id' => 'chat-updates', 'class' => 'text-warning'])),
 			$this->navigationOptions
 		);
 		return $ret_val;
