@@ -13,6 +13,10 @@
 	"require": {
 		"yiisoft/yii2": "*",
 		"nitm/yii2-module": "*"
+                "kartik-v/yii2-widgets": "*",
+                "kartik-v/yii2-helpers": "*",
+                "kartik-v/yii2-icons": "*",
+                "asofter/yii2-imperavi-redactor":"*",
 	},
     "autoload": {
         "psr-4": {
