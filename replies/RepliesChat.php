@@ -27,14 +27,24 @@ class RepliesChat extends BaseWidget
 	];
 	
 	public $withForm = false;
+	 
+	/*
+	 * HTML options for the chat message container
+	 */
+	public $options = [
+		'role' => 'chatFormParent',
+		'id' => 'chat',
+		'class' => 'chat col-lg-4 col-md-4',
+	];
+	
 	/*
 	 * HTML options for generating the widget
 	 */
-	public $options = [
-		'class' => 'chat',
-		'role' => 'entityChat',
-		'id' => 'chat',
-		'data-parent' => 'chatFormParent'
+	public $listOptions = [
+		'class' => 'chat-messages',
+		'role' => 'chatMessages',
+		'id' => 'chat-messages',
+		'data-parent' => 'chatParent'
 	];
 	
 	/**
@@ -125,13 +135,12 @@ class RepliesChat extends BaseWidget
 			$replies = $this->getView()->render('@nitm/views/chat/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
-				'parentId' => $this->parentId,
-				'parentType' => $this->parentType,
 				'useModal' => $this->useModal,
 				'widget' => $this,
 				'options' => $this->options,
+				'listOptions' => $this->listOptions,
 				'withForm' => $this->withForm,
-				'chatModel' => $this->model,
+				'primaryModel' => $this->model,
 				'updateOptions' => $this->updateOptions
 			]);
 			//RepliesAsset::register($this->getView());

@@ -16,7 +16,14 @@ use nitm\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
 class Chat extends BaseWidget
-{	
+{
+	//the information that gets stored in the miscellaneous pane
+	public $miscPane = [
+		'title' => 'Alerts',
+		'content' => ''
+		
+	];
+		
 	/*
 	 * Interval for updating new chat and chat info
 	 */
@@ -33,9 +40,34 @@ class Chat extends BaseWidget
 		'role' => 'chatContainer',
 		'id' => 'chat-container',
 	];
+	 
+	/*
+	 * HTML options for the chat message container
+	 */
+	public $chatOptions = [
+		'role' => 'chatParent',
+		'id' => 'chat',
+		'class' => 'chat col-lg-4 col-md-4',
+	];
+	 
+	/*
+	 * HTML options for the miscellaneous pane
+	 */
+	public $chatPaneOptions = [
+		'class' => 'tab-pane fade',
+		'id' => 'chat-messages-pane'
+	];
+	 
+	/*
+	 * HTML options for the miscellaneous pane
+	 */
+	public $miscPaneOptions = [
+		'class' => 'tab-pane fade',
+		'id' => 'chat-misc-pane'
+	];
 	
 	/*
-	 * HTML options for generating the widget
+	 * HTML options for the navigation
 	 */
 	public $navigationOptions = [
 		'class' => 'nav nav-tabs',
@@ -43,7 +75,7 @@ class Chat extends BaseWidget
 	];
 	
 	/*
-	 * HTML options for generating the widget
+	 * HTML options for the combining div for the mesages and form
 	 */
 	public $contentOptions = [
 		'class' => 'tab-content',
@@ -74,15 +106,12 @@ class Chat extends BaseWidget
 				\nitm\widgets\replies\RepliesChat::widget([
 					'model' => $this->model, 
 					'withForm' => true,
-					'updateOptions' => $this->updateOptions
-				]), [
-				'class' => 'tab-pane fade in',
-				'id' => 'chat-messages'
-			]).
-			Html::tag('div', '', [
-				'class' => 'tab-pane fade',
-				'id' => 'chat-misc'
-			]),
+					'updateOptions' => $this->updateOptions,
+					'options' => $this->chatOptions
+				]), 
+				$this->chatPaneOptions
+			).
+			Html::tag('div', $this->miscPane['content'], $this->miscPaneOptions),
 			$this->contentOptions
 		);
 		return $ret_val;
@@ -105,9 +134,13 @@ class Chat extends BaseWidget
 				break;
 		}
 		$ret_val = Html::tag('ul', 
-			Html::tag('li', Html::a('Messages'.$newBadge, '#chat-messages', ['data-toggle' => 'tab', 'id' => 'chat-messages-nav', 'class' => $newClass]), []).
-			Html::tag('li', Html::a('Information', '#chat-misc', ['data-toggle' => 'tab']), ['id' => 'chat-meta-nav']).
-			Html::tag('li', Html::a($newMessage, '#', ['id' => 'chat-updates', 'class' => 'text-warning'])),
+			Html::tag('li', Html::a('Messages'.$newBadge, '#chat-messages-pane', [
+				'data-toggle' => 'tab', 
+				'id' => 'chat-messages-nav', 
+				'class' => $newClass
+			]), []).
+			Html::tag('li', Html::a($this->miscPane['title'], '#chat-misc-pane', ['data-toggle' => 'tab']), ['id' => 'chat-misc-nav']).
+			Html::tag('li', Html::a($newMessage, '#', ['id' => 'chat-info-pane', 'class' => 'text-warning'])),
 			$this->navigationOptions
 		);
 		return $ret_val;

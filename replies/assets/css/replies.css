@@ -148,21 +148,31 @@
 
 .chat {
 	position: fixed;
+	top: 0; right: 0;
+	bottom: 40px;
+	overflow: hidden;
+	padding: 0 30px 0 0;
+}
+
+.chat .chat-messages {
+	overflow: scroll;
+	position: absolute;
 	top: 0;
-	bottom: 180px;
-	overflow: auto;
-	z-index: 10000;
+	width: 100%;
+	height: 80%;
+	z-index: 1050;
 	background-color: rgba(153,153,153,0.9);
 }
 
-.chat-form {
-	width: 32.33%;
-	position: fixed;
-	bottom: 40px; right: 0;
+.chat .chat-form {
+	width: 100%;
+	height: 20%;
+	position: absolute;
+	top: 80%; botton: 0;
 	overflow: auto;
-	z-index: 10000;
 	background-color: rgba(0,0,0, 0.9);
-	padding:15px;
+	padding: 15px;
+	z-index: 98;
 }
 
 .chat-form-btn {
@@ -178,6 +188,11 @@
 
 .chat-form-body {
 	color: white;
+	margin-top: -20px;
+}
+
+.chat-form-body textarea {
+	height: auto;
 }
 
 .input-group .btn-group > .btn, .btn-group-vertical > .btn {

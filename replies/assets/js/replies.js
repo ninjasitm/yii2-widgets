@@ -12,9 +12,9 @@ function Replies(items)
 	};
 	this.views = {
 		containers: {
-				replyForm: 'reply_form',
-				messages: 'messages',
-				message: 'message',
+			replyForm: 'reply_form',
+			messages: 'messages',
+			message: 'message',
 		}
 	};
 	this.elements = {
@@ -32,10 +32,10 @@ function Replies(items)
 			hide: '/reply/hide',
 		},
 		inputs : {
-			unique: 'replies-unique',
-			pour: 'replies-for',
-			reply_to: 'replies-reply_to',
-			message: 'replies-message'
+			unique: 'unique',
+			pour: 'replyFor',
+			reply_to: 'replyTo',
+			message: 'message'
 		},
 	};
 	this.actions = {
@@ -116,10 +116,11 @@ function Replies(items)
 					e.preventDefault();
 					self.startEditor($(this).data('container'));
 					var form = $('#'+self.views.containers.replyForm+$(this).data('parent'));
-					form.find("[id='"+self.forms.inputs.reply_to+"']").val($(this).data('reply-to'));
-					form.find("[id='"+self.forms.inputs.message+"']").val('').focus();
-					self.setEditorValue(self.forms.inputs.message+$(this).data('parent'), '', false, self.editor);
-					self.setEditorFocus(self.forms.inputs.message+$(this).data('parent'), self.editor);
+					form.find("[role~='"+self.forms.inputs.reply_to+"']").val($(this).data('reply-to'));
+					var msgField = form.find("[role~='"+self.forms.inputs.message+"']");
+					msgField.val('').focus();
+					self.setEditorValue(msgField.get(0), '', false, self.editor);
+					self.setEditorFocus(msgField.get(0), self.editor);
 				});
 			});
 		});
@@ -133,7 +134,7 @@ function Replies(items)
 					e.preventDefault();
 					self.startEditor($(this).data('container'));
 					var form = $('#'+self.views.containers.replyForm+$(this).data('parent'));
-					form.find("[id="+self.forms.inputs.reply_to+"]").val($(this).data('reply-to'));
+					form.find("[role~="+self.forms.inputs.reply_to+"]").val($(this).data('reply-to'));
 					var quote = {
 						author: $(this).data('author'),
 						parent: $(this).data('parent'),
@@ -143,8 +144,9 @@ function Replies(items)
 					var quoteString = "<blockquote>";
 					quoteString += quote.author+" said:<br>"+quote.message;
 					quoteString += "</blockquote><br>";
-					self.setEditorValue(self.forms.inputs.message+quote.parent, quoteString, true, self.editor);
-					self.setEditorFocus(self.forms.inputs.message+quote.parent, self.editor);
+					var msgField = form.find("[role~='"+self.forms.inputs.message+"']");
+					self.setEditorValue(msgField.get(0), quoteString, true, self.editor);
+					self.setEditorFocus(msgField.get(0), self.editor);
 				});
 			});
 		});
@@ -251,7 +253,7 @@ function Replies(items)
 			self.initHiding('#'+result.unique_id);
 			self.initQuoting('#'+result.unique_id);
 			self.initReplying('#'+result.unique_id);
-			_form.find('#'+self.forms.inputs.reply_to).val('');
+			_form.find('[role~="'+self.forms.inputs.reply_to+'"]').val('');
 			self.setEditorValue(_form.find('textarea').attr('id'), '', false, self.editor);
 			break;
 			
@@ -334,6 +336,8 @@ function Replies(items)
 		{
 			case 'redactor':
 			$('#'+textarea.prop('id')).redactor({
+				air: true,
+				airButtons: ['bold', 'italic', 'deleted', 'link'],
 				focus: true,
 				autoresize: true,
 				initCallback: function(){
