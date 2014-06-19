@@ -22,6 +22,6 @@ class Asset extends AssetBundle
 	];	
 	public $depends = [
 		'nitm\assets\AppAsset',
-		'yii\redactor\widgets\RedactorAsset',
+		'yii\imperavi\ImperaviRedactorAsset',
 	];
 }

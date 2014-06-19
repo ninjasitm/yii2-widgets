@@ -23,15 +23,8 @@ class Chat extends BaseWidget
 		'content' => ''
 		
 	];
-		
-	/*
-	 * Interval for updating new chat and chat info
-	 */
-	public $updateOptions = [
-		"interval" => 60000,
-		"enabled" => true,
-		'url' => 'reply/get-new/chat/0'
-	];
+	
+	public $updateOptions = [];
 	 
 	/*
 	 * HTML options for generating the widget
@@ -81,6 +74,15 @@ class Chat extends BaseWidget
 		'class' => 'tab-content',
 		'id' => 'chat-content',
 	];
+		
+	/*
+	 * Interval for updating new chat and chat info
+	 */
+	private $_updateOptions = [
+		"interval" => 60000,
+		"enabled" => true,
+		'url' => 'reply/get-new/chat/0'
+	];
 	
 	public function init()
 	{
@@ -89,6 +91,7 @@ class Chat extends BaseWidget
 				'type' => 'chat'
 			]
 		]);
+		$this->updateOptions = array_merge($this->_updateOptions, $this->updateOptions);
 		parent::init();
 	}
 	
@@ -103,7 +106,7 @@ class Chat extends BaseWidget
 	protected function getContent() {
 		$ret_val = Html::tag('div', 
 			Html::tag('div', 
-				\nitm\widgets\replies\RepliesChat::widget([
+				\nitm\widgets\replies\ChatMessages::widget([
 					'model' => $this->model, 
 					'withForm' => true,
 					'updateOptions' => $this->updateOptions,

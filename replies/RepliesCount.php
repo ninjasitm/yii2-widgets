@@ -16,6 +16,7 @@ use kartik\icons\Icon;
 
 class RepliesCount extends BaseWidget
 {
+	public $fullDetails = true;
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -53,13 +54,13 @@ class RepliesCount extends BaseWidget
 		switch(is_null($this->model) || ($this->model->count == 0))
 		{
 			case true:
-			$info = $this->showEmptyCount ? Html::tag('li', 'Replies: '.Html::tag('span', 0, $this->options), $this->itemOptions) : '';
+			$info = $this->showEmptyCount ? Html::tag('li', Html::tag('span', 0, $this->options)." Replies", $this->itemOptions) : '';
 			break;
 			
 			default:
 			$this->options['id'] .= $this->parentId;
-			$info = 'Replies: '.Html::a(
-				Html::tag('span', (int)$this->model->count.' '.Icon::show('eye'), $this->options),
+			$info = Html::a(
+				Html::tag('span', (int)$this->model->count.' Replies '.Icon::show('eye'), $this->options),
 				'/reply/index/'.$this->parentType."/".$this->parentId."/".urlencode($this->parentKey)."?__format=modal",
 				[
 					'data-toggle' => 'modal',
@@ -81,7 +82,7 @@ class RepliesCount extends BaseWidget
 				);
 				break;
 			}
-			switch(((int)$this->model->count >= 1) && ($this->model->last->authorUser instanceof User))
+			switch(((int)$this->model->count >= 1) && ($this->model->last->authorUser instanceof User) && $this->fullDetails)
 			{
 				case true:
 				$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);

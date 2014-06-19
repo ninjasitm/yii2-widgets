@@ -44,12 +44,9 @@ class BaseWidget extends Widget
 	public $limit = 10;
 	
 	/*
-	 * Options for replies
+	 * Options for widget
 	 */
-	public $widgetOptions = [
-		'class' => '',
-		'id' => ''
-	];
+	public $widgetOptions = [];
 	/**
 	 * Options for use in a modal
 	 */

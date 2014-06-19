@@ -17,6 +17,7 @@ use kartik\icons\Icon;
 
 class IssueCount extends BaseWidget
 {	
+	public $fullDetails = true;
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -57,8 +58,8 @@ class IssueCount extends BaseWidget
 		{
 			case true:
 			$this->options['class'] .= " bg-success";
-			$info .= "Issues: ".Html::a(
-				Html::tag('span', (int)$this->model->count.' '.Icon::show('eye'), $this->options), 
+			$info .= Html::a(
+				Html::tag('span', (int)$this->model->count.' Issues '.Icon::show('eye'), $this->options), 
 				'/issue/index/'.$this->parentType."/".$this->parentId."?__format=modal",
 				[
 					'data-toggle' => 'modal',
@@ -67,8 +68,11 @@ class IssueCount extends BaseWidget
 					'class' => 'btn btn-xs btn-primary'
 				]
 			);
-			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-			$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
+			if($this->fullDetails)
+			{
+				$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
+				$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
+			}
 			$info = Html::tag('li', $info, $this->itemOptions);
 			$info = Html::tag('ul', $info, $this->widgetOptions);
 			break;

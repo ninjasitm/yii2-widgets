@@ -17,6 +17,7 @@ use kartik\icons\Icon;
 
 class RepliesForm extends BaseWidget
 {	
+	public $editor = 'redactor';
 	public $inline = true;
 	public $useModal = false;
 	public $hidden = false;
@@ -28,6 +29,11 @@ class RepliesForm extends BaseWidget
 		'class' => 'messages',
 		'role' => 'replyFormContainer',
 		'id' => 'messagesForm'
+	];
+	
+	public $editorOptions = [
+		"toolbarSize" => "medium",
+		"size" => "medium"
 	];
 	
 	/**
@@ -99,7 +105,9 @@ class RepliesForm extends BaseWidget
 				'parentKey' => $this->parentKey,
 				'useModal' => $this->useModal,
 				'widget' => $this,
-				'inline' => $this->inline
+				'inline' => $this->inline,
+				'editor' => $this->editor,
+				'editorOptions' => $this->editorOptions
 			]);
 			break;
 		}

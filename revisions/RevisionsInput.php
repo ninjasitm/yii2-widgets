@@ -10,11 +10,11 @@ namespace nitm\widgets\revisions;
 use Yii;
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
-use yii\redactor\widgets\Redactor;
 use nitm\models\Revisions as RevisionsModel;
 use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 use nitm\widgets\revisions\assets\Asset as RevisionsAsset;
+use nitm\widgets\editor\Editor;
 
 class RevisionsInput extends BaseWidget
 {
@@ -102,17 +102,14 @@ class RevisionsInput extends BaseWidget
 		switch($this->enableRedactor)
 		{
 			case true:
-			$input = @Redactor::widget([
-				'model' => $this->model,
-				'name' => $this->name,
-				'value' => $this->value,
-				'options' => $revisionOptions,
-				'clientOptions' => [
-					'autoresize' => true,
-					'autosave' =>  $this->autoSavePath,
-					'autosaveInterval' => $this->autoSaveInterval,
-				]
-			]);
+			$editorOptions['toolbarSize'] = 'medium';
+			$editorOptions['size'] = 'medium';
+			$editorOptions['id'] = 'message'.$this->model->getId();
+			$editorOptions['model'] = $this->model;
+			$editorOptions['attribute'] = 'data';
+			$editorOptions['options']['value'] = $this->value;
+			$editorOptions['role'] = 'message';
+			$input = Editor::widget($editorOptions);
 			break;
 			
 			default:

@@ -202,7 +202,7 @@ function Replies(items)
 			else {
 				tab.append("<span class='badge'>"+result.count+"</span>");
 			}
-			container.find('[id="chat\-updates"]').html(result.message);
+			container.find('[id="chat\-info\-pane"]').html(result.message);
 			if(tab.parent().hasClass('active'))
 			{
 				self.afterCreate(result, 'form\[role="chatForm"\]');

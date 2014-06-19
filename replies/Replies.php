@@ -115,7 +115,7 @@ class Replies extends BaseWidget
 					'id' => SORT_DESC,
 				]
 			]);
-		$this->options['id'] .= $this->parentId;
+			$this->options['id'] .= $this->parentId;
 			$replies = $this->getView()->render('@nitm/views/replies/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,

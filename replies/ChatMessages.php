@@ -15,7 +15,7 @@ use nitm\models\Replies as RepliesModel;
 use nitm\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
-class RepliesChat extends BaseWidget
+class ChatMessages extends BaseWidget
 {	
 	/*
 	 * Interval for updating new chat and chat info

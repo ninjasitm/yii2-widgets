@@ -15,8 +15,9 @@ use nitm\widgets\models\BaseWidget;
 use nitm\models\Replies as RepliesModel;
 use kartik\icons\Icon;
 
-class RepliesChatForm extends BaseWidget
+class ChatForm extends BaseWidget
 {	
+	public $editor = 'redactor';
 	public $inline = true;
 	public $useModal = false;
 	public $hidden = false;
@@ -28,6 +29,17 @@ class RepliesChatForm extends BaseWidget
 		'class' => 'messages',
 		'role' => 'replyChatContainer',
 		'id' => 'messagesChat'
+	];
+	
+	public $editorOptions = [
+		"toolbarSize" => "small",
+		"size" => "small",
+		'options' => [
+			'style' => 'resize:none;',
+			'autoresize' => false,
+			'maxHeight' => 70,
+			'minHeight' => 70
+		]
 	];
 	
 	/**
@@ -74,6 +86,7 @@ class RepliesChatForm extends BaseWidget
 				'type' => 'notes'
 			]
 		]);
+		$this->model->maxLength = 140;
 		parent::init();
 	}
 	
@@ -95,6 +108,8 @@ class RepliesChatForm extends BaseWidget
 				'useModal' => $this->useModal,
 				'widget' => $this,
 				'inline' => $this->inline,
+				'editor' => $this->editor,
+				'editorOptions' => $this->editorOptions
 			]);
 			break;
 		}

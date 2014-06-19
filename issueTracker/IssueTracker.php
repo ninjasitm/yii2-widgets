@@ -41,6 +41,7 @@ class IssueTracker extends BaseWidget
 			$this->model = ($this->model instanceof IssueModel) ? $this->model : IssueModel::findModel([$this->parentId, $this->parentType]);
 			break;
 		}
+		assets\Asset::register($this->getView());
 		parent::init();
 	}
 	
@@ -69,7 +70,7 @@ class IssueTracker extends BaseWidget
 	
 			$dataProviderOpen = $searchModel->search(array_merge($params, ['closed' => 0]));
 			$dataProviderClosed = $searchModel->search(array_merge($params, ['closed' => 1]));
-			$issues = $this->getView()->render('@nitm/views/issue/index', [
+			$issues = $this->render('@nitm/views/issue/index', [
 				'dataProviderOpen' => $dataProviderOpen,
 				'dataProviderClosed' => $dataProviderClosed,
 				'searchModel' => $searchModel,

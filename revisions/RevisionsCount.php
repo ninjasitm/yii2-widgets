@@ -16,7 +16,8 @@ use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 
 class RevisionsCount extends BaseWidget
-{	
+{
+	public $fullDetails = true;	
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -57,8 +58,8 @@ class RevisionsCount extends BaseWidget
 		{
 			case true:
 			$this->options['class'] .= " bg-success";
-			$info = "Revisions: ".Html::a(
-				Html::tag('span', (int)$this->model->count.' '.Icon::show('eye'), $this->options), 
+			$info = Html::a(
+				Html::tag('span', (int)$this->model->count.' Revisions '.Icon::show('eye'), $this->options), 
 				'/revisions/index/'.$this->parentType."/".$this->parentId,
 				[
 					'data-toggle' => 'modal',
@@ -67,9 +68,11 @@ class RevisionsCount extends BaseWidget
 					'class' => 'btn btn-xs btn-primary'
 				]
 			);
-			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-			$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
-			
+			if($this->fullDetails)
+			{
+				$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
+				$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
+			}
 			$info = Html::tag('li', $info, $this->itemOptions);
 			
 			$info .= Html::tag(
@@ -96,14 +99,14 @@ class RevisionsCount extends BaseWidget
 					"role" => "dialog",
 					"class" => "col-md-6 col-lg-6 col-sm-12 col-xs-12 col-md-offset-3 col-lg-offset-3 modal fade",
 					"id" => "revisionsViewModal",
-					"style" => "z-index: 10001"
+					"style" => "z-index: 1001"
 				]
 			);
 			$info .= $modalView;
 			break;
 			
 			default:
-			$info = $this->showEmptyCount ? Html::tag('li', 'Revisions: '.Html::tag('span', 0, $this->options), $this->itemOptions) : '';
+			$info = $this->showEmptyCount ? Html::tag('li', Html::tag('span', "0 Revisions", $this->options), $this->itemOptions) : '';
 			break;
 		}
 		echo $info = Html::tag('ul', $info, $this->widgetOptions);
