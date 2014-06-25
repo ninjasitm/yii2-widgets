@@ -26,10 +26,10 @@ class Dropdown extends Select2
 	
 	public function init()
 	{
-		$this->ajaxOptions['ajax']['url'] = $this->url;
+		if($this->url) $this->ajaxOptions['ajax']['url'] = $this->url;
 		$this->ajaxOptions['minimumInputLength'] = $this->minLength;
 		$this->ajaxOptions['initSelection'] = new JsExpression("function (element, callback) {var data = {id: element.val(), text: element.attr('title')};callback(data);}");
-		$this->ajaxOptions['ajax']['data'] = new JsExpression('function(term,page) { return {search:term}; }');
+		$this->ajaxOptions['ajax']['data'] = new JsExpression('function(term,page) { return {term:term}; }');
 		$this->ajaxOptions['ajax']['results'] = new JsExpression('function(data,page) { return {results:data}; }');
 		$this->pluginOptions = $this->ajaxOptions;
 		parent::init();
