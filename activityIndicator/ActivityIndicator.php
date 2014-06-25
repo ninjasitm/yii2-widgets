@@ -12,7 +12,13 @@ use yii\helpers\Html;
 use yii\base\Widget;
 
 class ActivityIndicator extends Widget
-{	
+{
+	/**
+	 * Defaults to the top left
+	 */
+	public $position;
+		
+	public $text;
 	/**
 	 * The indicator class options
 	 */
@@ -67,7 +73,6 @@ class ActivityIndicator extends Widget
 			"class" => 'glyphicon glyphicon-exclamation-sign',
 		],
 		'tag' => 'span',
-		'content' => ''
 	];
 	
 	/*
@@ -85,12 +90,33 @@ class ActivityIndicator extends Widget
 		$type = isset($this->_types[$this->type]) ? $this->_types[$this->type] : $this->_types['default'];
 		$this->options = array_merge($this->_defaultOptions, $this->options);
 		$this->options['class'] .= ' '.$size.' '.$type;
-		$this->indicator = array_merge($this->indicator, $this->_indicatorOptions);
-		echo Html::tag('div', 
-			Html::tag($this->indicator['tag'], 
-				$this->indicator['content'], 
-				$this->indicator['options']
-			), 
+		$this->indicator = array_merge($this->_indicatorOptions, $this->indicator);
+		if($this->text != null)
+		{
+			unset($this->indicator['options']['class']);
+		}
+		$positions = explode(' ', $this->position);
+		foreach($positions as $position)
+		{
+			switch($position)
+			{
+				case 'right':
+				$this->options['class'] .= ' activity-right';
+				break;
+				
+				case 'top':
+				$this->options['class'] .= ' activity-top';
+				break;
+				
+				case 'bottom':
+				$this->options['class'] .= ' activity-bottom';
+				break;
+			}
+		}
+		$this->options['class'] .= ' '.@$this->indicator['options']['class'];
+		$this->options['id'] .= uniqid();
+		echo Html::tag($this->indicator['tag'], 
+			$this->text, 
 			$this->options
 		);
 	}

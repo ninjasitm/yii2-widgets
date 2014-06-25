@@ -18,6 +18,8 @@ use nitm\widgets\editor\Editor;
 
 class RevisionsInput extends BaseWidget
 {
+	public $revisionsModel;
+	
 	/**
 	 * The name of this input widget
 	 */
@@ -65,12 +67,12 @@ class RevisionsInput extends BaseWidget
 	{
 		switch(1)
 		{
-			case !($this->model instanceof RevisionsModel) && (($this->parentType == null) || ($this->parentId == null)):
+			case !($this->revisionsModel instanceof RevisionsModel) && (($this->parentType == null) || ($this->parentId == null)):
 			$this->_enableRevisions = false;
 			break;
 			
 			default:
-			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : RevisionsModel::findModel([$this->parentId, $this->parentType]);
+			$this->revisionsModel = ($this->revisionsModel instanceof RevisionsModel) ? $this->model : RevisionsModel::findModel([$this->parentId, $this->parentType]);
 			break;
 		}
 		parent::init();
@@ -82,7 +84,7 @@ class RevisionsInput extends BaseWidget
 		$this->options['id'] .= $this->parentId;
 		$this->widgetOptions['id'] .= $this->parentId;
 		
-		$this->model->setScenario('validateNew');
+		$this->revisionsModel->setScenario('validateNew');
 		switch($this->_enableRevisions)
 		{
 			case true:
@@ -104,9 +106,9 @@ class RevisionsInput extends BaseWidget
 			case true:
 			$editorOptions['toolbarSize'] = 'medium';
 			$editorOptions['size'] = 'medium';
-			$editorOptions['id'] = 'message'.$this->model->getId();
+			$editorOptions['id'] = 'message'.uniqid();
 			$editorOptions['model'] = $this->model;
-			$editorOptions['attribute'] = 'data';
+			$editorOptions['attribute'] = $this->name;
 			$editorOptions['options']['value'] = $this->value;
 			$editorOptions['role'] = 'message';
 			$input = Editor::widget($editorOptions);

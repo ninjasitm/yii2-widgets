@@ -51,11 +51,11 @@ class RepliesCount extends BaseWidget
 	
 	public function run()
 	{
-		switch(is_null($this->model) || ($this->model->count == 0))
+		switch($this->model instanceof RepliesModel)
 		{
-			case true:
+			/*case true:
 			$info = $this->showEmptyCount ? Html::tag('li', Html::tag('span', 0, $this->options)." Replies", $this->itemOptions) : '';
-			break;
+			break;*/
 			
 			default:
 			$this->options['id'] .= $this->parentId;

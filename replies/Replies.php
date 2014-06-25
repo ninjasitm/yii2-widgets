@@ -20,11 +20,7 @@ class Replies extends BaseWidget
 	/*
 	 * HTML options for generating the widget
 	 */
-	public $options = [
-		'role' => 'entityMessages',
-		'id' => 'messages',
-		'data-parent' => 'replyFormParent'
-	];
+	public $options = [];
 	
 	/**
 	 * \commond\models\Reply $reply
@@ -71,6 +67,13 @@ class Replies extends BaseWidget
 		],
 	];
 	
+	private $_options = [
+		'role' => 'entityMessages',
+		'id' => 'messages',
+		'data-parent' => 'replyFormParent',
+		'class' => 'messages'
+	];
+	
 	public function init()
 	{
 		switch(1)
@@ -84,6 +87,7 @@ class Replies extends BaseWidget
 			break;
 		}
 		parent::init();
+		$this->options = array_merge($this->_options, $this->options);
 	}
 	
 	public function run()

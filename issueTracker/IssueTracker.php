@@ -31,7 +31,7 @@ class IssueTracker extends BaseWidget
 	];
 	
 	public function init()
-	{	
+	{
 		switch(1)
 		{
 			case !($this->model instanceof IssueModel) && (($this->parentType == null) || ($this->parentId == null)):

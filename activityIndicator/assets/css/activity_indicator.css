@@ -1,41 +1,48 @@
 .activity {
-	position: absolute;
+	position: relative !important;
 	left: -0.25em;
-	top: auto;
-	padding: 1%;
+	top: auto !important;
+	right: auto;
 	font-size: 1em;
 	color: #FFF;
 	z-index: 9999;
+	border-radius: 50%;
+	padding: 0.25em 0.5em;
 }
 
-.activity * {
-	font-size: 1.2em;
-	left: -0.005em;
-	color: inherit;
-	opacity: 1;
+.activity-right {
+	left: auto;
+	right: -0.25em !important;
 }
 
-.activity-error *, .activity-new * {
-	color: #F30;
-	color: rgba(255, 51, 0, 0.75);
+.activity-top {
+	bottom: auto;
+	top: -0.25em !important;
 }
 
-.activity-success * {
-	color: #5CB85C;
-	color: rgba(92, 184, 92, 0.75);
+.activity-bottom {
+	bottom: -0.25em !important;
 }
 
-.activity-info * {
-	color: #357EBD;
-	color: rgba(53, 126, 189, 0.75);
+.activity-error, .activity-new {
+	background-color: #F30 !important;
+	background-color: rgba(255, 51, 0, 0.75) !important;
 }
 
-.activity-sm * {
+.activity-success {
+	background-color: #5CB85C;
+	background-color: rgba(92, 184, 92, 0.75);
+}
+
+.activity-info {
+	background-color: #357EBD;
+	background-color: rgba(53, 126, 189, 0.75);
+}
+
+.activity-sm  {
 	font-size: 1em;
-	left: -0.0005em;
 }
 
-.activity-lg * {
+.activity-lg {
 	font-size: 2em;
-	left: -0.195em;
 }
