@@ -81,7 +81,7 @@ class Chat extends BaseWidget
 	private $_updateOptions = [
 		"interval" => 60000,
 		"enabled" => true,
-		'url' => 'reply/get-new/chat/0'
+		'url' => '/reply/get-new/chat/0'
 	];
 	
 	public function init()

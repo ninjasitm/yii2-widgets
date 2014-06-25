@@ -63,31 +63,37 @@ function Replies(items)
 	}
 	
 	this.initEditor = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		var containers = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
 		this.elements.allowEditor.map(function (v) {
-			container.find("[role='"+v+"']").map(function() {
-				$(this).off('click');
-				$(this).on('click', function (e) {
-					e.preventDefault();
-					$(this).addClass('hidden');
-					self.startEditor($(this).data('container'), '', this);
+			containers.each(function(index, element) {
+				var container = $(element);
+				container.find("[role='"+v+"']").map(function() {
+					$(this).off('click');
+					$(this).on('click', function (e) {
+						e.preventDefault();
+						$(this).addClass('hidden');
+						self.startEditor($(this).data('container'), '', this);
+					});
 				});
-			})
+			});
 		});
 	}
 	
 	this.initCreating = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		var containers = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
 		this.forms.allowCreate.map(function (v) {
-			container.find("form[role='"+v+"']").map(function() {
-				$(this).find("[data-toggle='buttons'] .btn").button();
-				$(this).off('submit');
-				$(this).on('submit', function (e) {
-					e.preventDefault();
-					$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
-					self.operation(this);
-				});
-			})
+			containers.each(function(index, element) {
+				var container = $(element);
+				container.find("form[role='"+v+"']").map(function() {
+					$(this).find("[data-toggle='buttons'] .btn").button();
+					$(this).off('submit');
+					$(this).on('submit', function (e) {
+						e.preventDefault();
+						$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
+						self.operation(this);
+					});
+				})
+			});
 		});
 	}
 	
@@ -183,32 +189,34 @@ function Replies(items)
 		});
 	}
 	
-	this.chatStatus = function (update, result, container){
-		var tab = container.find('[id="chat\-messages-nav"]');
-		switch(update)
-		{
-			case false:
-			container.find('[id="chat\-messages\-nav"]').find('[class="badge"]').remove();
-			container.find('[id="chat\-updates"]').html('');
-			tab.removeClass('bg-success');
-			break;
-			
-			default:
-			var badge = tab.find('[class="badge"]');
-			tab.addClass('bg-success');
-			if(badge.get(0) != undefined){
-				badge.html(result.count);
-			}
-			else {
-				tab.append("<span class='badge'>"+result.count+"</span>");
-			}
-			container.find('[id="chat\-info\-pane"]').html(result.message);
-			if(tab.parent().hasClass('active'))
+	this.chatStatus = function (update, result, containers){
+		containers.find('[id="chat\-messages-nav"]').each(function(index, element) {
+			var tab = $(element);
+			switch(update)
 			{
-				self.afterCreate(result, 'form\[role="chatForm"\]');
+				case false:
+				container.find('[id="chat\-messages\-nav"]').find('[class="badge"]').remove();
+				container.find('[id="chat\-updates"]').html('');
+				tab.removeClass('bg-success');
+				break;
+				
+				default:
+				var badge = tab.find('[class="badge"]');
+				tab.addClass('bg-success');
+				if(badge.get(0) != undefined){
+					badge.html(result.count);
+				}
+				else {
+					tab.append("<span class='badge'>"+result.count+"</span>");
+				}
+				container.find('[id="chat\-info\-pane"]').html(result.message);
+				if(tab.parent().hasClass('active'))
+				{
+					self.afterCreate(result, 'form\[role="chatForm"\]');
+				}
+				break;
 			}
-			break;
-		}
+		});
 	}
 	
 	this.operation = function (form) {
@@ -249,6 +257,7 @@ function Replies(items)
 			case true:
 			var ret_val = false;
 			var _form = $(form);
+			_form.find(".empty").remove();
 			$nitm.place({append:true, index:0}, result.data, _form.data('parent'));
 			self.initHiding('#'+result.unique_id);
 			self.initQuoting('#'+result.unique_id);
@@ -279,112 +288,124 @@ function Replies(items)
 			switch(result.value)
 			{
 				case true:
-				$nitm.getObj('#'+self.views.containers.message+result.id).addClass(self.classes.hidden);
+				$nitm.getObj("[id='"+self.views.containers.message+result.id+"']").each(function(index, element) {
+					$(element).addClass(self.classes.hidden);
+				});
 				break;
 				
 				default:  
-				$nitm.getObj('#'+self.views.containers.message+result.id).removeClass(self.classes.hidden);
-				break;
+				$nitm.getObj("[id='"+self.views.containers.message+result.id+"']").each(function(index, element) {
+					$(element).removeClass(self.classes.hidden);
+				});
 			}
-			$nitm.getObj('#'+self.actions.ids.hide+result.id).html(result.action);
+			$nitm.getObj("[id='"+self.views.containers.message+result.id+"']").each(function(index, element) {
+					$(element).html(result.action);
+				});;
 		}
 	}
 	
 	this.startEditor = function (containerId, value, button) {
 		var activator = $(button);
-		var container = $('#'+containerId);
-		var textarea = $("<textarea id='"+containerId+"editor' role='editor' class='form-control' name='Replies[message]' rows=10>");
-		var actions = container.find("[role='"+self.elements.replyActions+"']");
-		actions.removeClass('hidden');
-		switch(activator.data('use-modal'))
-		{
-			case true:
-			if(container.find('.modal').get(0) == undefined)
+		var containers = $("[id='"+containerId+"']");
+		containers.each(function(index, element) {
+			var container = $(element);
+			var textarea = $("<textarea id='"+container.attr('id')+"editor' role='editor' class='form-control' name='Replies[message]' rows=10>");
+			var actions = container.find("[role='"+self.elements.replyActions+"']");
+			actions.removeClass('hidden');
+			switch(activator.data('use-modal'))
 			{
-				var content = $("<div class='modal fade in' role='dialog' aria-hidden='true'>");
-				var modalDialog = $("<div class='modal-dialog'>");
-				var modalContent = $("<div class='modal-content'>");
-				var modalBody = $("<div class='modal-body'>");
-				var modalTitle = $("<div class='modal-title'>").html("<h3>Your message:</h3>");
-				var modalHeader = $("<div class='modal-header'>");
-				var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
-				modalHeader.append(modalClose);
-				modalBody.append(modalHeader);
-				modalBody.append(modalTitle);
-				modalBody.append(textarea);
-				modalBody.append(actions);
-				$('body').append(content.append(modalDialog.append(modalContent.append(modalBody))));
-			}
-			else
-			{
-				content = container;
-			}
-			content.modal({
-				keyboard: true
-			});
-			content.on('hidden.bs.modal', function () {
-				self.closeEditor(containerId);
-			});
-			break;
-			
-			default:
-			textarea.insertBefore(actions);
-			break;
-		}
-		var type = textarea.parent('form').data('editor');
-		switch(type)
-		{
-			case 'redactor':
-			$('#'+textarea.prop('id')).redactor({
-				air: true,
-				airButtons: ['bold', 'italic', 'deleted', 'link'],
-				focus: true,
-				autoresize: true,
-				initCallback: function(){
-					if(value != undefined)
-					{
-						this.set(value);
-					}
-				},
-				setCode: function(html){
-					html = this.preformater(html);
-					this.$editor.html(html).focus();
-					this.syncCode();
+				case true:
+				if(container.find('.modal').get(0) == undefined)
+				{
+					var content = $("<div class='modal fade in' role='dialog' aria-hidden='true'>");
+					var modalDialog = $("<div class='modal-dialog'>");
+					var modalContent = $("<div class='modal-content'>");
+					var modalBody = $("<div class='modal-body'>");
+					var modalTitle = $("<div class='modal-title'>").html("<h3>Your message:</h3>");
+					var modalHeader = $("<div class='modal-header'>");
+					var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
+					modalHeader.append(modalClose);
+					modalBody.append(modalHeader);
+					modalBody.append(modalTitle);
+					modalBody.append(textarea);
+					modalBody.append(actions);
+					$('body').append(content.append(modalDialog.append(modalContent.append(modalBody))));
 				}
-			});
-			break;
-		}
-		self.initCreating('#'+containerId);
-	}
-	
-	this.closeEditor = function (containerId) {
-		var containerId = (containerId == undefined) ? 'body' : '#'+containerId;
-		var content = $(containerId).find('.modal-dialog');
-		switch(content.get(0) == undefined) 
-		{
-			//if there is a modal
-			case false:
-			//destroy the editor
-			var container = $(containerId);
-			var textarea = content.find("textarea"); 
-			var type = $nitm.getObj(field).parents('form').data('editor');
+				else
+				{
+					content = container;
+				}
+				content.modal({
+					keyboard: true
+				});
+				content.on('hidden.bs.modal', function () {
+					self.closeEditor(container.attr('id'));
+				});
+				break;
+				
+				default:
+				textarea.insertBefore(actions);
+				break;
+			}
+			var type = textarea.parent('form').data('editor');
 			switch(type)
 			{
 				case 'redactor':
-				$('#'+textarea.prop('id')).redactor('getObject').destroyEditor();
+				$nitm.getObj("[id='"+textarea.prop('id')+"']").each(function (index, element) {
+						$(element).redactor({
+						air: true,
+						airButtons: ['bold', 'italic', 'deleted', 'link'],
+						focus: true,
+						autoresize: true,
+						initCallback: function(){
+							if(value != undefined)
+							{
+								this.set(value);
+							}
+						},
+						setCode: function(html){
+							html = this.preformater(html);
+							this.$editor.html(html).focus();
+							this.syncCode();
+						}
+					});
+				});
 				break;
 			}
-			//container.find('.redactor_box').remove();
-			//unhide the actions
-			var actions = container.find("[role='"+self.elements.replyActions+"']");
-			actions.addClass('hidden');
-			//reset the html
-			container.html(content.html());
-			break;
-		}
-		this.elements.allowEditor.map(function (v) {
-			$(containerId+" "+"[role='"+v+"']").map(function() {
-				$(this).removeClass('hidden');
+		});
+		self.initCreating(containerId);
+	}
+	
+	this.closeEditor = function (containerId) {
+		var containers = $("[id='"+containerId+"']");
+		containers.each(function(index, element) {
+			var container = $(element);
+			var content = $(container.attr('id')).find('.modal-dialog');
+			switch(content.get(0) == undefined) 
+			{
+				//if there is a modal
+				case false:
+				//destroy the editor
+				var textarea = content.find("textarea"); 
+				var type = $nitm.getObj(field).parents('form').data('editor');
+				switch(type)
+				{
+					case 'redactor':
+					$('#'+textarea.prop('id')).redactor('getObject').destroyEditor();
+					break;
+				}
+				//container.find('.redactor_box').remove();
+				//unhide the actions
+				var actions = container.find("[role='"+self.elements.replyActions+"']");
+				actions.addClass('hidden');
+				//reset the html
+				container.html(content.html());
+				break;
+			}
+			this.elements.allowEditor.map(function (v) {
+				$nitm.getObj(container.attr('id')+" "+"[role='"+v+"']").map(function() {
+					$(this).removeClass('hidden');
+				});
 			});
 		});
 		//need to reinit click to reply button since not doing so casues form to submit

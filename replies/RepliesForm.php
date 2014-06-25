@@ -40,27 +40,11 @@ class RepliesForm extends BaseWidget
 	 * The actions that are supported
 	 */
 	private $_actions = [
-		'submit' => [
-			'tag' => 'span',
-			'action' => '/replies/reply',
-			'text' => '',
-			'options' => [
-				'class' => 'btn btn-sm btn-default',
-				'role' => 'replyToFormMessage',
-				'id' => 'reply_to_form_message',
-				'title' => 'Reply',
-				'type' => 'submit'
-			],
-			'tagOptions' => [
-				'class' => 'glyphicon glyphicon-envelope',
-				'style' => 'font-size: 16px'
-			]
-		],
 		'reset' => [
 			'tag' => 'span',
 			'text' => '',
 			'options' => [
-				'class' => 'btn btn-sm btn-default',
+				'class' => 'btn btn-default',
 				'role' => 'resetForm',
 				'id' => 'reset_form',
 				'title' => 'Reset this form',
@@ -68,6 +52,22 @@ class RepliesForm extends BaseWidget
 			],
 			'tagOptions' => [
 				'class' => 'glyphicon glyphicon-refresh',
+				'style' => 'font-size: 16px'
+			]
+		],
+		'submit' => [
+			'tag' => 'span',
+			'action' => '/replies/reply',
+			'text' => '',
+			'options' => [
+				'class' => 'btn btn-success',
+				'role' => 'replyToFormMessage',
+				'id' => 'reply_to_form_message',
+				'title' => 'Reply',
+				'type' => 'submit'
+			],
+			'tagOptions' => [
+				'class' => 'glyphicon glyphicon-envelope',
 				'style' => 'font-size: 16px'
 			]
 		],
@@ -86,6 +86,7 @@ class RepliesForm extends BaseWidget
 			break;
 		}
 		parent::init();
+		assets\Asset::register($this->getView());
 	}
 	
 	public function run()
@@ -123,29 +124,30 @@ class RepliesForm extends BaseWidget
 		{
 			switch($type)
 			{
-				case 'reset':
-				$ret_val .= Html::resetButton(
-						Html::tag($action['tag'], $action['text'], $action['tagOptions']), 
-						$action['options']
-					);
-				break;
-				
 				case 'submit':
 				$ret_val .= Html::submitButton(
-						Html::tag($action['tag'], $action['text'], $action['tagOptions']), 
-						$action['options']
-					);
+					Html::tag($action['tag'], $action['text'], $action['tagOptions']), 
+					$action['options']
+				);
+				break;
+				
+				case 'reset':
+				$ret_val .= Html::resetButton(
+					Html::tag($action['tag'], $action['text'], $action['tagOptions']), 
+					$action['options']
+				);
 				break;
 			}
 		}
 		return Html::tag('div', 
 			Html::tag('div', 
 				$ret_val, [
-					'class' => 'text-right'
+					'class' => 'btn-group'
 				]),
 			[
 				'role' => 'replyActions',
-				'class' => 'form-group pull-right '.(($hidden == true) ? 'hidden' : ''),
+				'class' => 'form-group pull-right'.(($hidden == true) ? 'hidden' : ''),
+				"style" => "padding-right: 15px"
 			]
 		);
 	}

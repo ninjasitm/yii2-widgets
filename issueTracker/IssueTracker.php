@@ -10,6 +10,7 @@ namespace nitm\widgets\issueTracker;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\icons\Icon;
+use nitm\models\Replies;
 use nitm\models\Issues as IssueModel;
 use nitm\models\search\Issues as IssueSearch;
 use nitm\widgets\models\BaseWidget;
@@ -19,7 +20,7 @@ use nitm\widgets\issueTracker\assets\Asset as IssueAsset;
  */
 class IssueTracker extends BaseWidget
 {
-	
+	public $enableComments;
 	/*
 	 * HTML options for generevision the widget
 	 */
@@ -76,7 +77,8 @@ class IssueTracker extends BaseWidget
 				'searchModel' => $searchModel,
 				'parentId' => $this->parentId,
 				'parentType' => $this->parentType,
-				'useModal' => $this->useModal
+				'useModal' => $this->useModal,
+				'enableComments' => $this->enableComments
 			]);
 			//IssueAsset::register($this->getView());
 			break;

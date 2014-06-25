@@ -16,7 +16,8 @@ use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 
 class IssueCount extends BaseWidget
-{	
+{
+	public $enableComments;
 	public $fullDetails = true;
 	/*
 	 * HTML options for generating the widget
@@ -54,13 +55,13 @@ class IssueCount extends BaseWidget
 	{
 		$this->options['id'] .= $this->parentId;
 		$info = '';
-		switch($this->model->count >= 1)
+		switch($this->model instanceof IssuesModel)
 		{
 			case true:
 			$this->options['class'] .= " bg-success";
 			$info .= Html::a(
 				Html::tag('span', (int)$this->model->count.' Issues '.Icon::show('eye'), $this->options), 
-				'/issue/index/'.$this->parentType."/".$this->parentId."?__format=modal",
+				'/issue/index/'.$this->parentType."/".$this->parentId."?__format=modal".($this->enableComments ? '&'.$this->model->commentParam.'=1' : ''),
 				[
 					'data-toggle' => 'modal',
 					'data-target' => '#issue-tracker-modal',

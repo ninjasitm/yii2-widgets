@@ -15,17 +15,23 @@ use yii\base\Widget;
 class issueTrackerModal extends Widget
 {
 	public $size = 'large';
+	public $options = [];
 	
 	/*
 	 * HTML options for generating the widget
 	 */
-	public $options = [
+	public $_options = [
 		'id' => 'issue-tracker-modal',
-		'style' => 'z-index: 100001',
+		'style' => 'z-index: 1043',
 	];
 	
 	public $dialogOptions = [
 	];
+	
+	public function init()
+	{
+		$this->options = array_merge($this->_options, $this->options);
+	}
 	
 	public function run()
 	{

@@ -14,9 +14,12 @@ function IssueTracker(items)
 		issue: 'issue',
 		issues: 'issues',
 		issueForm: 'issues-form',
+		issueUpdateForm: 'issues-update-form',
+		issueUpdateFormTab: 'issues-update-form-tab'
 	};
 	this.forms = {
 		allowCreateUpdate: ['createIssue', 'updateIssue'],
+		allowCreateUpdateTrigger: ['updateIssueTrigger'],
 		actions : {
 			create: '/issue/create',
 			resolve: '/issue/resolve',
@@ -40,6 +43,7 @@ function IssueTracker(items)
 		duplicateIssue: 'duplicateIssue',
 	};
 	this.defaultInit = [
+		'initCreateUpdateTrigger',
 		'initCreateUpdate',
 		'initMeta',
 	];
@@ -62,6 +66,31 @@ function IssueTracker(items)
 					e.preventDefault();
 					self.operation(this);
 				});
+			})
+		});
+	}
+	
+	this.initCreateUpdateTrigger = function (containerId) {
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		this.forms.allowCreateUpdateTrigger.map(function (v) {
+			container.find("[role='"+v+"']").map(function() {
+				switch(v)
+				{
+					case 'updateIssueTrigger':
+					$(this).off('click');
+					$(this).on('click', function (e) {
+						e.preventDefault();
+						$.post($(this).attr('href'), 
+							function (result) {
+								var tab = $nitm.getObj(self.views.issueUpdateFormTab);
+								var tabContent = $nitm.getObj(self.views.issueUpdateForm);
+								tabContent.html(result);
+								tab.removeClass('hidden');
+								tab.tab('show');
+						}, 'html');
+					});
+					break;
+				}
 			})
 		});
 	}
@@ -152,6 +181,9 @@ function IssueTracker(items)
 			{
 				$nitm.getObj('#'+self.views.issue+result.id).replaceWith(result.data);
 			}
+			$nitm.getObj('open-'+self.views.issues).tab('show');
+			$nitm.getObj(self.views.issueUpdateForm).html(''); 
+			$nitm.getObj(self.views.issueUpdateFormTab).addClass('hidden'); 
 		}
 		else
 		{
