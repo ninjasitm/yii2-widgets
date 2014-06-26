@@ -13,14 +13,17 @@ function IssueTracker(items)
 	this.views = {
 		issue: 'issue',
 		issues: 'issues',
-		issuesOpenTab: 'open-issues-tab',
-		issuesClosedTab: 'closed-issues-tab',
-		issuesOpen: 'open-issues',
-		issuesClosed: 'closed-issues',
-		issueForm: 'issues-form',
-		issueUpdateForm: 'issues-update-form',
-		issueUpdateFormTab: 'issues-update-form-tab',
-		issuesAlerts: 'issues-alerts'
+		issuesOpenTab: "[id^='open-issues-tab']",
+		issuesClosedTab: "[id^='closed-issues-tab']",
+		issuesOpen: "[id^='open-issues']",
+		issuesClosed: "[id^='closed-issues']",
+		issueForm: "[id^='issues-form']",
+		issueUpdateForm: "[id^='issues-update-form']",
+		issueUpdateFormTab: "[id^='issues-update-form-tab']",
+		issuesAlerts: "[id^='issues-alerts']",
+		roles: {
+			issues: "[role='entityIssues']"
+		}
 	};
 	this.forms = {
 		allowCreateUpdate: ['createIssue', 'updateIssue'],
@@ -88,10 +91,10 @@ function IssueTracker(items)
 						e.preventDefault();
 						$.post($(this).attr('href'), 
 							function (result) {
-								var tab = $nitm.getObj(self.views.issueUpdateFormTab);
-								var tabContent = $nitm.getObj(self.views.issueUpdateForm);
+								var tab = container.find(self.views.issueUpdateFormTab);
+								var tabContent = $nitm.getObj(tab.attr('href'));
 								tabContent.html(result);
-								self.initCreateUpdate(self.views.issueUpdateForm);
+								self.initCreateUpdate(tabContent.attr('id'));
 								tab.removeClass('hidden');
 								tab.tab('show');
 						}, 'html');
@@ -132,15 +135,17 @@ function IssueTracker(items)
 	}
 	
 	this.operation = function (form) {
-		data = $(form).serializeArray();
+		var _form = $(form);
+		var parent = _form.parents(self.views.roles.issues);
+		data = _form.serializeArray();
 		data.push({'name':'__format', 'value':'json'});
 		data.push({'name':'getHtml', 'value':true});
 		data.push({'name':'do', 'value':true});
 		data.push({'name':'ajax', 'value':true});
-		switch(!$(form).attr('action'))
+		switch(!_form.attr('action'))
 		{
 			case false:
-			var request = $nitm.doRequest($(form).attr('action'), 
+			var request = $nitm.doRequest(_form.attr('action'), 
 					data,
 					function (result) {
 						switch(result.action)
@@ -155,7 +160,7 @@ function IssueTracker(items)
 						}
 					},
 					function () {
-						$nitm.notify('Error Could not perform IssueTracker action. Please try again', self.classes.error, self.views.issues+" #alert");
+						$nitm.notify('Error Could not perform IssueTracker action. Please try again', self.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
 					}
 				);
 				break;
@@ -163,42 +168,36 @@ function IssueTracker(items)
 	}
 	
 	this.afterCreate = function(result, form) {
+		var _form = $(form);
+		var parent = _form.parents(self.views.roles.issues);
 		if(result.success)
 		{
-			$(form).get(0).reset();
-			$nitm.notify("Added new issue. You can add another or view the newly added one", self.classes.success, self.views.issuesAlerts);
+			_form.get(0).reset();
+			$nitm.notify("Added new issue. You can add another or view the newly added one", '#'+parent.attr('id')+' '+self.views.issuesAlerts);
 			if(result.data)
 			{
-				$nitm.place({append:true, index:0}, result.data, self.views.issues);
-				self.initCreateUpdateTrigger('#'+self.views.issue+result.id);
-				self.initCreateUpdate('#'+self.views.issue+result.id);
-				self.initMeta('#'+self.views.issue+result.id);
-				var open = $nitm.getObj(self.views.issuesOpenTab).find('.badge');
+				var open = parent.find(self.views.issuesOpenTab).find('.badge');
 				var openValue = (result.data == 1) ? Number(open.html())-1 : Number(open.html())+1;
 				open.html(openValue);
 			}
 		}
 		else
 		{
-			$nitm.notify("Couldn't create new issue", self.classes.error, self.views.issuesAlerts);
+			$nitm.notify("Couldn't create new issue", self.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
 		}
 	}
 	
-	this.afterUpdate = function (result) {
+	this.afterUpdate = function (result, form) {
+		var _form = $(form);
+		var parent = _form.parents(self.views.roles.issues);
 		if(result.success)
 		{
-			$nitm.notify("Updated issue sucessfully", self.classes.success, self.views.issuesAlerts);
-			if(result.data)
-			{
-				$nitm.getObj('#'+self.views.issue+result.id).replaceWith(result.data);
-			} 
-			self.initCreateUpdate('#'+self.views.issue+result.id);
-			self.initMeta('#'+self.views.issue+result.id);
-			$nitm.getObj(self.views.issueUpdateFormTab).addClass('hidden');
+			$nitm.notify("Updated issue sucessfully", self.classes.success, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+			parent.find(self.views.issueUpdateFormTab).addClass('hidden');
 		}
 		else
 		{
-			$nitm.notify("Couldn't update the issue", self.classes.error, self.views.issuesAlerts);
+			$nitm.notify("Couldn't update the issue", self.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
 		}
 	}
 	
@@ -206,29 +205,20 @@ function IssueTracker(items)
 		if(result.success)
 		{
 			var container = $nitm.getObj('#'+self.views.issue+result.id);
+			var parent = container.parents(self.views.roles.issues);
 			container.find("[role~='"+self.roles.updateIssue+"']").toggleClass(self.classes.hidden, result.data);
 			var actionElem = container.find("[role~='"+self.roles.closeIssue+"']");
 			actionElem.attr('title', result.title);
 			actionElem.find(':first-child').replaceWith(result.actionHtml);
 			container.removeClass().addClass(result.class);
-			var open = $nitm.getObj(self.views.issuesOpenTab).find('.badge');
+			//Move elements between sections and update counters
+			var open = parent.find(self.views.issuesOpenTab).find('.badge');
 			var openValue = (result.data == 1) ? Number(open.html())-1 : Number(open.html())+1;
 			open.html(openValue);
-			var closed = $nitm.getObj(self.views.issuesClosedTab).find('.badge');
+			var closed = parent.find(self.views.issuesClosedTab).find('.badge');
 			var closedValue = (result.data == 0) ? Number(closed.html())-1 : Number(closed.html())+1;
 			closed.html(closedValue);
-			switch(result.data)
-			{
-				case 0:
-				container.appendTo($nitm.getObj(self.views.issuesOpen));
-				container.find("[role~='"+self.actions.disabledOnClose+"']").removeClass('hidden');
-				break;
-				
-				case 1:
-				container.appendTo($nitm.getObj(self.views.issuesClosed));
-				container.find("[role~='"+self.actions.disabledOnClose+"']").addClass('hidden');
-				break;
-			}
+			container.remove();
 		}
 	}
 	

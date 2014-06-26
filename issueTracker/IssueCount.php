@@ -61,7 +61,7 @@ class IssueCount extends BaseWidget
 			$this->options['class'] .= " bg-success";
 			$info .= Html::a(
 				Html::tag('span', (int)$this->model->count.' Issues '.Icon::show('eye'), $this->options), 
-				'/issue/index/'.$this->parentType."/".$this->parentId."?__format=modal".($this->enableComments ? '&'.$this->model->commentParam.'=1' : ''),
+				\Yii::$app->urlManager->createUrl(['/issue/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal', IssuesModel::COMMENT_PARAM => $this->enableComments]),
 				[
 					'data-toggle' => 'modal',
 					'data-target' => '#issue-tracker-modal',

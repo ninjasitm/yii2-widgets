@@ -83,6 +83,10 @@ class ActivityIndicator extends Widget
 		'role' => 'activityIndicator',
 		'id' => 'activity'
 	];
+	public function init()
+	{
+		assets\Asset::register($this->getView());
+	}
 	
 	public function run()
 	{

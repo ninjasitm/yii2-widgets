@@ -119,7 +119,7 @@ class ChatMessages extends BaseWidget
 				break;
 			}
 			$searchModel = new RepliesSearch;
-			$searchModel->withThese = ['replyToAuthor', 'authorUser'];
+			$searchModel->withThese = ['replyTo', 'authorUser'];
 			$get = \Yii::$app->request->getQueryParams();
 			$params = array_merge($get, $this->model->constraints);
 			unset($params['type']);

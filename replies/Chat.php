@@ -103,7 +103,8 @@ class Chat extends BaseWidget
 		);
 	}
 	
-	protected function getContent() {
+	protected function getContent() 
+	{
 		$ret_val = Html::tag('div', 
 			Html::tag('div', 
 				\nitm\widgets\replies\ChatMessages::widget([
@@ -120,7 +121,8 @@ class Chat extends BaseWidget
 		return $ret_val;
 	}
 	
-	protected function getNavigation() {
+	protected function getNavigation() 
+	{
 		$new = $this->model->hasNew();
 		switch($new >= 1)
 		{

@@ -88,6 +88,7 @@ class Replies extends BaseWidget
 		}
 		parent::init();
 		$this->options = array_merge($this->_options, $this->options);
+		assets\Asset::register($this->getView());
 	}
 	
 	public function run()
@@ -107,7 +108,7 @@ class Replies extends BaseWidget
 				break;
 			}
 			$searchModel = new RepliesSearch;
-			$searchModel->withThese = ['replyToAuthor', 'authorUser'];
+			$searchModel->withThese = ['replyTo', 'authorUser'];
 			$get = \Yii::$app->request->getQueryParams();
 			$params = array_merge($get, $this->model->constraints);
 			unset($params['type']);
@@ -129,12 +130,11 @@ class Replies extends BaseWidget
 				'widget' => $this,
 				'options' => $this->options
 			]);
-			//RepliesAsset::register($this->getView());
 			break;
 			
 			default:
 			//$replies = Html::tag('h3', "No comments", ['class' => 'text-error']);
-			$replies = 'No Replies';
+			$replies = '';
 			break;
 		}
 		$this->options['id'] .= $this->parentId;

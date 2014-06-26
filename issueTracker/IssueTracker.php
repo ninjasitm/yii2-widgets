@@ -80,11 +80,9 @@ class IssueTracker extends BaseWidget
 				'useModal' => $this->useModal,
 				'enableComments' => $this->enableComments
 			]);
-			//IssueAsset::register($this->getView());
 			break;
 			
 			default:
-			//$replies = Html::tag('h3', "No comments", ['class' => 'text-error']);
 			$issues = 'No Issues';
 			break;
 		}
