@@ -130,12 +130,13 @@
 	padding: 2px 4px;
 }
 
-.message .message-footer {
+.message .message-footer * {
 	position: relative;
 	clear: both;
 	width: 100%;
 	height: 18px;
 	padding: 0 6px;
+	font-size: small;
 }
 
 .message .message-reply-to {
