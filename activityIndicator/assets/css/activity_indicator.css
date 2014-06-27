@@ -1,7 +1,7 @@
 .activity {
 	position: absolute !important;
 	display: inline !important;
-	left: -0.5em !important;
+	left: 0.05em !important;
 	top: auto !important;
 	font-size: 2em;
 	background-color: transparent;

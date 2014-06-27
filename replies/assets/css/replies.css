@@ -15,10 +15,19 @@
 	padding: 6px;
 }
 
+.messages .message-reply-to, .chat .message-reply-to {
+	width: auto;
+	float: left;
+	font-size: 14px;
+	line-height: 28px;
+}
+
 .chat .message,
 .messages .message {
 	width: 100%;
 	height: auto;
+	float: left;
+	clear: both;
 	border-radius: 6px;
 	padding: 6px;
 	border-bottom: solid thin gray;
@@ -26,15 +35,6 @@
 
 .chat .message {
 	border-radius: 0;
-}
-
-.message .header {
-	width: auto;
-	font-size: 12px;
-	font-weight: bold;
-	position: absolute;
-	right: 6px;
-	margin-top: 6px;
 }
 
 .message .date {
@@ -48,25 +48,20 @@
 .message .author, .message .reply-to-author {
 	font-size: 14px;
 	color: black;
+	font-size: bold;
 }
 
-.message .avatar {
+.message .message-avatar {
 	width: 72px;
 	height: 100%;
 	font-size: 6px;
-	padding: 6px;
+	padding: 0 6px;
 	float: left;
 	display: block;
 	position: relative;
-	display: block;
 }
 
-.chat .avatar {
-	width: 78px;
-	height: 78px;
-}
-
-.message .avatar img {
+.message .message-avatar img {
 	width: auto;
 	max-width: 60px;
 	height: 100%;
@@ -76,9 +71,13 @@
 	margin-right: auto;
 }
 
-.chat .avatar img {
-	max-width: 72px;
-	max-height: 72px;
+.message .message-header {
+	width: 100%;
+	right: 0;
+	font-size: small;
+	vertical-align: middle;
+	text-align: right;
+	clear: right;
 }
 
 .message .message-body {
@@ -88,7 +87,7 @@
 	position: relative;
 	float: left;
 	padding: 6px;
-	margin-top: 18px;
+	width: auto;
 }
 
 .message .message-body *[role=message] {
@@ -111,22 +110,23 @@
 }
 
 .message .message-meta {
-	width: 50%;
+	width: auto;
 	float: left;
-	padding-right: 6px;
-	font-size: 11px;
+	tex-align: left;
+	font-size: small;
 	display: table-cell;
-	vertical-align: bottom;
+	vertical-align: middle;
 }
+
 .message .message-actions {
-	width: 50%;
+	width: auto;
 	float: left;
 	text-align: right;
 }
 
 .message .message-actions a {
 	color: black;
-	font-size: 16px;
+	font-size: small;
 	padding: 2px 4px;
 }
 
@@ -154,20 +154,55 @@
 
 .chat {
 	position: fixed;
-	top: 0; right: 0;
+	top: 6px; right: 6px;
 	bottom: 40px;
 	overflow: hidden;
-	padding: 0 30px 0 0;
+	padding: 0px;
+	box-shadow: 2px 2px 15px #000;
 }
 
+.chat .message-avatar {
+	width: 64px;
+	height: 64px;
+}
+
+.chat .message-avatar img {
+	width: 100%;
+	height: auto;
+}
 .chat .chat-messages {
 	overflow: scroll;
 	position: absolute;
 	top: 0;
 	width: 100%;
 	height: 80%;
-	z-index: 1050;
+	z-index: 1041;
 	background-color: rgba(153,153,153,0.9);
+}
+
+.chat .message-footer {
+	width: 100%;
+	float: left;
+}
+
+.chat .message-footer * {
+	width: auto;
+	font-size: smaller;
+	clear: none;
+}
+
+.chat .message-meta {
+	font-size: smaller;
+}
+
+.chat .message-actions {
+	float: right;
+}
+
+.chat .message-actions a {
+	color: black;
+	font-size: smaller;
+	padding: 2px 4px;
 }
 
 .chat .chat-form {
@@ -176,8 +211,8 @@
 	position: absolute;
 	top: 80%; botton: 0;
 	overflow: auto;
-	background-color: rgba(0,0,0, 0.9);
-	padding: 15px;
+	background-color: rgba(0,0,0, 0.8);
+	padding: 8px;
 	z-index: 98;
 }
 
@@ -186,19 +221,15 @@
 	border: none;
 }
 
-.chat-form-header {
+.chat-form-footer {
 }
 
 .chat-form-container {
-}
-
-.chat-form-body {
 	color: white;
-	margin-top: -20px;
 }
 
-.chat-form-body textarea {
-	height: auto;
+.chat-form-container textarea, .chat-form-container .redactor_box  {
+	color: black;
 }
 
 .input-group .btn-group > .btn, .btn-group-vertical > .btn {

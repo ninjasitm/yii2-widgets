@@ -106,13 +106,7 @@ class Chat extends BaseWidget
 	protected function getContent() 
 	{
 		$ret_val = Html::tag('div', 
-			Html::tag('div', 
-				\nitm\widgets\replies\ChatMessages::widget([
-					'model' => $this->model, 
-					'withForm' => true,
-					'updateOptions' => $this->updateOptions,
-					'options' => $this->chatOptions
-				]), 
+			Html::tag('div','', 
 				$this->chatPaneOptions
 			).
 			Html::tag('div', $this->miscPane['content'], $this->miscPaneOptions),
@@ -142,7 +136,11 @@ class Chat extends BaseWidget
 			Html::tag('li', Html::a('Messages'.$newBadge, '#chat-messages-pane', [
 				'data-toggle' => 'tab', 
 				'id' => 'chat-messages-nav', 
-				'class' => $newClass
+				'class' => $newClass,
+				'role' => 'dynamicValue',
+				'data-type' => 'html',
+				'data-id' => '#chat-messages-pane',
+				'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html']),
 			]), []).
 			Html::tag('li', Html::a($this->miscPane['title'], '#chat-misc-pane', ['data-toggle' => 'tab']), ['id' => 'chat-misc-nav']).
 			Html::tag('li', Html::a($newMessage, '#', ['id' => 'chat-info-pane', 'class' => 'text-warning'])),

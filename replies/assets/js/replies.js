@@ -15,6 +15,9 @@ function Replies(items)
 			replyForm: 'reply_form',
 			messages: 'messages',
 			message: 'message',
+		},
+		roles: {
+			replyToIndicator: "[role='replyToIndicator']",
 		}
 	};
 	this.elements = {
@@ -92,6 +95,12 @@ function Replies(items)
 						$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
 						self.operation(this);
 					});
+					$(this).on('reset', function (e) {
+						this.reset();
+						var msgField = $(this).find("textarea");
+						self.setEditorValue(msgField.get(0), '', false, self.editor);
+						$(this).find(self.views.roles.replyToIndicator).html("");
+					});
 				})
 			});
 		});
@@ -123,10 +132,11 @@ function Replies(items)
 					self.startEditor($(this).data('container'));
 					var form = $('#'+self.views.containers.replyForm+$(this).data('parent'));
 					form.find("[role~='"+self.forms.inputs.reply_to+"']").val($(this).data('reply-to'));
-					var msgField = form.find("[role~='"+self.forms.inputs.message+"']");
+					var msgField = form.find("textarea");
 					msgField.val('').focus();
 					self.setEditorValue(msgField.get(0), '', false, self.editor);
 					self.setEditorFocus(msgField.get(0), self.editor);
+					container.find(self.views.roles.replyToIndicator).html("Replying to "+$(this).data('author'));
 				});
 			});
 		});
@@ -150,9 +160,10 @@ function Replies(items)
 					var quoteString = "<blockquote>";
 					quoteString += quote.author+" said:<br>"+quote.message;
 					quoteString += "</blockquote><br>";
-					var msgField = form.find("[role~='"+self.forms.inputs.message+"']");
+					var msgField = form.find("textarea");
 					self.setEditorValue(msgField.get(0), quoteString, true, self.editor);
 					self.setEditorFocus(msgField.get(0), self.editor);
+					container.find(self.views.roles.replyToIndicator).html("Replying to "+$(this).data('author'));
 				});
 			});
 		});
@@ -258,12 +269,13 @@ function Replies(items)
 			var ret_val = false;
 			var _form = $(form);
 			_form.find(".empty").remove();
-			$nitm.place({append:true, index:0}, result.data, _form.data('parent'));
+			$nitm.place({append:true, index:-1}, result.data, _form.data('parent'));
 			self.initHiding('#'+result.unique_id);
 			self.initQuoting('#'+result.unique_id);
 			self.initReplying('#'+result.unique_id);
 			_form.find('[role~="'+self.forms.inputs.reply_to+'"]').val('');
 			self.setEditorValue(_form.find('textarea').attr('id'), '', false, self.editor);
+			_form.find(self.views.roles.replyToIndicator).html("");
 			break;
 			
 			default:
@@ -298,9 +310,9 @@ function Replies(items)
 					$(element).removeClass(self.classes.hidden);
 				});
 			}
-			$nitm.getObj("[id='"+self.views.containers.message+result.id+"']").each(function(index, element) {
+			/*$nitm.getObj("[id='"+self.views.containers.message+result.id+"']").each(function(index, element) {
 					$(element).html(result.action);
-				});;
+				});;*/
 		}
 	}
 	
@@ -433,7 +445,7 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			ret_val = $nitm.getObj(field).redactor('getObject').set(value, false);
+			$nitm.getObj(field).redactor('getObject').set(value, false);
 			break;
 			
 			default:
@@ -455,7 +467,7 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			ret_val = $('#'+$nitm.getObj(field).attr('id')).redactor('getObject').get();
+			ret_val = $nitm.getObj(field).redactor('getObject').get();
 			break;
 			
 			default:
@@ -475,11 +487,11 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			$nitm.getObj(field).redactor('focus');
+			$nitm.getObj(field).redactor('getObject').focus();
 			break;
 			
 			default:
-			ret_val = $nitm.getObj(field).get(0).focus();
+			$nitm.getObj(field).get(0).focus();
 			break;
 		}
 	}
