@@ -49,12 +49,12 @@ function Replies(items)
 		}
 	};
 	this.defaultInit = [
-					'initCreating',
-					'initEditor',
-					'initHiding',
-					'initReplying',
-					'initQuoting'
-				];
+		'initCreating',
+		'initEditor',
+		'initHiding',
+		'initReplying',
+		'initQuoting'
+	];
 
 	this.init = function () {
 		this.defaultInit.map(function (method, key) {
@@ -497,5 +497,8 @@ function Replies(items)
 	}
 }
 
-$nitm.replies = new Replies();
-$nitm.replies.init();
+$nitm.addOnLoadEvent(function () {
+	$nitm.replies = new Replies();
+	$nitm.replies.init();
+	$nitm.moduleLoaded('replies');
+});
