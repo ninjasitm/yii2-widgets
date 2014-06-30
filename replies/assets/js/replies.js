@@ -364,23 +364,28 @@ function Replies(items)
 			{
 				case 'redactor':
 				$nitm.getObj("[id='"+textarea.prop('id')+"']").each(function (index, element) {
-						$(element).redactor({
-						air: true,
-						airButtons: ['bold', 'italic', 'deleted', 'link'],
-						focus: true,
-						autoresize: true,
-						initCallback: function(){
-							if(value != undefined)
-							{
-								this.set(value);
+					var textarea = $(element);
+					try {
+						textarea.redactor('getObject');
+					} catch (error) {
+						textarea.redactor({
+							air: true,
+							airButtons: ['bold', 'italic', 'deleted', 'link'],
+							focus: true,
+							autoresize: true,
+							initCallback: function(){
+								if(value != undefined)
+								{
+									this.set(value);
+								}
+							},
+							setCode: function(html){
+								html = this.preformater(html);
+								this.$editor.html(html).focus();
+								this.syncCode();
 							}
-						},
-						setCode: function(html){
-							html = this.preformater(html);
-							this.$editor.html(html).focus();
-							this.syncCode();
-						}
-					});
+						});
+					}
 				});
 				break;
 			}

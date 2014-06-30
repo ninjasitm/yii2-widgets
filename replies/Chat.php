@@ -40,22 +40,22 @@ class Chat extends BaseWidget
 	public $chatOptions = [
 		'role' => 'chatParent',
 		'id' => 'chat',
-		'class' => 'chat col-lg-4 col-md-4',
+		'class' => 'chat col-md-4 col-lg-4',
 	];
 	 
 	/*
 	 * HTML options for the miscellaneous pane
 	 */
 	public $chatPaneOptions = [
-		'class' => 'tab-pane fade',
-		'id' => 'chat-messages-pane'
+		'class' => 'hidden',
+		'id' => 'chat-messages-pane',
 	];
 	 
 	/*
 	 * HTML options for the miscellaneous pane
 	 */
 	public $miscPaneOptions = [
-		'class' => 'tab-pane fade',
+		'class' => 'fade',
 		'id' => 'chat-misc-pane'
 	];
 	
@@ -64,6 +64,7 @@ class Chat extends BaseWidget
 	 */
 	public $navigationOptions = [
 		'class' => 'nav nav-tabs',
+		'role' => 'tablist',
 		'id' => 'chat-navigation',
 	];
 	
@@ -106,7 +107,13 @@ class Chat extends BaseWidget
 	protected function getContent() 
 	{
 		$ret_val = Html::tag('div', 
-			Html::tag('div','', 
+			Html::tag('div',
+					Html::tag('div',
+						Html::tag('div', '', ['id' => 'chat-messages-container', 'style' => 'display:none']).
+						ChatForm::widget(['model' => $this->model]),
+						$this->chatOptions
+					)
+				, 
 				$this->chatPaneOptions
 			).
 			Html::tag('div', $this->miscPane['content'], $this->miscPaneOptions),
@@ -133,16 +140,18 @@ class Chat extends BaseWidget
 				break;
 		}
 		$ret_val = Html::tag('ul', 
-			Html::tag('li', Html::a('Messages'.$newBadge, '#chat-messages-pane', [
-				'data-toggle' => 'tab', 
+			Html::tag('li', Html::a('Messages'.$newBadge, \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', RepliesModel::FORM_PARAM => false]), [
 				'id' => 'chat-messages-nav', 
 				'class' => $newClass,
-				'role' => 'dynamicValue',
+			]), [
+				'role' => 'visibility',
 				'data-type' => 'html',
-				'data-id' => '#chat-messages-pane',
-				'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html']),
-			]), []).
-			Html::tag('li', Html::a($this->miscPane['title'], '#chat-misc-pane', ['data-toggle' => 'tab']), ['id' => 'chat-misc-nav']).
+				'data-id' => '#chat-messages-container',
+				'data-on' => '#chat-messages-pane:hidden',
+				'data-toggle' => '#chat-messages-pane',
+				'data-url' =>  \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', RepliesModel::FORM_PARAM => false])
+			]).
+			Html::tag('li', Html::a($this->miscPane['title'], '#chat-misc-pane', ['data-toggle' => '']), ['id' => 'chat-misc-nav']).
 			Html::tag('li', Html::a($newMessage, '#', ['id' => 'chat-info-pane', 'class' => 'text-warning'])),
 			$this->navigationOptions
 		);

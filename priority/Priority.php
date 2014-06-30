@@ -108,6 +108,7 @@ class Priority extends BaseWidget
 	 * Sizes supported
 	 */
 	private $_sizes = [
+		'tiny' => 'priority-xs',
 		'small' => 'priority-sm',
 		'default' => 'priority-default',
 		'large' => 'priority-lg',
@@ -174,6 +175,10 @@ class Priority extends BaseWidget
 			$options['class'] = "$btnQualifier $btnQualifier-".$options['class'];
 			switch($this->size)
 			{
+				case 'tiny':
+				$options['class'] .= " $btnQualifier-xs";
+				break;
+				
 				case 'small':
 				$options['class'] .= " $btnQualifier-sm";
 				break;
