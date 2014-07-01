@@ -56,11 +56,11 @@ function Replies(items)
 		'initQuoting'
 	];
 
-	this.init = function () {
+	this.init = function (containerId) {
 		this.defaultInit.map(function (method, key) {
 			if(typeof self[method] == 'function')
 			{
-				self[method]();
+				self[method](containerId);
 			}
 		});
 	}
@@ -88,7 +88,10 @@ function Replies(items)
 			containers.each(function(index, element) {
 				var container = $(element);
 				container.find("form[role='"+v+"']").map(function() {
-					$(this).find("[data-toggle='buttons'] .btn").button();
+					//console.log(this);
+					//$(this).find("[data-toggle='buttons'] .btn").map(function() {
+					//	$(this).button();
+					//});
 					$(this).off('submit');
 					$(this).on('submit', function (e) {
 						e.preventDefault();
