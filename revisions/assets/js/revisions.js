@@ -38,7 +38,7 @@ function Revisions(items)
 	}
 	
 	this.checkActivity = function (container) {
-		this.roles.map(function (role, k) {
+		$.map(this.roles, function (role, k) {
 			$(container+" "+"[role='"+role+"']").map(function() {
 				switch($(this).attr('revisionRecentActivity'))
 				{
@@ -53,7 +53,7 @@ function Revisions(items)
 	this.initActivity = function(container)
 	{
 		var container = (container == undefined) ? 'body' : container;
-		self.roles.map(function (role, k) {
+		$.map(this.roles, function (role, k) {
 			var object = $(container+" "+"[role='"+role+"']");
 			switch(1)
 			{
@@ -156,5 +156,5 @@ function Revisions(items)
 }
 
 $nitm.addOnLoadEvent(function () {
-	$nitm.revisions = new Revisions();
+	$nitm.initModule('revisions', new Revisions());
 });

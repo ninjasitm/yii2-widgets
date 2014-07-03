@@ -116,9 +116,11 @@ function Replies(items)
 				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
+					var parent = $(this).parents("[class~='message']:first");
+					var element = this;
 					$.post($(this).attr('href'), 
-						function (result) { 
-							self.afterHide(result);
+						function (result) {
+							self.afterHide(result, parent.get(0), element);
 						}, 'json');
 				});
 			});
@@ -248,7 +250,7 @@ function Replies(items)
 						switch(result.action)
 						{
 							case 'hide':
-							self.afterHide(result);
+							self.afterHide(result, form);
 							break;
 								
 							case 'create':
@@ -265,7 +267,7 @@ function Replies(items)
 		}
 	}
 	
-	this.afterCreate = function(result, form) {
+	this.afterCreate = function(result, form, element) {
 		switch(result.success)
 		{
 			case true:
@@ -297,22 +299,20 @@ function Replies(items)
 		}
 	}
 	
-	this.afterHide = function (result) {
+	this.afterHide = function (result, element, activator) {
 		if(result.success)
 		{
 			switch(result.value)
 			{
 				case true:
-				$nitm.getObj("[id='"+self.views.containers.message+result.id+"']").each(function(index, element) {
-					$(element).addClass(self.classes.hidden);
-				});
+				$(element).addClass(self.classes.hidden);
 				break;
 				
 				default:  
-				$nitm.getObj("[id='"+self.views.containers.message+result.id+"']").each(function(index, element) {
-					$(element).removeClass(self.classes.hidden);
-				});
+				$(element).removeClass(self.classes.hidden);
+				break;
 			}
+			$(activator).text(result.action);
 			/*$nitm.getObj("[id='"+self.views.containers.message+result.id+"']").each(function(index, element) {
 					$(element).html(result.action);
 				});;*/
@@ -506,7 +506,5 @@ function Replies(items)
 }
 
 $nitm.addOnLoadEvent(function () {
-	$nitm.replies = new Replies();
-	$nitm.replies.init();
-	$nitm.moduleLoaded('replies');
+	$nitm.initModule('replies', new Replies());
 });

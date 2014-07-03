@@ -48,7 +48,7 @@
 .message .author, .message .reply-to-author {
 	font-size: 14px;
 	color: black;
-	font-size: bold;
+	font-weight: bold;
 }
 
 .message .message-avatar {
@@ -57,8 +57,6 @@
 	font-size: 6px;
 	padding: 0 6px;
 	float: left;
-	display: block;
-	position: relative;
 }
 
 .message .message-avatar img {
@@ -82,19 +80,19 @@
 
 .message .message-body {
 	text-align: left;
-	border: none;
-	display: block;
-	position: relative;
 	float: left;
 	padding: 6px;
 	width: auto;
+	max-width: 90%;
+	left: 72px;
 }
 
 .message .message-body *[role=message] {
 	width: auto;
 	float: left;
 	word-wrap: break-word;
-	clear: both;
+	clear: right;
+	text-align: left;
 }
 
 .message * blockquote, .cke_editable blockquote {
@@ -109,34 +107,34 @@
 	width: 100%;
 }
 
-.message .message-meta {
-	width: auto;
+.message .message-footer {
+	width: 100%;
 	float: left;
-	tex-align: left;
-	font-size: small;
+}
+
+.message .message-footer * {
+	position: relative;
+	width: auto;
+	font-size: smaller;
+	clear: none;
+	padding: 0 6px;
+}
+
+.message .message-meta {
+	float: left;
+	font-size: smaller;
 	display: table-cell;
 	vertical-align: middle;
 }
 
 .message .message-actions {
-	width: auto;
-	float: left;
-	text-align: right;
+	float: right;
 }
 
 .message .message-actions a {
 	color: black;
 	font-size: small;
 	padding: 2px 4px;
-}
-
-.message .message-footer * {
-	position: relative;
-	clear: both;
-	width: 100%;
-	height: 18px;
-	padding: 0 6px;
-	font-size: small;
 }
 
 .message .message-reply-to {
@@ -180,31 +178,6 @@
 	background-color: rgba(153,153,153,0.9);
 }
 
-.chat .message-footer {
-	width: 100%;
-	float: left;
-}
-
-.chat .message-footer * {
-	width: auto;
-	font-size: smaller;
-	clear: none;
-}
-
-.chat .message-meta {
-	font-size: smaller;
-}
-
-.chat .message-actions {
-	float: right;
-}
-
-.chat .message-actions a {
-	color: black;
-	font-size: smaller;
-	padding: 2px 4px;
-}
-
 .chat .chat-form {
 	width: 100%;
 	height: 20%;
@@ -221,7 +194,8 @@
 	border: none;
 }
 
-.chat-form-footer {
+.chat .message-actions a {
+	font-size: smaller;
 }
 
 .chat-form-container {
@@ -231,6 +205,10 @@
 .chat-form-container textarea, .chat-form-container .redactor_box  {
 	color: black;
 	margin-top: -15px;
+}
+
+.redactor_editor  {
+	box-shadow: inset 2px 2px 6px #999 !important;
 }
 
 .input-group .btn-group > .btn, .btn-group-vertical > .btn {

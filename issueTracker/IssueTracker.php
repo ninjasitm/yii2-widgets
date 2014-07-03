@@ -25,7 +25,7 @@ class IssueTracker extends BaseWidget
 	 * HTML options for generevision the widget
 	 */
 	public $options = [
-		'class' => 'issues',
+		'class' => 'issues row',
 		'role' => 'entityIssues',
 		'id' => 'issues',
 	];
