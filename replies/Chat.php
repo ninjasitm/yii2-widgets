@@ -32,6 +32,7 @@ class Chat extends BaseWidget
 	public $options = [
 		'role' => 'chatContainer',
 		'id' => 'chat-container',
+		'class' => 'pull-left'
 	];
 	 
 	/*
