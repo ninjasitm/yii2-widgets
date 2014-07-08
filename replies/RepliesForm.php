@@ -17,6 +17,7 @@ use kartik\icons\Icon;
 
 class RepliesForm extends BaseWidget
 {	
+	public $uniqid;	
 	public $editor = 'redactor';
 	public $inline = true;
 	public $useModal = false;
@@ -86,6 +87,8 @@ class RepliesForm extends BaseWidget
 			break;
 		}
 		parent::init();
+		$this->uniqid = !$this->uniqid ? uniqid() : $this->uniqid;
+		$this->options['id'] .= $this->uniqid;
 		assets\Asset::register($this->getView());
 	}
 	
@@ -108,7 +111,8 @@ class RepliesForm extends BaseWidget
 				'widget' => $this,
 				'inline' => $this->inline,
 				'editor' => $this->editor,
-				'editorOptions' => $this->editorOptions
+				'editorOptions' => $this->editorOptions,
+				'uniqid' => $this->uniqid
 			]);
 			break;
 		}

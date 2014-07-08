@@ -16,7 +16,8 @@ use nitm\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
 class Replies extends BaseWidget
-{	
+{
+	public $uniqid;	
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -88,6 +89,8 @@ class Replies extends BaseWidget
 		}
 		parent::init();
 		$this->options = array_merge($this->_options, $this->options);
+		$this->uniqid = !$this->uniqid ? uniqid() : $this->uniqid;
+		$this->options['id'] .= $this->uniqid;
 		assets\Asset::register($this->getView());
 	}
 	
@@ -120,7 +123,6 @@ class Replies extends BaseWidget
 					'id' => SORT_DESC,
 				]
 			]);
-			$this->options['id'] .= $this->parentId;
 			$replies = $this->getView()->render('@nitm/views/replies/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
@@ -128,7 +130,8 @@ class Replies extends BaseWidget
 				'parentType' => $this->parentType,
 				'useModal' => $this->useModal,
 				'widget' => $this,
-				'options' => $this->options
+				'options' => $this->options,
+				'uniqid' => $this->uniqid
 			]);
 			break;
 			
@@ -137,7 +140,6 @@ class Replies extends BaseWidget
 			$replies = '';
 			break;
 		}
-		$this->options['id'] .= $this->parentId;
 		return $replies;
 	}
 }
