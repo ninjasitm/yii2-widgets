@@ -48,7 +48,7 @@ class Chat extends BaseWidget
 	 * HTML options for the miscellaneous pane
 	 */
 	public $chatPaneOptions = [
-		'class' => 'hidden',
+		'style' => 'display:none',
 		'id' => 'chat-messages-pane',
 	];
 	 

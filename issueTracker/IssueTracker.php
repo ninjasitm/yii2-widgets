@@ -28,12 +28,17 @@ class IssueTracker extends BaseWidget
 		'class' => 'issues row',
 		'role' => 'entityIssues',
 		'id' => 'issues',
+		'style' => 'font-size:smaller;'
 	];
 	
 	public function init()
 	{
 		switch(1)
 		{
+			case $this->parentType == 'all':
+			$this->model = new IssueModel();
+			break;
+			
 			case !($this->model instanceof IssueModel) && (($this->parentType == null) || ($this->parentId == null)):
 			$this->model = null;
 			break;

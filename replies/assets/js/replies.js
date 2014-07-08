@@ -505,6 +505,4 @@ function Replies(items)
 	}
 }
 
-$nitm.addOnLoadEvent(function () {
-	$nitm.initModule('replies', new Replies());
-});
+$nitm.initModule('replies', new Replies());

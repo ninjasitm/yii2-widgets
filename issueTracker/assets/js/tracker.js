@@ -106,10 +106,10 @@ function IssueTracker(items)
 	}
 	
 	this.initMeta = function (containerId) {
-		console.log("Triggered for "+containerId+" "+Date.now());
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		$.map(this.actions.allowMeta, function (v) {
 			container.find("[role~='"+v+"']").map(function() {
+				console.log(this);
 				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
@@ -206,7 +206,7 @@ function IssueTracker(items)
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		if(result.success)
 		{
-			var element = $nitm.getObj('#'+self.views.issue+result.id);
+			var element = $nitm.getObj("[id~='"+self.views.issue+result.id+"']");
 			var parent = element.parents(self.views.roles.issues);
 			element.find("[role~='"+self.roles.updateIssue+"']").toggleClass(self.classes.hidden, result.data);
 			var actionElem = element.find("[role~='"+self.roles.closeIssue+"']");
@@ -228,7 +228,7 @@ function IssueTracker(items)
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		if(result.success)
 		{
-			var element = container.find('#'+self.views.issue+result.id);
+			var element = container.find("[id~='"+self.views.issue+result.id+"']");
 			element.removeClass().addClass(result.class);
 			var actionElem = element.find("[role~='"+self.roles.resolveIssue+"']");
 			actionElem.attr('title', result.title);
@@ -240,7 +240,7 @@ function IssueTracker(items)
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		if(result.success)
 		{
-			var element = container.find('#'+self.views.issue+result.id);
+			var element = container.find("[id~='"+self.views.issue+result.id+"']");
 			element.removeClass().addClass(result.class);
 			var actionElem = element.find("[role~='"+self.roles.duplicateIssue+"']");
 			actionElem.attr('title', result.title);
@@ -249,6 +249,4 @@ function IssueTracker(items)
 	}
 }
 
-$nitm.addOnLoadEvent(function () {
-	$nitm.initModule('issueTracker', new IssueTracker());
-});
+$nitm.initModule('issueTracker', new IssueTracker());
