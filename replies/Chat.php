@@ -42,6 +42,7 @@ class Chat extends BaseWidget
 		'role' => 'chatParent',
 		'id' => 'chat',
 		'class' => 'chat col-md-4 col-lg-4',
+		'style' => 'position: fixed;top: 6px; right: 6px;bottom: 40px;overflow: hidden;padding: 0px;box-shadow: 2px 2px 15px #000;'
 	];
 	 
 	/*
@@ -110,8 +111,7 @@ class Chat extends BaseWidget
 		$ret_val = Html::tag('div', 
 			Html::tag('div',
 					Html::tag('div',
-						Html::tag('div', '', ['id' => 'chat-messages-container', 'style' => 'display:none']).
-						ChatForm::widget(['model' => $this->model]),
+						Html::tag('div', '', ['id' => 'chat-messages-container', 'style' => 'display:none']),
 						$this->chatOptions
 					)
 				, 
@@ -141,7 +141,7 @@ class Chat extends BaseWidget
 				break;
 		}
 		$ret_val = Html::tag('ul', 
-			Html::tag('li', Html::a('Messages'.$newBadge, \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', RepliesModel::FORM_PARAM => false]), [
+			Html::tag('li', Html::a('Messages'.$newBadge, \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', RepliesModel::FORM_PARAM => true]), [
 				'id' => 'chat-messages-nav', 
 				'class' => $newClass,
 			]), [
@@ -150,7 +150,7 @@ class Chat extends BaseWidget
 				'data-id' => '#chat-messages-container',
 				'data-on' => '#chat-messages-pane:hidden',
 				'data-toggle' => '#chat-messages-pane',
-				'data-url' =>  \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', RepliesModel::FORM_PARAM => false])
+				'data-url' =>  \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', RepliesModel::FORM_PARAM => true])
 			]).
 			Html::tag('li', Html::a($this->miscPane['title'], '#chat-misc-pane', ['data-toggle' => '']), ['id' => 'chat-misc-nav']).
 			Html::tag('li', Html::a($newMessage, '#', ['id' => 'chat-info-pane', 'class' => 'text-warning'])),
