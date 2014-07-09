@@ -150,7 +150,7 @@ class RepliesForm extends BaseWidget
 				]),
 			[
 				'role' => 'replyActions',
-				'class' => 'form-group pull-right'.(($hidden == true) ? 'hidden' : ''),
+				'class' => 'form-group pull-right'.(($hidden == true) ? ' hidden ' : ''),
 				"style" => "padding-right: 15px"
 			]
 		);
