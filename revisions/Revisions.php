@@ -87,7 +87,7 @@ class Revisions extends BaseWidget
 	public function run()
 	{
 		$this->model->queryFilters['order_by'] = ['id' => SORT_DESC];
-		switch(\nitm\models\User::isAdmin())
+		switch(\Yii::$app->user->identity->isAdmin())
 		{
 			case true:
 			break;
@@ -107,7 +107,7 @@ class Revisions extends BaseWidget
 					'label' => 'Author',
 					'format' => 'html',
 					'value' => function ($model, $index, $widget) {
-						return Html::a($model->authorUser->getFullName(true, $model->authorUser), \Yii::$app->urlManager->createUrl(['', 'Revisions[author]' => $model->authorUser->id]));
+						return $model->authorUser->url();
 					}
 				],
 				'created_at',

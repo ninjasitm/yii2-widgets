@@ -84,10 +84,10 @@ class RevisionsInput extends BaseWidget
 		$this->options['id'] .= $this->parentId;
 		$this->widgetOptions['id'] .= $this->parentId;
 		
-		$this->revisionsModel->setScenario('validateNew');
 		switch($this->_enableRevisions)
 		{
 			case true:
+			$this->revisionsModel->setScenario('validateNew');
 			$revisionOptions =  [
 				'role' => $this->options['role'],
 				'id' => $this->options['id'].$this->parentId,

@@ -97,7 +97,7 @@ class Vote extends BaseWidget
 	public function run()
 	{
 		$vote = '';
-		switch(\nitm\models\User::isAdmin())
+		switch(\Yii::$app->user->identity->isAdmin())
 		{
 			case true:
 			break;
@@ -153,7 +153,7 @@ class Vote extends BaseWidget
 			switch(isset($action['adminOnly']) && ($action['adminOnly'] == true))
 			{
 				case true:
-				switch(\Yii::$app->userMeta->isAdmin())
+				switch(\Yii::$app->user->identity->isAdmin())
 				{
 					case true:
 					$action['options']['id'] = $action['options']['id'].$this->parentId;
