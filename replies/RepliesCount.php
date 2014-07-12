@@ -86,7 +86,7 @@ class RepliesCount extends BaseWidget
 			{
 				case true:
 				$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-				$info .= Html::tag('span', " Last by ".$this->model->last->authorUser->getFullName(true, $this->model->last->authorUser), $this->options);
+				$info .= Html::tag('span', " Last by ".$this->model->last->authorUser->fullName(true), $this->options);
 				break;
 			}
 			$info = Html::tag('li', $info, $this->itemOptions);

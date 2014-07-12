@@ -109,7 +109,6 @@ function IssueTracker(items)
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		$.map(this.actions.allowMeta, function (v) {
 			container.find("[role~='"+v+"']").map(function() {
-				console.log(this);
 				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
