@@ -80,7 +80,7 @@ function IssueTracker(items)
 	}
 	
 	this.initCreateUpdateTrigger = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId).parents(self.views.roles.issues);
 		$.map(this.forms.allowCreateUpdateTrigger, function (v) {
 			container.find("[role~='"+v+"']").map(function() {
 				switch(v)
@@ -89,15 +89,16 @@ function IssueTracker(items)
 					$(this).off('click');
 					$(this).on('click', function (e) {
 						e.preventDefault();
-						$.post($(this).attr('href'), 
-							function (result) {
+						$.post($(this).attr('href'), function (result) {
+							$nitm.module('tools').evalScripts(result, function (responseText) {
 								var tab = container.find(self.views.issueUpdateFormTab);
 								var tabContent = $nitm.getObj(tab.find('a').attr('href'));
-								tabContent.html(result);
+								tabContent.html(responseText);
 								self.initCreateUpdate(tabContent.attr('id'));
 								tab.removeClass('hidden');
 								tab.find('a').tab('show');
-						}, 'html');
+							}, 'html');
+						});
 					});
 					break;
 				}
@@ -146,24 +147,24 @@ function IssueTracker(items)
 		{
 			case false:
 			var request = $nitm.doRequest(_form.attr('action'), 
-					data,
-					function (result) {
-						switch(result.action)
-						{		
-							case 'create':
-							self.afterCreate(result, form);
-							break;
-								
-							case 'update':
-							self.afterUpdate(result, form);
-							break;
-						}
-					},
-					function () {
-						$nitm.notify('Error Could not perform IssueTracker action. Please try again', self.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+				data,
+				function (result) {
+					switch(result.action)
+					{		
+						case 'create':
+						self.afterCreate(result, form);
+						break;
+							
+						case 'update':
+						self.afterUpdate(result, form);
+						break;
 					}
-				);
-				break;
+				},
+				function () {
+					$nitm.notify('Error Could not perform IssueTracker action. Please try again', self.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+				}
+			);
+			break;
 		}
 	}
 	
@@ -173,7 +174,7 @@ function IssueTracker(items)
 		if(result.success)
 		{
 			_form.get(0).reset();
-			$nitm.notify("Added new issue. You can add another or view the newly added one", '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+			$nitm.notify("Added new issue. You can add another or view the newly added one", self.classes.success, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
 			if(result.data)
 			{
 				var open = parent.find(self.views.issuesOpenTab).find('.badge');

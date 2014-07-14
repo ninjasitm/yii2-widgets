@@ -52,7 +52,7 @@
 }
 
 .message .message-avatar {
-	width: 72px;
+	width: 56px;
 	height: 100%;
 	font-size: 6px;
 	padding: 0 6px;
@@ -61,7 +61,7 @@
 
 .message .message-avatar img {
 	width: auto;
-	max-width: 60px;
+	max-width: 56px;
 	height: 100%;
 	max-height: 60px;
 	border-raduis: 3px;
