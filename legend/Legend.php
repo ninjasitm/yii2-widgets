@@ -23,6 +23,9 @@ use nitm\widgets\models\BaseWidget;
  */
 class Legend extends BaseWidget
 {
+	public $options = [
+	];
+	
 	/**
 	 * Array containing legend mappint for classes
 	 */
@@ -31,7 +34,7 @@ class Legend extends BaseWidget
 	/*
 	 * HTML options for generating the widget
 	 */
-	public $options = [
+	public $labelOptions = [
 		'class' => 'label',
 		'role' => 'legend',
 	];
@@ -40,16 +43,16 @@ class Legend extends BaseWidget
 	{
 		parent::init();
 		
-		$legend = Html::tag('span', 'Legend:&nbsp;', ['class' => 'pull-left']);
+		$legend = Html::tag('span', 'Legend:&nbsp;', []);
 		foreach ($this->legend as $type => $message) {
 			/* initialize css class for each alert box */
-			$options['class'] = $this->options['class'].' label-'.$type;
+			$options['class'] = $this->labelOptions['class'].' label-'.$type;
 
 			/* assign unique id to each alert box */
 			$options['id'] = $this->getId() . '-' . $type;
 
 			$legend .= Html::tag('span', $message, $options);
 		}
-		echo Html::tag('div', $legend, $this->widgetOptions);
+		echo Html::tag('div', $legend, $this->options);
 	}
 }
