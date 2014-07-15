@@ -4,23 +4,35 @@ function IssueTracker(items)
 	var self = this;
 	var editor;
 	this.classes = {
-		warning: 'bg-warning',
-		success: 'bg-success',
-		information: 'bg-info',
-		error: 'bg-danger',
-		hidden: 'hidden',
+		items: {
+			warning: 'bg-warning',
+			success: 'bg-success',
+			information: 'bg-info',
+			error: 'bg-danger',
+			hidden: 'hidden',
+		},
+		alerts: {
+			warning: 'alert alert-warning',
+			success: 'alert alert-success',
+			information: 'alert alert-info',
+			error: 'alert alert-danger',
+			hidden: 'hidden',
+		},
 	};
 	this.views = {
 		issue: 'issue',
 		issues: 'issues',
 		issuesOpenTab: "[id^='open-issues-tab']",
 		issuesClosedTab: "[id^='closed-issues-tab']",
+		issuesDuplicateTab: "[id^='duplicate-issues-tab']",
+		issuesResolvedTab: "[id^='resolved-issues-tab']",
+		issuesUnresolvedTab: "[id^='unresolved-issues-tab']",
 		issuesOpen: "[id^='open-issues-content']",
 		issuesClosed: "[id^='closed-issues-content']",
 		issueForm: "[id^='issues-form']",
 		issueUpdateForm: "[id^='issues-update-form']",
 		issueUpdateFormTab: "[id^='issues-update-form-tab']",
-		issuesAlerts: "[id^='issues-alerts-link']",
+		issuesAlerts: "[id^='alert']",
 		roles: {
 			issues: "[role='entityIssues']"
 		}
@@ -113,6 +125,8 @@ function IssueTracker(items)
 				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
+					var elem = $(this);
+					$nitm.startSpinner(elem.get(0));
 					$.post($(this).attr('href'), 
 						function (result) { 
 							switch(result.action)
@@ -130,12 +144,21 @@ function IssueTracker(items)
 								break;
 							}
 						}, 'json');
+						$nitm.stopSpinner(elem.get(0));
 				});
 			});
 		});
 	}
 	
 	this.operation = function (form) {
+		/*
+		 * This is to support yii active form validation and prevent multiple submitssions
+		 */
+		try {
+			$data = $(form).data('yiiActiveForm');
+			if(!$data.validated)
+				return false;
+		} catch (error) {}
 		var _form = $(form);
 		var parent = _form.parents(self.views.roles.issues);
 		data = _form.serializeArray();
@@ -161,9 +184,12 @@ function IssueTracker(items)
 					}
 				},
 				function () {
-					$nitm.notify('Error Could not perform IssueTracker action. Please try again', self.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+					$nitm.notify('Error Could not perform IssueTracker action. Please try again', self.classes.alerts.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
 				}
 			);
+			request.done(function () {
+				$nitm.animateSubmit(form, true);
+			});
 			break;
 		}
 	}
@@ -174,7 +200,7 @@ function IssueTracker(items)
 		if(result.success)
 		{
 			_form.get(0).reset();
-			$nitm.notify("Added new issue. You can add another or view the newly added one", self.classes.success, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+			$nitm.notify("Added new issue. You can add another or view the newly added one", self.classes.alerts.success, $(form).parents('div').find(self.views.issuesAlerts).last());
 			if(result.data)
 			{
 				var open = parent.find(self.views.issuesOpenTab).find('.badge');
@@ -184,7 +210,7 @@ function IssueTracker(items)
 		}
 		else
 		{
-			$nitm.notify("Couldn't create new issue", self.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+			$nitm.notify("Couldn't create new issue", self.classes.alerts.error, $(form).parents('div').find(self.views.issuesAlerts).last());
 		}
 	}
 	
@@ -193,12 +219,12 @@ function IssueTracker(items)
 		var parent = _form.parents(self.views.roles.issues);
 		if(result.success)
 		{
-			$nitm.notify("Updated issue sucessfully", self.classes.success, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+			$nitm.notify("Updated issue sucessfully", self.classes.alerts.success, $(form).parents('div').find(self.views.issuesAlerts).last());
 			parent.find(self.views.issueUpdateFormTab).addClass('hidden');
 		}
 		else
 		{
-			$nitm.notify("Couldn't update the issue", self.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+			$nitm.notify("Couldn't update the issue", self.classes.alerts.error, $(form).parents('div').find(self.views.issuesAlerts).last());
 		}
 	}
 	
@@ -208,18 +234,14 @@ function IssueTracker(items)
 		{
 			var element = $nitm.getObj("[id~='"+self.views.issue+result.id+"']");
 			var parent = element.parents(self.views.roles.issues);
-			element.find("[role~='"+self.roles.updateIssue+"']").toggleClass(self.classes.hidden, result.data);
+			element.find("[role~='"+self.roles.updateIssue+"']").toggleClass(self.classes.items.hidden, result.data);
 			var actionElem = element.find("[role~='"+self.roles.closeIssue+"']");
 			actionElem.attr('title', result.title);
 			actionElem.find(':first-child').replaceWith(result.actionHtml);
 			element.removeClass().addClass(result.class);
 			//Move elements between sections and update counters
-			var open = parent.find(self.views.issuesOpenTab).find('.badge');
-			var openValue = (result.data == 1) ? Number(open.html())-1 : Number(open.html())+1;
-			open.html(openValue);
-			var closed = parent.find(self.views.issuesClosedTab).find('.badge');
-			var closedValue = (result.data == 0) ? Number(closed.html())-1 : Number(closed.html())+1;
-			closed.html(closedValue);
+			self.updateCounter(container, self.views.issuesOpenTab, result.data);
+			self.updateCounter(container, self.views.issuesClosedTab, !result.data);
 			element.remove();
 		}
 	}
@@ -233,6 +255,8 @@ function IssueTracker(items)
 			var actionElem = element.find("[role~='"+self.roles.resolveIssue+"']");
 			actionElem.attr('title', result.title);
 			actionElem.find(':first-child').replaceWith(result.actionHtml);
+			self.updateCounter(container, self.views.issuesResolvedTab, result.data);
+			self.updateCounter(container, self.views.issuesUnresolvedTab, !result.data);
 		}
 	}
 	
@@ -245,7 +269,14 @@ function IssueTracker(items)
 			var actionElem = element.find("[role~='"+self.roles.duplicateIssue+"']");
 			actionElem.attr('title', result.title);
 			actionElem.find(':first-child').replaceWith(result.actionHtml);
+			self.updateCounter(container, self.views.issuesDuplicateTab, result.data);
 		}
+	}
+	
+	this.updateCounter = function (parent, tab, increase) {
+		var counter = $nitm.getObj(parent).find(tab).find('.badge');
+		var counterValue = (increase == 1) ? Number(counter.html())+1 : Number(counter.html())-1;
+		counter.html(counterValue);
 	}
 }
 

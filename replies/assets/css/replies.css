@@ -46,24 +46,24 @@
 }
 
 .message .author, .message .reply-to-author {
-	font-size: 14px;
+	font-size: normal;
 	color: black;
 	font-weight: bold;
 }
 
 .message .message-avatar {
-	width: 56px;
-	height: 100%;
+	width: 44px;
+	height: auto;
 	font-size: 6px;
-	padding: 0 6px;
+	padding: 2px;
 	float: left;
 }
 
 .message .message-avatar img {
 	width: auto;
-	max-width: 56px;
+	max-width: 40px;
 	height: 100%;
-	max-height: 60px;
+	max-height: 40px;
 	border-raduis: 3px;
 	margin-left: auto;
 	margin-right: auto;
@@ -160,8 +160,9 @@
 }
 
 .chat .message-avatar {
-	width: 48px;
-	height: 48px;
+	width: 32px;
+	height: 32px;
+	padding: 2px;
 }
 
 .chat .message-avatar img {
