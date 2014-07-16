@@ -208,10 +208,6 @@
 	margin-top: -15px;
 }
 
-.redactor_editor  {
-	box-shadow: inset 2px 2px 6px #999 !important;
-}
-
 .input-group .btn-group > .btn, .btn-group-vertical > .btn {
     position: relative;
 	float: none;

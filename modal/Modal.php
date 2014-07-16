@@ -12,7 +12,7 @@ use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use yii\base\Widget;
 
-class Modal extends Widget
+class Modal extends \yii\bootstrap\Modal
 {	
 	/*
 	 * The size of the widget [large, mediaum, small, normal]
@@ -50,6 +50,11 @@ class Modal extends Widget
 		"class" => "modal-dialog"
 	];
 	
+	public function init()
+	{
+		$this->initOptions();
+	}
+	
 	public function run()
 	{
 		$this->options = array_merge($this->_defaultOptions, $this->options);
@@ -73,10 +78,20 @@ class Modal extends Widget
 			$this->dialogOptions['class'] .= " modal-sm";
 			break;
 		}
-		return Html::tag('div',
-			Html::tag('div', Html::tag('div', $this->content, $this->contentOptions), $this->dialogOptions),
+		return $this->renderTogglebutton().Html::tag('div',
+				Html::tag('div', 
+					Html::tag('div', $this->renderHeader().$this->content, $this->contentOptions), 
+				$this->dialogOptions),
 			$this->options
 		);
+	}
+	
+	protected function renderToggleButton()
+	{
+		$options = isset($this->toggleButton['wrapper']) ? $this->toggleButton['wrapper'] : [];
+		unset($this->toggleButton['wrapper']);
+		$tag = isset($options['tag']) ? $options['tag'] : 'span';
+		return Html::tag($tag, parent::renderToggleButton(), $options);
 	}
 }
 ?>
