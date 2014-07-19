@@ -61,7 +61,7 @@ class RepliesCount extends BaseWidget
 			$this->options['id'] .= $this->parentId;
 			$info = Html::a(
 				Html::tag('span', (int)$this->model->count.' Replies '.Icon::show('eye'), $this->options),
-				'/reply/index/'.$this->parentType."/".$this->parentId."/".urlencode($this->parentKey)."?__format=modal",
+				'/reply/index/'.$this->parentType."/".$this->parentId.(!empty($this->parentKey) ? "/".urlencode($this->parentKey) : '')."?__format=modal",
 				[
 					'data-toggle' => 'modal',
 					'data-target' => '#replies-modal',
