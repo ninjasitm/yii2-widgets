@@ -103,11 +103,11 @@ class Revisions extends BaseWidget
 			//'filterModel' => $searchModel,
 			'columns' => [
 				[
-					'attribute' => 'author',
+					'attribute' => 'author_id',
 					'label' => 'Author',
 					'format' => 'html',
 					'value' => function ($model, $index, $widget) {
-						return $model->authorUser->url();
+						return $model->author()->url();
 					}
 				],
 				'created_at',

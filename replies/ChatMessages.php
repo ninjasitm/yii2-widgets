@@ -119,13 +119,13 @@ class ChatMessages extends BaseWidget
 				break;
 			}
 			$searchModel = new RepliesSearch;
-			$searchModel->withThese = ['replyTo', 'authorUser'];
+			$searchModel->addWith($this->model->withThese);
 			$get = \Yii::$app->request->getQueryParams();
 			$params = array_merge($get, $this->model->constraints);
 			unset($params['type']);
 			unset($params['id']);
 	
-			$dataProvider = $searchModel->search(array_merge($params));
+			$dataProvider = $searchModel->search($params);
 			$dataProvider->setSort([
 				'defaultOrder' => [
 					'id' => SORT_DESC,

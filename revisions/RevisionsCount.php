@@ -36,7 +36,7 @@ class RevisionsCount extends BaseWidget
 	];
 	
 	public function init()
-	{ 
+	{
 		switch(1)
 		{
 			case !($this->model instanceof RevisionsModel) && (($this->parentType == null) || ($this->parentId == null)):
@@ -71,7 +71,7 @@ class RevisionsCount extends BaseWidget
 			if($this->fullDetails)
 			{
 				$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-				$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->fullName(true), $this->options);
+				$info .= Html::tag('span', "Last by ".$this->model->last->author()->fullName(true), $this->options);
 			}
 			$info = Html::tag('li', $info, $this->itemOptions);
 			
