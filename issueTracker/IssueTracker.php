@@ -68,7 +68,7 @@ class IssueTracker extends BaseWidget
 				break;
 			}
 			$searchModel = new IssueSearch;
-			$searchModel->withThese = ['closeUser', 'resolveUser'];
+			$searchModel->addWith(['closedBy', 'resolvedBy']);
 			$get = \Yii::$app->request->getQueryParams();
 			$params = array_merge($get, $this->model->constraints);
 			unset($params['type']);
