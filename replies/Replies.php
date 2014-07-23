@@ -96,33 +96,48 @@ class Replies extends BaseWidget
 	
 	public function run()
 	{
-		switch(($this->model instanceof RepliesModel))
+		$searchModel = new RepliesSearch;
+		$searchModel->addWith(['author', 'replyTo']);
+		$dataProvdier = null;
+		switch(is_array($this->items))
 		{
 			case true:
-			switch(empty($this->parentId))
+			$dataProvider = new \yii\data\ArrayDataProvider(["allModels" => $this->items]);
+			break;
+			
+			default:
+			switch(($this->model instanceof RepliesModel))
 			{
-				/**
-				 * This issue model was initialed through a model
-				 * We need to set the parentId and parentType from the constraints values
-				 */
 				case true:
-				//$this->parentId = $this->model->constraints['parent_id'];
-				//$this->parentType = $this->model->constrain['parent_type'];
+				switch(empty($this->parentId))
+				{
+					/**
+					 * This issue model was initialed through a model
+					 * We need to set the parentId and parentType from the constraints values
+					 */
+					case true:
+					//$this->parentId = $this->model->constraints['parent_id'];
+					//$this->parentType = $this->model->constrain['parent_type'];
+					break;
+				}
+				$get = \Yii::$app->request->getQueryParams();
+				$params = array_merge($get, $this->model->constraints);
+				unset($params['type']);
+				unset($params['id']);
+		
+				$dataProvider = $searchModel->search(array_merge($params));
+				$dataProvider->setSort([
+					'defaultOrder' => [
+						'id' => SORT_DESC,
+					]
+				]);
 				break;
 			}
-			$searchModel = new RepliesSearch;
-			$searchModel->addWith($this->model->withThese);
-			$get = \Yii::$app->request->getQueryParams();
-			$params = array_merge($get, $this->model->constraints);
-			unset($params['type']);
-			unset($params['id']);
-	
-			$dataProvider = $searchModel->search(array_merge($params));
-			$dataProvider->setSort([
-				'defaultOrder' => [
-					'id' => SORT_DESC,
-				]
-			]);
+			break;
+		}
+		switch(is_null($dataProvider))
+		{
+			case false:
 			$replies = $this->getView()->render('@nitm/views/replies/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,

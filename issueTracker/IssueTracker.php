@@ -11,8 +11,8 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\icons\Icon;
 use nitm\models\Replies;
-use nitm\models\Issues as IssueModel;
-use nitm\models\search\Issues as IssueSearch;
+use nitm\models\Issues as IssuesModel;
+use nitm\models\search\Issues as IssuesSearch;
 use nitm\widgets\models\BaseWidget;
 use nitm\widgets\issueTracker\assets\Asset as IssueAsset;
 
@@ -53,27 +53,48 @@ class IssueTracker extends BaseWidget
 	
 	public function run()
 	{
-		switch(($this->model instanceof IssueModel))
+		$dataProvdier = null;
+		$searchModel = new IssuesSearch;
+		$searchModel->addWith($this->model->withThese);
+		switch(is_array($this->items))
 		{
 			case true:
-			switch(empty($this->parentId))
+			$dataProvider = new \yii\data\ArrayDataProvider(["allModels" => $this->items]);
+			break;
+			
+			default:
+			switch(($this->model instanceof IssuesModel))
 			{
-				/**
-				 * This issue model was initialed through a model
-				 * We need to set the parentId and parentType from the constraints values
-				 */
 				case true:
-				//$this->parentId = $this->model->constraints['parent_id'];
-				//$this->parentType = $this->model->constrain['parent_type'];
+				switch(empty($this->parentId))
+				{
+					/**
+					 * This issue model was initialed through a model
+					 * We need to set the parentId and parentType from the constraints values
+					 */
+					case true:
+					//$this->parentId = $this->model->constraints['parent_id'];
+					//$this->parentType = $this->model->constrain['parent_type'];
+					break;
+				}
+				$get = \Yii::$app->request->getQueryParams();
+				$params = array_merge($get, $this->model->constraints);
+				unset($params['type']);
+				unset($params['id']);
+		
+				$dataProvider = $searchModel->search(array_merge($params));
 				break;
 			}
-			$searchModel = new IssueSearch;
-			$searchModel->addWith(['closedBy', 'resolvedBy']);
-			$get = \Yii::$app->request->getQueryParams();
-			$params = array_merge($get, $this->model->constraints);
-			unset($params['type']);
-			unset($params['id']);
-	
+			break;
+		}
+		switch(is_null($dataProvider))
+		{
+			case false:
+			$dataProvider->setSort([
+				'defaultOrder' => [
+					'id' => SORT_DESC,
+				]
+			]);
 			$dataProviderOpen = $searchModel->search(array_merge($params, ['closed' => 0]));
 			$dataProviderClosed = $searchModel->search(array_merge($params, ['closed' => 1]));
 			$dataProviderDuplicate = $searchModel->search(array_merge($params, ['duplicate' => 1]));
@@ -84,9 +105,8 @@ class IssueTracker extends BaseWidget
 			$issues = $this->render('@nitm/views/issue/index', [
 				'dataProviderOpen' => $dataProviderOpen,
 				'dataProviderClosed' => $dataProviderClosed,
-				'dataProviderDuplicate' => $dataProviderDuplicate,
 				'dataProviderResolved' => $dataProviderResolved,
-				'dataProviderUnresolved' => $dataProviderUnresolved,
+				'dataProviderDuplicate' => $dataProviderDuplicate,
 				'searchModel' => $searchModel,
 				'parentId' => $this->parentId,
 				'parentType' => $this->parentType,

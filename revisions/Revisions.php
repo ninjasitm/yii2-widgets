@@ -86,18 +86,15 @@ class Revisions extends BaseWidget
 	
 	public function run()
 	{
-		$this->model->queryFilters['order_by'] = ['id' => SORT_DESC];
+		$dataProvider = new \yii\data\ArrayDataProvider([
+			"allModels" => is_array($this->items) ? $this->items : $this->model->getModels()
+			'pagination' => false,
+		]);
 		switch(\Yii::$app->user->identity->isAdmin())
 		{
 			case true:
 			break;
 		}
-		
-		$dataProvider = new ArrayDataProvider([
-			'allModels' => $this->model->getModels(),
-			'pagination' => false,
-		]);
-		$this->model->queryFilters['order_by'] = ['id' => SORT_DESC];
 		$revisions = GridView::widget([
 			'dataProvider' => $dataProvider,
 			//'filterModel' => $searchModel,
