@@ -36,15 +36,15 @@ class IssueTracker extends BaseWidget
 		switch(1)
 		{
 			case $this->parentType == 'all':
-			$this->model = new IssueModel();
+			$this->model = new IssuesModel();
 			break;
 			
-			case !($this->model instanceof IssueModel) && (($this->parentType == null) || ($this->parentId == null)):
+			case !($this->model instanceof IssuesModel) && (($this->parentType == null) || ($this->parentId == null)):
 			$this->model = null;
 			break;
 			
 			default:
-			$this->model = ($this->model instanceof IssueModel) ? $this->model : IssueModel::findModel([$this->parentId, $this->parentType]);
+			$this->model = ($this->model instanceof IssuesModel) ? $this->model : IssuesModel::findModel([$this->parentId, $this->parentType]);
 			break;
 		}
 		assets\Asset::register($this->getView());
@@ -56,7 +56,9 @@ class IssueTracker extends BaseWidget
 		$dataProvdier = null;
 		$searchModel = new IssuesSearch;
 		$searchModel->addWith($this->model->withThese);
-		switch(is_array($this->items))
+		$get = \Yii::$app->request->getQueryParams();
+		$params = array_merge($get, $this->model->constraints);
+		switch(is_array($this->items) && !empty($this->items))
 		{
 			case true:
 			$dataProvider = new \yii\data\ArrayDataProvider(["allModels" => $this->items]);
@@ -77,8 +79,6 @@ class IssueTracker extends BaseWidget
 					//$this->parentType = $this->model->constrain['parent_type'];
 					break;
 				}
-				$get = \Yii::$app->request->getQueryParams();
-				$params = array_merge($get, $this->model->constraints);
 				unset($params['type']);
 				unset($params['id']);
 		
@@ -95,17 +95,18 @@ class IssueTracker extends BaseWidget
 					'id' => SORT_DESC,
 				]
 			]);
-			$dataProviderOpen = $searchModel->search(array_merge($params, ['closed' => 0]));
-			$dataProviderClosed = $searchModel->search(array_merge($params, ['closed' => 1]));
-			$dataProviderDuplicate = $searchModel->search(array_merge($params, ['duplicate' => 1]));
-			$dataProviderResolved = $searchModel->search(array_merge($params, ['resolved' => 1]));
-			$dataProviderUnresolved = $searchModel->search(array_merge($params, ['resolved' => 0]));
+			$dataProviderOpen = $searchModel->search(array_replace($params, ['closed' => 0]));
+			$dataProviderClosed = $searchModel->search(array_replace($params, ['closed' => 1]));
+			$dataProviderDuplicate = $searchModel->search(array_replace($params, ['duplicate' => 1]));
+			$dataProviderResolved = $searchModel->search(array_replace($params, ['resolved' => 1]));
+			$dataProviderUnresolved = $searchModel->search(array_replace($params, ['resolved' => 0]));
 			$dataProviderOpen->query->orderBy(['id' => SORT_DESC]);
 			$dataProviderClosed->query->orderBy(['closed_at' => SORT_DESC]);
 			$issues = $this->render('@nitm/views/issue/index', [
 				'dataProviderOpen' => $dataProviderOpen,
 				'dataProviderClosed' => $dataProviderClosed,
 				'dataProviderResolved' => $dataProviderResolved,
+				'dataProviderUnresolved' => $dataProviderUnresolved,
 				'dataProviderDuplicate' => $dataProviderDuplicate,
 				'searchModel' => $searchModel,
 				'parentId' => $this->parentId,

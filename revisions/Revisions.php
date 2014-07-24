@@ -87,7 +87,7 @@ class Revisions extends BaseWidget
 	public function run()
 	{
 		$dataProvider = new \yii\data\ArrayDataProvider([
-			"allModels" => is_array($this->items) ? $this->items : $this->model->getModels()
+			"allModels" => (is_array($this->items) && !empty($this->items)) ? $this->items : $this->model->getModels()
 			'pagination' => false,
 		]);
 		switch(\Yii::$app->user->identity->isAdmin())

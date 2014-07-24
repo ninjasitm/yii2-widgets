@@ -99,7 +99,7 @@ class Replies extends BaseWidget
 		$searchModel = new RepliesSearch;
 		$searchModel->addWith(['author', 'replyTo']);
 		$dataProvdier = null;
-		switch(is_array($this->items))
+		switch(is_array($this->items) && !empty($this->items))
 		{
 			case true:
 			$dataProvider = new \yii\data\ArrayDataProvider(["allModels" => $this->items]);
