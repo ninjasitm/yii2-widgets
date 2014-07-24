@@ -98,8 +98,8 @@ class Replies extends BaseWidget
 	{
 		$searchModel = new RepliesSearch;
 		$searchModel->addWith(['author', 'replyTo']);
-		$dataProvdier = null;
-		switch(is_array($this->items) && !empty($this->items))
+		$dataProvider = null;
+		switch(isset($this->items) && is_array($this->items))
 		{
 			case true:
 			$dataProvider = new \yii\data\ArrayDataProvider(["allModels" => $this->items]);
@@ -121,11 +121,11 @@ class Replies extends BaseWidget
 					break;
 				}
 				$get = \Yii::$app->request->getQueryParams();
-				$params = array_merge($get, $this->model->constraints);
+				$params = array_merge($get, $this->model->getConstraints());
 				unset($params['type']);
 				unset($params['id']);
 		
-				$dataProvider = $searchModel->search(array_merge($params));
+				$dataProvider = $searchModel->search($params);
 				$dataProvider->setSort([
 					'defaultOrder' => [
 						'id' => SORT_DESC,
@@ -135,9 +135,9 @@ class Replies extends BaseWidget
 			}
 			break;
 		}
-		switch(is_null($dataProvider))
+		switch(isset($dataProvider))
 		{
-			case false:
+			case true:
 			$replies = $this->getView()->render('@nitm/views/replies/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,

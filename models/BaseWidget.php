@@ -14,7 +14,7 @@ use kartik\icons\Icon;
 
 class BaseWidget extends Widget
 {
-	public $items = [];
+	public $items;
 	public $useModal = true;
 	/**
 	 * Show the count even if the number is 0
