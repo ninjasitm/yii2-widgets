@@ -22,9 +22,10 @@ class RevisionsCount extends BaseWidget
 	 * HTML options for generating the widget
 	 */
 	public $options = [
-		'class' => 'badge',
+		'class' => 'btn btn-sm',
 		'role' => 'revisionsCount',
-		'id' => 'revisions-count'
+		'id' => 'revisions-count',
+		'tag' => 'a'
 	];
 	
 	public $widgetOptions = [
@@ -53,62 +54,22 @@ class RevisionsCount extends BaseWidget
 	public function run()
 	{
 		$this->options['id'] .= $this->parentId;
-		$info = '';
-		switch($this->model->count >= 1)
+		$this->options['class'] .= ' '.($this->model->getCount() >= 1 ? 'btn-primary' : 'btn-transparent');
+		$this->options['label'] = (int)$this->model->getCount().' Revisions '.Icon::show('eye');
+		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/revisions/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal']);
+		$this->options['title'] = \Yii::t('yii', 'View Revisions');
+		$info = \nitm\widgets\modal\Modal::widget([
+			'options' => [
+				'id' => $this->options['id'].'-modal'
+			],
+			'toggleButton' => $this->options,
+		]);
+		if($this->fullDetails)
 		{
-			case true:
-			$this->options['class'] .= " bg-success";
-			$info = Html::a(
-				Html::tag('span', (int)$this->model->count.' Revisions '.Icon::show('eye'), $this->options), 
-				'/revisions/index/'.$this->parentType."/".$this->parentId,
-				[
-					'data-toggle' => 'modal',
-					'data-target' => '#revisions-view-modal',
-					'title' => 'View revisions',
-					'class' => 'btn btn-xs btn-primary'
-				]
-			);
-			if($this->fullDetails)
-			{
-				$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-				$info .= Html::tag('span', "Last by ".$this->model->last->author()->fullName(true), $this->options);
-			}
-			$info = Html::tag('li', $info, $this->itemOptions);
-			
-			$info .= Html::tag(
-				'div', 
-				Html::tag(
-					'div', 
-					Html::tag(
-						'div', 
-						'', 
-						['class' => 'modal-content']
-					), 
-					['class' => 'modal-dialog']
-				), 
-				['class' => 'modal fade', 'id' => 'revisions'.$this->parentId]
-			);
-			$modalView = Html::tag('div',
-				Html::tag('div', 
-					'',
-					[
-						'class' => "modal-content"
-					]
-				),
-				[
-					"role" => "dialog",
-					"class" => "col-md-6 col-lg-6 col-sm-12 col-xs-12 col-md-offset-3 col-lg-offset-3 modal fade",
-					"id" => "revisionsViewModal",
-					"style" => "z-index: 1001"
-				]
-			);
-			$info .= $modalView;
-			break;
-			
-			default:
-			$info = $this->showEmptyCount ? Html::tag('li', Html::tag('span', "0 Revisions", $this->options), $this->itemOptions) : '';
-			break;
+			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
+			$info .= Html::tag('span', "Last by ".$this->model->last->author()->fullName(true), $this->options);
 		}
+		$info = Html::tag('li', $info, $this->itemOptions);
 		echo $info = Html::tag('ul', $info, $this->widgetOptions);
 	}
 }

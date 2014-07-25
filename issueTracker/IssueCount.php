@@ -23,7 +23,7 @@ class IssueCount extends BaseWidget
 	 * HTML options for generating the widget
 	 */
 	public $options = [
-		'class' => 'badge',
+		'class' => 'btn btn-sm',
 		'role' => 'issueCount',
 		'id' => 'issue-count'
 	];
@@ -55,33 +55,26 @@ class IssueCount extends BaseWidget
 	{
 		$this->options['id'] .= $this->parentId;
 		$info = '';
-		switch($this->model instanceof IssuesModel)
+		$this->options['id'] .= $this->parentId;
+		$this->options['class'] .= ' '.($this->model->getCount() >= 1 ? 'btn-primary' : 'btn-transparent');
+		$this->options['label'] = (int)$this->model->getCount().' Issues '.Icon::show('eye');
+		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/issue/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal', IssuesModel::COMMENT_PARAM => $this->enableComments]);
+		$this->options['title'] = \Yii::t('yii', 'View Revisions');
+		$info = \nitm\widgets\modal\Modal::widget([
+			'options' => [
+				'id' => $this->options['id'].'-modal'
+			],
+			'size' => 'large',
+			'header' => 'Issues',
+			'toggleButton' => $this->options,
+		]);
+		if($this->fullDetails)
 		{
-			case true:
-			$this->options['class'] .= " bg-success";
-			$info .= Html::a(
-				Html::tag('span', (int)$this->model->count.' Issues '.Icon::show('eye'), $this->options), 
-				\Yii::$app->urlManager->createUrl(['/issue/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal', IssuesModel::COMMENT_PARAM => $this->enableComments]),
-				[
-					'data-toggle' => 'modal',
-					'data-target' => '#issue-tracker-modal',
-					'title' => 'View issue',
-					'class' => 'btn btn-xs btn-primary'
-				]
-			);
-			if($this->fullDetails)
-			{
-				$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-				$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->fullName(true), $this->options);
-			}
-			$info = Html::tag('li', $info, $this->itemOptions);
-			$info = Html::tag('ul', $info, $this->widgetOptions);
-			break;
-			
-			default:
-			$info = $this->showEmptyCount ? 'Issues: '.Html::tag('span', 0, $this->options) : '';
-			break;
+			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
+			$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->fullName(true), $this->options);
 		}
+		$info = Html::tag('li', $info, $this->itemOptions);
+		$info = Html::tag('ul', $info, $this->widgetOptions);
 		echo $info;
 	}
 }

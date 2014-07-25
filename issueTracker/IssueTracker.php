@@ -25,7 +25,7 @@ class IssueTracker extends BaseWidget
 	 * HTML options for generevision the widget
 	 */
 	public $options = [
-		'class' => 'issues row',
+		'class' => 'issues',
 		'role' => 'entityIssues',
 		'id' => 'issues',
 		'style' => 'font-size:smaller;'
@@ -33,6 +33,7 @@ class IssueTracker extends BaseWidget
 	
 	public function init()
 	{
+		parent::init();
 		switch(1)
 		{
 			case $this->parentType == 'all':
@@ -44,11 +45,10 @@ class IssueTracker extends BaseWidget
 			break;
 			
 			default:
-			$this->model = ($this->model instanceof IssuesModel) ? $this->model : IssuesModel::findModel([$this->parentId, $this->parentType]);
+			$this->model = ($this->model instanceof IssuesModel) ? $this->model : (new IssuesModel(['initSearchClass' => false]))->findModel([$this->parentId, $this->parentType]);
 			break;
 		}
 		assets\Asset::register($this->getView());
-		parent::init();
 	}
 	
 	public function run()

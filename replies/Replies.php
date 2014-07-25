@@ -84,7 +84,7 @@ class Replies extends BaseWidget
 			break;
 			
 			default:
-			$this->model = ($this->model instanceof RepliesModel) ? $this->model : RepliesModel::findModel([$this->parentId, $this->parentType, $this->parentKey]);
+			$this->model = ($this->model instanceof RepliesModel) ? $this->model : (new RepliesModel(['initSearchClass' => false]))->findModel([$this->parentId, $this->parentType, $this->parentKey]);
 			break;
 		}
 		parent::init();

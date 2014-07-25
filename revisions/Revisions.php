@@ -78,7 +78,7 @@ class Revisions extends BaseWidget
 			break;
 			
 			default:
-			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : RevisionsModel::findModel([$this->parentId, $this->parentType]);
+			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : (new RevisionsModel(['initSearchClass' => false]))->findModel([$this->parentId, $this->parentType]);
 			break;
 		}
 		parent::init();
@@ -87,7 +87,7 @@ class Revisions extends BaseWidget
 	public function run()
 	{
 		$dataProvider = new \yii\data\ArrayDataProvider([
-			"allModels" => (is_array($this->items) && !empty($this->items)) ? $this->items : $this->model->getModels()
+			"allModels" => (is_array($this->items) && !empty($this->items)) ? $this->items : $this->model->getModels(),
 			'pagination' => false,
 		]);
 		switch(\Yii::$app->user->identity->isAdmin())

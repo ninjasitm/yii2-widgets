@@ -21,7 +21,7 @@ class RepliesCount extends BaseWidget
 	 * HTML options for generating the widget
 	 */
 	public $options = [
-		'class' => 'badge',
+		'class' => 'btn btn-sm',
 		'role' => 'replyCount',
 		'id' => 'reply-count'
 	];
@@ -51,44 +51,41 @@ class RepliesCount extends BaseWidget
 	
 	public function run()
 	{
-		switch($this->model instanceof RepliesModel)
-		{	
-			default:
-			$this->options['id'] .= $this->parentId;
-			$info = Html::a(
-				Html::tag('span', (int)$this->model->count.' Replies '.Icon::show('eye'), $this->options),
-				'/reply/index/'.$this->parentType."/".$this->parentId.(!empty($this->parentKey) ? "/".urlencode($this->parentKey) : '')."?__format=modal",
+		$this->options['id'] .= $this->parentId;
+		$this->options['class'] .= ' '.($this->model->getCount() >= 1 ? 'btn-primary' : 'btn-transparent');
+		$this->options['label'] = (int)$this->model->getCount().' Replies '.Icon::show('eye');
+		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/reply/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal']);
+		$this->options['title'] = \Yii::t('yii', 'View Revisions');
+		$info = \nitm\widgets\modal\Modal::widget([
+			'options' => [
+				'id' => $this->options['id'].'-modal'
+			],
+			'size' => 'large',
+			'header' => 'Comments',
+			'toggleButton' => $this->options,
+		]);
+		$new = $this->model->hasNew();
+		switch($new)
+		{
+			case true:
+			$info .= " New: ".Html::a(
+				Html::tag('span', $new),
+				"#",
 				[
-					'data-toggle' => 'modal',
-					'data-target' => '#replies-modal',
-					'title' => 'View issue',
-					'class' => 'btn btn-xs btn-primary'
+					'class' => 'btn btn-xs btn-success'
 				]
 			);
-			$new = $this->model->hasNew();
-			switch($new)
-			{
-				case true:
-				$info .= " New: ".Html::a(
-					Html::tag('span', $new, $this->options),
-					"#",
-					[
-						'class' => 'btn btn-xs btn-primary'
-					]
-				);
-				break;
-			}
-			switch(((int)$this->model->count >= 1) && ($this->model->last->author() instanceof User) && $this->fullDetails)
-			{
-				case true:
-				$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-				$info .= Html::tag('span', " Last by ".$this->model->last->author()->fullName(true), $this->options);
-				break;
-			}
-			$info = Html::tag('li', $info, $this->itemOptions);
 			break;
 		}
-		echo $info = Html::tag('ul', $info, $this->widgetOptions);
+		switch(((int)$this->model->getCount() >= 1) && ($this->model->last instanceof RepliesModel) && $this->fullDetails)
+		{
+			case true:
+			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
+			$info .= Html::tag('span', " Last by ".$this->model->last->author()->fullName(true), $this->options);
+			break;
+		}
+		$info = Html::tag('li', $info, $this->itemOptions);
+		echo Html::tag('ul', $info, $this->widgetOptions);
 	}
 }
 ?>

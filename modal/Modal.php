@@ -58,6 +58,7 @@ class Modal extends \yii\bootstrap\Modal
 	public function run()
 	{
 		$this->options = array_merge($this->_defaultOptions, $this->options);
+		//$this->options['id'] = $this->options['id'].uniqid();
 		$this->contentOptions = array_merge($this->_defaultContentOptions, $this->contentOptions);
 		$this->dialogOptions = array_merge($this->_defaultDialogOptions, $this->dialogOptions);
 		//Merge the class information in a unique manner to prevent duplicate classes
@@ -90,6 +91,7 @@ class Modal extends \yii\bootstrap\Modal
 	{
 		$options = isset($this->toggleButton['wrapper']) ? $this->toggleButton['wrapper'] : [];
 		unset($this->toggleButton['wrapper']);
+		$this->toggleButton['data-target'] = '#'.$this->options['id'];
 		$tag = isset($options['tag']) ? $options['tag'] : 'span';
 		return Html::tag($tag, parent::renderToggleButton(), $options);
 	}
