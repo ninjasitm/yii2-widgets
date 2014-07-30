@@ -3,7 +3,7 @@
 	display: inline !important;
 	left: 0.05em !important;
 	top: auto !important;
-	font-size: 2em;
+	font-size: 1em;
 	background-color: transparent;
 	z-index: 1043;
 	border-radius: 50%;
@@ -15,7 +15,7 @@ a .activity {
 
 .activity-right {
 	left: auto !important;
-	right: -0.5 !important;
+	right: -0.05em !important;
 }
 
 .activity-top {
@@ -24,7 +24,7 @@ a .activity {
 }
 
 .activity-bottom {
-	bottom: -0.5em !important;
+	bottom: -0.25em !important;
 }
 
 .activity-error, .activity-new {
@@ -47,5 +47,5 @@ a .activity {
 }
 
 .activity-lg {
-	font-size: 4em;
+	font-size: 2em;
 }

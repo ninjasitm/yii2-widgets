@@ -23,15 +23,12 @@ class RepliesCount extends BaseWidget
 	public $options = [
 		'class' => 'btn btn-sm',
 		'role' => 'replyCount',
-		'id' => 'reply-count'
+		'id' => 'reply-count',
+		'tag' => 'a'
 	];
 	
 	public $widgetOptions = [
-		'class' => 'list-group'
-	];
-	
-	public $itemOptions = [
-		'class' => 'list-group-item'
+		'class' => 'btn-group'
 	];
 	
 	public function init()
@@ -55,7 +52,7 @@ class RepliesCount extends BaseWidget
 		$this->options['class'] .= ' '.($this->model->getCount() >= 1 ? 'btn-primary' : 'btn-transparent');
 		$this->options['label'] = (int)$this->model->getCount().' Replies '.Icon::show('eye');
 		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/reply/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal']);
-		$this->options['title'] = \Yii::t('yii', 'View Revisions');
+		$this->options['title'] = \Yii::t('yii', 'View Replies');
 		$info = \nitm\widgets\modal\Modal::widget([
 			'options' => [
 				'id' => $this->options['id'].'-modal'
@@ -65,16 +62,18 @@ class RepliesCount extends BaseWidget
 			'toggleButton' => $this->options,
 		]);
 		$new = $this->model->hasNew();
-		switch($new)
+		switch($new >= 1)
 		{
 			case true:
-			$info .= " New: ".Html::a(
-				Html::tag('span', $new),
-				"#",
-				[
-					'class' => 'btn btn-xs btn-success'
-				]
-			);
+			$new = \nitm\widgets\activityIndicator\ActivityIndicator::widget([
+				'type' => 'new',
+				'position' => 'top right',
+				'text' => Html::tag('span', $new." new")
+			]);
+			break;
+			
+			default:
+			$new = '';
 			break;
 		}
 		switch(((int)$this->model->getCount() >= 1) && ($this->model->last instanceof RepliesModel) && $this->fullDetails)
@@ -84,8 +83,7 @@ class RepliesCount extends BaseWidget
 			$info .= Html::tag('span', " Last by ".$this->model->last->author()->fullName(true), $this->options);
 			break;
 		}
-		$info = Html::tag('li', $info, $this->itemOptions);
-		echo Html::tag('ul', $info, $this->widgetOptions);
+		echo Html::tag('div', $info, $this->widgetOptions).$new;
 	}
 }
 ?>

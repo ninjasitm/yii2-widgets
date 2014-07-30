@@ -25,15 +25,12 @@ class IssueCount extends BaseWidget
 	public $options = [
 		'class' => 'btn btn-sm',
 		'role' => 'issueCount',
-		'id' => 'issue-count'
+		'id' => 'issue-count',
+		'tag' => 'a'
 	];
 	
 	public $widgetOptions = [
-		'class' => 'list-group'
-	];
-	
-	public $itemOptions = [
-		'class' => 'list-group-item'
+		'class' => 'btn-group'
 	];
 	
 	public function init()
@@ -54,12 +51,10 @@ class IssueCount extends BaseWidget
 	public function run()
 	{
 		$this->options['id'] .= $this->parentId;
-		$info = '';
-		$this->options['id'] .= $this->parentId;
 		$this->options['class'] .= ' '.($this->model->getCount() >= 1 ? 'btn-primary' : 'btn-transparent');
 		$this->options['label'] = (int)$this->model->getCount().' Issues '.Icon::show('eye');
 		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/issue/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal', IssuesModel::COMMENT_PARAM => $this->enableComments]);
-		$this->options['title'] = \Yii::t('yii', 'View Revisions');
+		$this->options['title'] = \Yii::t('yii', 'View Issues');
 		$info = \nitm\widgets\modal\Modal::widget([
 			'options' => [
 				'id' => $this->options['id'].'-modal'
@@ -68,14 +63,27 @@ class IssueCount extends BaseWidget
 			'header' => 'Issues',
 			'toggleButton' => $this->options,
 		]);
+		$new = $this->model->hasNew();
+		switch($new >= 1)
+		{
+			case true:
+			$new = \nitm\widgets\activityIndicator\ActivityIndicator::widget([
+				'type' => 'new',
+				'position' => 'top right',
+				'text' => Html::tag('span', $new." new")
+			]);
+			break;
+			
+			default:
+			$new = '';
+			break;
+		}
 		if($this->fullDetails)
 		{
 			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
 			$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->fullName(true), $this->options);
 		}
-		$info = Html::tag('li', $info, $this->itemOptions);
-		$info = Html::tag('ul', $info, $this->widgetOptions);
-		echo $info;
+		return Html::tag('div', $info, $this->widgetOptions).$new;
 	}
 }
 ?>

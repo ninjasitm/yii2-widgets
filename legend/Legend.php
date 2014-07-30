@@ -47,6 +47,10 @@ class Legend extends BaseWidget
 		foreach ($this->legend as $type => $message) {
 			/* initialize css class for each alert box */
 			$options['class'] = $this->labelOptions['class'].' label-'.$type;
+			if($type == 'normal')
+				$options['style'] = 'color:black';
+			else 
+				$options['style'] = '';
 
 			/* assign unique id to each alert box */
 			$options['id'] = $this->getId() . '-' . $type;

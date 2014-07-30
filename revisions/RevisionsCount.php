@@ -29,11 +29,7 @@ class RevisionsCount extends BaseWidget
 	];
 	
 	public $widgetOptions = [
-		'class' => 'list-group'
-	];
-	
-	public $itemOptions = [
-		'class' => 'list-group-item'
+		'class' => 'btn-group'
 	];
 	
 	public function init()
@@ -64,13 +60,27 @@ class RevisionsCount extends BaseWidget
 			],
 			'toggleButton' => $this->options,
 		]);
+		$new = $this->model->hasNew();
+		switch($new >= 1)
+		{
+			case true:
+			$new = \nitm\widgets\activityIndicator\ActivityIndicator::widget([
+				'type' => 'new',
+				'position' => 'top right',
+				'text' => Html::tag('span', $new." new")
+			]);
+			break;
+			
+			default:
+			$new = '';
+			break;
+		}
 		if($this->fullDetails)
 		{
 			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
 			$info .= Html::tag('span', "Last by ".$this->model->last->author()->fullName(true), $this->options);
 		}
-		$info = Html::tag('li', $info, $this->itemOptions);
-		echo $info = Html::tag('ul', $info, $this->widgetOptions);
+		echo $info = Html::tag('div', $info, $this->widgetOptions).$new;
 	}
 }
 ?>
