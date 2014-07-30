@@ -61,6 +61,9 @@ class Alerts extends \yii\base\Widget
 					'id' => SORT_DESC,
 				]
 			]);
+			$dataProvider->query->andWhere([
+				'user_id' => \Yii::$app->user->getId()
+			]);
 			$alerts = $this->getView()->render('@nitm/views/alerts/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
