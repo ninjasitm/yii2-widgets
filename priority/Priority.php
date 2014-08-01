@@ -50,7 +50,7 @@ class Priority extends BaseWidget
 	 */
 	public $addonType;
 	public $inputsInline;
-	public $fieldName = 'id';
+	public $attribute = 'id';
 	
 	/*
 	 * User HTML options for generating the widget
@@ -152,9 +152,8 @@ class Priority extends BaseWidget
 		$items = [];
 		$itemsLabels = [];
 		$form = $this->form;
-		$fieldName = $this->fieldName;
-		$this->model->$fieldName = !$this->model->$fieldName ? 'normal' : $this->model->$fieldName;
-		echo $this->model->$fieldName;
+		$attribute = $this->attribute;
+		$this->model->$attribute = !$this->model->$attribute ? 'normal' : $this->model->$attribute;
 		foreach($this->priorities as $name=>$priority)
 		{
 			$text = isset($priority['text']) ? $priority['text'] : ucfirst($name);
@@ -195,7 +194,7 @@ class Priority extends BaseWidget
 				'url' => '#'
 			];
 		}
-		$itemsLabels[$this->model->$fieldName]['options']['class'] .= ' active';
+		$itemsLabels[$this->model->$attribute]['options']['class'] .= ' active';
 		$this->options['inline'] = $this->inputsInline;
 		switch($this->addonType)
 		{
@@ -216,10 +215,9 @@ class Priority extends BaseWidget
 				$itemOptions = [
 					'value' => $value	
 				];
-				//return Html::label(Html::input('radio', $name, $value, $itemOptions).' '. $label['label'], null, $itemsLabels[$value]['options']);
 				return Html::label(Html::radio($name, $checked, $itemOptions).' '. $label['label'], null, $itemsLabels[$value]['options']);
 			};
-			$ret_val = $this->form->field($this->model, $this->fieldName)->radioList($itemsLabels, $this->options)->label("Priority", ['class' => 'sr-only']);
+			$ret_val = $this->form->field($this->model, $this->attribute)->radioList($itemsLabels, $this->options)->label("Priority", ['class' => 'sr-only']);
 			break;
 			
 			case 'checkboxlist':
@@ -228,7 +226,7 @@ class Priority extends BaseWidget
 					'class' => 'btn'
 				]
 			];
-			$ret_val = $this->form->field($this->model, $this->fieldName, [
+			$ret_val = $this->form->field($this->model, $this->attribute, [
 				'options' => [
 					'class' => 'btn-group',
 					'data-toggle' => 'buttons',
@@ -236,12 +234,13 @@ class Priority extends BaseWidget
 			])->checkBoxList($items, $this->options);
 			break;
 			
-			default:	//Return as buttons by default
-			$ret_val = implode(PHP_EOL, array_map(function ($item) use ($model, $form, $fieldName){
-				unset($item['url']);
-				$item['options']['name'] = $model::formName()."[$fieldName]";
-				$item['options']['id'] = strtolower($model::formName()."-$fieldName");
-				return \yii\bootstrap\Button::widget($item) ;
+			default:	
+			//Return as buttons by default
+			$model = $this->model;
+			$ret_val = implode(PHP_EOL, array_map(function ($item) use ($model, $form, $attribute){
+				//$item['options']['name'] = $model::formName()."[$attribute]";
+				$item['options']['id'] = strtolower($model::formName()."-$attribute");
+				return Html::tag('button', $item['label'], $item['options']) ;
 			}, $itemsLabels));
 			break;
 		}
@@ -257,7 +256,8 @@ class Priority extends BaseWidget
 			$text = isset($priority['text']) ? $priority['text'] : ucfirst($name);
 			$priorityOptions = isset($this->_defaultPriorities[$name]) ? $this->_defaultPriorities[$name] : $this->defaultPriorities['normal'];
 			$options = isset($priority['options']) ? array_merge($priorityOptions, $priority['options']) : $priorityOptions;
-			$options['class'] = 'btn-'.$options['class'];
+			$options['class'] = 'btn btn-'.$options['class'];
+			//$options['name'] = $this->model->formName().'['.$this->attribute.']';
 			switch($this->size)
 			{
 				case 'small':
