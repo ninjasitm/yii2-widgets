@@ -13,12 +13,14 @@ function Vote(items)
 	this.views = {
 		containers: {
 				vote: 'vote',
-				upVote: 'vote-up',
-				downVote: 'vote-down',
 		}
 	};
 	this.elements = {
 		allowVote: ['voteUp', 'voteDown'],
+		vote: {
+			up: 'vote-up',
+			down: 'vote-down',
+		},
 		actions : {
 			up: '/vote/up',
 			down: '/vote/down',
@@ -41,7 +43,6 @@ function Vote(items)
 		var container = (container == undefined) ? 'body' : container;
 		this.elements.allowVote.map(function (v) {
 			$(container+" "+"[role='"+v+"']").map(function() {
-				alert('here');
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					self.operation(this);
@@ -56,40 +57,47 @@ function Vote(items)
 		data.push({'name':'getHtml', 'value':true});
 		data.push({'name':'do', 'value':true});
 		data.push({'name':'ajax', 'value':true});
-		switch(!$(form).attr('action'))
+		switch(!$(form).attr('href'))
 		{
 			case false:
-			var request = doRequest($(form).attr('href'), 
-					data,
-					function (result) {
-						self.aftervote(result);
-					},
-					function () {
-						notify('Error Could not perform Vote action. Please try again', self.classes.error, false);
-					}
-				);
-				break;
+			var request = $nitm.doRequest($(form).attr('href'), 
+				data,
+				function (result) {
+					self.afterVote(result);
+				},
+				function () {
+					$nitm.notify('Error Could not perform Vote action. Please try again', self.classes.error, false);
+				},
+				function () {
+					$nitm.notify('Error Could not perform Vote action. Please try again', self.classes.error, false);
+				},
+				null,
+				true
+			);
+			break;
 		}
 	}
 	
 	this.afterVote = function (result) {
 		if(result.success)
 		{
+			var $down = $nitm.getObj(self.elements.vote.down+result.id);
+			var $up = $nitm.getObj(self.elements.vote.up+result.id);
 			switch(result.atMin)
 			{
 				case true:
 				//Hide the downvote button
-				getObj(upid).hide('slow');
-				getObj(upid).attr('oldonclick', getObj(downid).attr('onclick'));
-				getObj(upid).click(void(0));
+				$down.hide('slow');
+				$down.attr('oldonclick', $down.attr('onclick'));
+				$down.click(void(0));
 				break;
 				
 				default:
-				switch(getObj(upid).css('display'))
+				switch($down.css('display'))
 				{
 					case 'none':
-					getObj(upid).show('slow');
-					getObj(upid).click(getObj(downid).attr('oldonclick'));
+					$down.show('slow');
+					$down.click($up.attr('oldonclick'));
 					break;
 				}
 				break;
@@ -98,25 +106,32 @@ function Vote(items)
 			{
 				case true:
 				//Hide the upvote button
-				getObj(downid).hide('slow');
-				getObj(downid).attr('oldonclick', getObj(downid).attr('onclick'));
-				getObj(downid).click(void(0));
+				$up.hide('slow');
+				$up.attr('oldonclick', $down.attr('onclick'));
+				$up.click(void(0));
 				break;
 				
 				default:
-				switch(getObj(downid).css('display'))
+				switch($up.css('display'))
 				{
 					case 'none':
-					getObj(downid).show('slow');
-					getObj(downid).click(getObj(downid).attr('oldonclick'));
+					$up.show('slow');
+					$up.click($up.attr('oldonclick'));
 					break;
 				}
 				break;
 			}
 			try {
-				getObj('percent'+id).html(Math.round(result['score']*100));
-				getObj('indicator'+id).css('background', 'rgba(255,51,0,'+result['score']+')');
-			}catch(error) {}
+				$nitm.getObj('vote-value-positive'+result.id).html(Math.round(result.value.positive));
+				$nitm.getObj('indicator'+result.id).css('background', 'rgba(255,51,0,'+result.value.positive+')');
+				$nitm.getObj('vote-value-negative'+result.id).html(Math.round(result.value.negative));
+				$nitm.getObj("[role~='voteIndicator"+result.id+"']").css('background-color', 'rgba(255,51,0,'+result.value.ratio+')');
+			}catch(error) {
+				try {
+					$nitm.getObj('percent'+result.id).html(Math.round(result.value.positive));
+					$nitm.getObj("[role~='voteIndicator"+result.id+"']").css('background-color', 'rgba(255,51,0,'+result.value.ratio+')');
+				}catch(error) {}
+			}
 		}
 	}
 }

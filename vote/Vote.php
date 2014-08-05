@@ -85,7 +85,10 @@ class Vote extends BaseWidget
 	public function init()
 	{
 		if (!($this->model instanceof VoteModel) && ($this->parentType == null) || ($this->parentId == null)) {
-			$this->model = null;
+			$this->model = new VoteModel([
+				'parent_id' => $this->parentId,
+				'parent_type' => $this->parentType
+			]);
 		}
 		else 
 		{
@@ -102,26 +105,25 @@ class Vote extends BaseWidget
 			case true:
 			break;
 		}
-		$this->rating = $this->model->getRating();
-		switch(isset($this->rating['negative']))
+		switch(VoteModel::$individualCounts)
 		{
 			case true:
 			$positive = Html::tag(
 				'div',
 				Html::tag(
 					'strong', 
-					$this->rating['positive'], 
-					['id' => 'vote-value-positive'.$this->model->getId()]
-				).($this->model->allowMultiple() ? '' : "%"),
+					$this->model->rating()['positive'], 
+					['id' => 'vote-value-positive'.$this->parentId]
+				).(VoteModel::$usePercentages ? '%' : ""),
 				['class' => 'text-success col-md-6 col-lg-6']
 			);
 			$negative = Html::tag(
 				'div',
 				Html::tag(
 					'strong', 
-					$this->rating['negative'], 
-					['id' => 'vote-value-negative'.$this->model->getId()]
-				).($this->model->allowMultiple() ? '' : "%"),
+					$this->model->rating()['negative'], 
+					['id' => 'vote-value-negative'.$this->parentId]
+				).(VoteModel::$usePercentages ? '%' : ""),
 				['class' => 'text-danger col-md-6 col-lg-6']
 			);
 			break;
@@ -130,9 +132,9 @@ class Vote extends BaseWidget
 			$negative = '';
 			$positive = Html::tag(
 				'strong', 
-				$this->rating['positive'], 
-				['id' => 'vote-value-positive'.$this->model->getId()]
-			).($this->model->allowMultiple() ? '' : "%");
+				$this->model->rating()['positive'], 
+				['id' => 'vote-value-positive'.$this->parentId]
+			).(VoteModel::$usePercentages ? "%" :'');
 			break;
 		}
 		$vote .= Html::tag('div', 
@@ -141,7 +143,7 @@ class Vote extends BaseWidget
 		);
 		$vote .= $this->getActions();
 		$this->widgetOptions['id'] .= $this->parentId;
-		echo Html::tag('div', $vote, $this->widgetOptions);
+		return Html::tag('div', $vote, $this->widgetOptions);
 	}
 	
 	public function getActions()
@@ -174,9 +176,9 @@ class Vote extends BaseWidget
 				$action['options']['id'] = $action['options']['id'].$this->parentId;
 				switch(1)
 				{
-					case ($name == 'up') && (($this->rating['positive'] >= $this->model->getMax()) || ($this->model->currentUserVoted($name))):
-					case ($name == 'down') && (($this->rating['positive'] <= 0) || ($this->model->currentUserVoted($name))):
-					$action['options']['class'] .= ' hidden';
+					case ($name == 'up') && (($this->model->rating()['positive'] >= $this->model->getMax()) || ($this->model->currentUserVoted($name))):
+					case ($name == 'down') && (($this->model->rating()['positive'] <= 0) || ($this->model->currentUserVoted($name))):
+					$action['options']['style'] = 'display:none';
 					break;
 				}
 				$ret_val .= Html::a(

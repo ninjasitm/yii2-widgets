@@ -19,14 +19,18 @@ function Rating(items)
 	};
 	this.elements = {
 		allowRating: ['ratingUp', 'ratingDown'],
+		vote: {
+			up: 'rate-up',
+			down: 'rate-down',
+		},
 		actions : {
 			up: '/rating/up',
 			down: '/rating/down',
 		},
 	};
 	this.defaultInit = [
-					'initRating',
-				];
+		'initRating',
+	];
 
 	this.init = function () {
 		this.defaultInit.map(function (method, key) {
@@ -74,6 +78,8 @@ function Rating(items)
 	this.afterrating = function (result) {
 		if(result.success)
 		{
+			var $down = $nitm.getObj(self.elements.vote.down+result.id);
+			var $up = $nitm.getObj(self.elements.vote.up+result.id);
 			switch(result.at)
 			{
 				case 'max':

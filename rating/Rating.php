@@ -124,7 +124,7 @@ class Rating extends BaseWidget
 		$rating .= Html::tag('div', 
 			Html::tag(
 				'strong', 
-				$r->getRating($this->model), 
+				$r->rating($this->model), 
 				['id' => 'rating-value'.$this->model->getUnique()]
 			)."%",
 			['class' => 'center-block text-center']

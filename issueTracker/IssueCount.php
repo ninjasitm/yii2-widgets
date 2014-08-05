@@ -34,7 +34,7 @@ class IssueCount extends BaseWidget
 	];
 	
 	public function init()
-	{ 
+	{
 		switch(1)
 		{
 			case !($this->model instanceof IssuesModel) && (($this->parentType == null) || ($this->parentId == null)):
