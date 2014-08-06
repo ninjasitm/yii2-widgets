@@ -48,6 +48,7 @@ function Alerts () {
 			$(this).on('click',function(event) {
 				event.preventDefault();
 				var button = this;
+				alert("Deleting");
 				$.post($(this).data('action'), function(result) {
 					self.afterDelete(result, button);
 				});

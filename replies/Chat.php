@@ -9,6 +9,7 @@ namespace nitm\widgets\replies;
 
 use Yii;
 use yii\helpers\Html;
+use yii\bootstrap\Tabs;
 use nitm\widgets\models\BaseWidget;
 use nitm\models\User;
 use nitm\models\Replies as RepliesModel;
@@ -96,6 +97,7 @@ class Chat extends BaseWidget
 		]);
 		$this->updateOptions = array_merge($this->_updateOptions, $this->updateOptions);
 		parent::init();
+		assets\Asset::register($this->getView());
 	}
 	
 	public function run()
@@ -136,26 +138,88 @@ class Chat extends BaseWidget
 				
 				default:
 				$newBadge = '';
-				$newMessage = '';
-				$newClass = "";
+				$newMessage = 'No new messages';
+				$newClass = "bg-transparent";
 				break;
 		}
-		$ret_val = Html::tag('ul', 
-			Html::tag('li', Html::a('Messages'.$newBadge, \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', RepliesModel::FORM_PARAM => true]), [
-				'id' => 'chat-messages-nav', 
-				'class' => $newClass,
-			]), [
-				'role' => 'visibility',
-				'data-type' => 'html',
-				'data-id' => '#chat-messages-container',
-				'data-on' => '#chat-messages-pane:hidden',
-				'data-toggle' => '#chat-messages-pane',
-				'data-url' =>  \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', RepliesModel::FORM_PARAM => true])
-			]).
-			Html::tag('li', Html::a($this->miscPane['title'], '#chat-misc-pane', ['data-toggle' => '']), ['id' => 'chat-misc-nav']).
-			Html::tag('li', Html::a($newMessage, '#', ['id' => 'chat-info-pane', 'class' => 'text-warning'])),
-			$this->navigationOptions
-		);
+		$uniqid = uniqid();
+		$ret_val = Tabs::widget([
+			'options' => [
+				'id' => 'nitm-chat-widget'.$uniqid,
+			],
+			'encodeLabels' => false,
+			'items' => [
+				[
+					'label' => 'Messages '.$newBadge,
+					'content' =>Html::tag('div', '',
+						[
+							'id' => 'chat-widget-container'.$uniqid,
+							'role' => 'chatParent',
+							'id' => 'chat'.$uniqid,
+							'class' => 'chat col-md-4 col-lg-4',
+							'style' => 'z-index: 10000; position: fixed;top: 6px; right: 6px;bottom: 40px;overflow: hidden;padding: 0px;box-shadow: 2px 2px 15px #000;'
+						]
+					),
+					'options' => [
+						'id' => 'chat-widget-messages'.$uniqid
+					],
+					'headerOptions' => [
+						'id' => 'chat-widget-messages-tab'.$uniqid
+					],
+					'linkOptions' => [
+						'role' => 'visibility',
+						'data-type' => 'html',
+						'data-on' => '#chat-widget-messages'.$uniqid.':hidden',
+						'data-id' => '#chat'.$uniqid,
+						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\models\Replies::FORM_PARAM => true]),
+						'id' => 'chat-widget-messages-link'.$uniqid
+					]
+				],
+				[
+					'label' => 'Alerts',
+					'content' =>Html::tag('div', '',
+						[
+							'role' => 'chatNotificationsParent',
+							'id' => 'chat-notifications'.$uniqid,
+							'class' => 'well col-md-4 col-lg-4',
+							'style' => 'z-index: 10000; position: fixed;top: 6px; right: 6px;bottom: 40px;overflow: hidden;padding: 0px;box-shadow: 2px 2px 15px #000;'
+						]
+					),
+					'options' => [
+						'id' => 'chat-widget-notifications'.$uniqid
+					],
+					'headerOptions' => [
+						'id' => 'chat-widget-notifications-tab'.$uniqid
+					],
+					'linkOptions' => [
+						'role' => 'visibility',
+						'data-type' => 'html',
+						'data-on' => '#chat-widget-notifications'.$uniqid.':hidden',
+						'data-id' => '#chat-notifications'.$uniqid,
+						'data-url' => \Yii::$app->urlManager->createUrl(['/alerts/notifications', '__format' => 'html']),
+						'id' => 'chat-widget-notifications-link'.$uniqid
+					]
+				],
+				[
+					'label' => $newMessage,
+					'active' => true,
+					'content' =>Html::tag('div', '',
+						[
+							'id' => 'chat-widget-info'.$uniqid,
+						]
+					),
+					'options' => [
+						'id' => 'chat-widget-info'.$uniqid,
+					],
+					'headerOptions' => [
+						'id' => 'chat-widget-info-tab'.$uniqid
+					],
+					'linkOptions' => [
+						'href' => '#'
+					]
+				],
+			]
+		]);
 		return $ret_val;
 	}
 }

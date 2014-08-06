@@ -12,7 +12,7 @@ use yii\helpers\Html;
 use nitm\models\Alerts;
 use kartik\icons\Icon;
 
-class AlertsForm extends \yii\base\Widget
+class AlertsList extends \yii\base\Widget
 {	
 	public $model;
 	public $inline = true;
@@ -21,9 +21,9 @@ class AlertsForm extends \yii\base\Widget
 	 * HTML options for generating the widget
 	 */
 	public $options = [
-		'class' => 'alerts',
-		'role' => 'alertsFormContainer',
-		'id' => 'alertsForm'
+		'class' => 'alerts-list',
+		'role' => 'alertsListContainer',
+		'id' => 'alertsList'
 	];
 	
 	public function init()
