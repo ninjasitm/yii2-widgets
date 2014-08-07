@@ -12,7 +12,7 @@ function Vote(items)
 	};
 	this.views = {
 		containers: {
-				vote: 'vote',
+			vote: 'vote',
 		}
 	};
 	this.elements = {
@@ -27,22 +27,22 @@ function Vote(items)
 		},
 	};
 	this.defaultInit = [
-					'initVote',
-				];
+		'initVote',
+	];
 
-	this.init = function () {
+	this.init = function (containerId) {
 		this.defaultInit.map(function (method, key) {
 			if(typeof self[method] == 'function')
 			{
-				self[method]();
+				self[method](containerId);
 			}
 		});
 	}
 	
-	this.initVote = function (container) {
-		var container = (container == undefined) ? 'body' : container;
+	this.initVote = function (containerId) {
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		this.elements.allowVote.map(function (v) {
-			$(container+" "+"[role='"+v+"']").map(function() {
+			$(container).find("[role='"+v+"']").map(function() {
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					self.operation(this);

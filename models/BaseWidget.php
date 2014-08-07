@@ -14,6 +14,7 @@ use kartik\icons\Icon;
 
 class BaseWidget extends Widget
 {
+	public $uniqid;
 	public $items;
 	public $useModal = true;
 	/**
@@ -75,6 +76,7 @@ class BaseWidget extends Widget
 	
 	public function init()
 	{
+		$this->uniqid = isset($this->uniqid) ? $this->uniqid : uniqid();
 		switch(empty($this->parentType) && !is_null($this->model))
 		{
 			/**

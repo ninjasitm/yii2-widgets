@@ -16,8 +16,7 @@ use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 
 class Vote extends BaseWidget
-{
-	
+{	
 	/**
 	 * The actions to enable
 	 */
@@ -94,6 +93,7 @@ class Vote extends BaseWidget
 		{
 			$this->model = ($this->model instanceof VoteModel) ? $this->model : VoteModel::findModel([$this->parentId, $this->parentType]);
 		}
+		$this->uniqid = uniqid();
 		parent::init();
 	}
 	
@@ -142,8 +142,8 @@ class Vote extends BaseWidget
 			['class' => 'center-block text-center']
 		);
 		$vote .= $this->getActions();
-		$this->widgetOptions['id'] .= $this->parentId;
-		return Html::tag('div', $vote, $this->widgetOptions);
+		$this->widgetOptions['id'] .= $this->parentId.$this->uniqid;
+		return Html::tag('div', $vote, $this->widgetOptions).Html::script((new \yii\web\JsExpression("\$nitm.onModuleLoad('vote', function () {\$nitm.module('vote').init('".$this->widgetOptions['id']."');});")));
 	}
 	
 	public function getActions()

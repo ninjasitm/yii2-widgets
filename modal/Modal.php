@@ -58,7 +58,7 @@ class Modal extends \yii\bootstrap\Modal
 	public function run()
 	{
 		$this->options = array_merge($this->_defaultOptions, $this->options);
-		//$this->options['id'] = $this->options['id'].uniqid();
+		$this->options['id'] = $this->options['id'].uniqid();
 		$this->contentOptions = array_merge($this->_defaultContentOptions, $this->contentOptions);
 		$this->dialogOptions = array_merge($this->_defaultDialogOptions, $this->dialogOptions);
 		//Merge the class information in a unique manner to prevent duplicate classes
