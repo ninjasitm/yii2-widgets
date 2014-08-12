@@ -17,7 +17,7 @@ use nitm\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
 class Chat extends BaseWidget
-{
+{	
 	//the information that gets stored in the miscellaneous pane
 	public $miscPane = [
 		'title' => 'Alerts',
@@ -95,6 +95,11 @@ class Chat extends BaseWidget
 				'type' => 'chat'
 			]
 		]);
+		$this->notificationModel = new \nitm\models\Notification([
+			'constrain' => [
+				'user_id' => \Yii::$app->user->getId()
+			]
+		]);
 		$this->updateOptions = array_merge($this->_updateOptions, $this->updateOptions);
 		parent::init();
 		assets\Asset::register($this->getView());
@@ -131,13 +136,11 @@ class Chat extends BaseWidget
 		switch($new >= 1)
 		{
 				case true:
-				$newBadge = Html::tag('span', $new, ['class' => 'badge']);
 				$newMessage = $new." new messages";
 				$newClass = "bg-success";
 				break;
 				
 				default:
-				$newBadge = '';
 				$newMessage = 'No new messages';
 				$newClass = "bg-transparent";
 				break;
@@ -150,14 +153,15 @@ class Chat extends BaseWidget
 			'encodeLabels' => false,
 			'items' => [
 				[
-					'label' => 'Messages '.$newBadge,
+					'label' => 'Messages '.Html::tag('span', $this->model->hasNew(), ['class' => 'badge']),
+					'active' => false,
 					'content' =>Html::tag('div', '',
 						[
 							'id' => 'chat-widget-container'.$uniqid,
 							'role' => 'chatParent',
 							'id' => 'chat'.$uniqid,
 							'class' => 'chat col-md-4 col-lg-4',
-							'style' => 'z-index: 10000; position: fixed;top: 6px; right: 6px;bottom: 40px;overflow: hidden;padding: 0px;box-shadow: 2px 2px 15px #000;'
+							'style' => 'z-index: 10000; position: fixed;top: 6px; right: 6px;bottom: 40px;overflow: hidden;padding: 0px;box-shadow: 2px 2px 15px #000; background-color: rgba(153,153,153,0.9);'
 						]
 					),
 					'options' => [
@@ -176,50 +180,17 @@ class Chat extends BaseWidget
 					]
 				],
 				[
-					'label' => 'Alerts',
-					'content' =>Html::tag('div', '',
-						[
-							'role' => 'chatNotificationsParent',
-							'id' => 'chat-notifications'.$uniqid,
-							'class' => 'well col-md-4 col-lg-4',
-							'style' => 'z-index: 10000; position: fixed;top: 6px; right: 6px;bottom: 40px;overflow: hidden;padding: 0px;box-shadow: 2px 2px 15px #000;'
-						]
-					),
-					'options' => [
-						'id' => 'chat-widget-notifications'.$uniqid
-					],
-					'headerOptions' => [
-						'id' => 'chat-widget-notifications-tab'.$uniqid
-					],
-					'linkOptions' => [
-						'role' => 'visibility',
-						'data-type' => 'html',
-						'data-on' => '#chat-widget-notifications'.$uniqid.':hidden',
-						'data-id' => '#chat-notifications'.$uniqid,
-						'data-url' => \Yii::$app->urlManager->createUrl(['/alerts/notifications', '__format' => 'html']),
-						'id' => 'chat-widget-notifications-link'.$uniqid
-					]
-				],
-				[
-					'label' => $newMessage,
+					'label' => '',
+					'content' => '',
 					'active' => true,
-					'content' =>Html::tag('div', '',
-						[
-							'id' => 'chat-widget-info'.$uniqid,
-						]
-					),
-					'options' => [
-						'id' => 'chat-widget-info'.$uniqid,
-					],
 					'headerOptions' => [
-						'id' => 'chat-widget-info-tab'.$uniqid
-					],
-					'linkOptions' => [
-						'href' => '#'
+						'class' => 'hidden'
 					]
-				],
+				]
 			]
 		]);
+		if($this->updateOptions['enable'])
+			$ret_val .= Html::script("\$nitm.module('replies').initChatActivity(\"[role='chatParent']\", '".$this->updateOptions['url']."', ".$this->updateOptions['interval'].")");
 		return $ret_val;
 	}
 }

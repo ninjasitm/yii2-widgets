@@ -31,7 +31,7 @@ class Notifications extends \yii\base\Widget
 	{
 		$this->model = ($this->model instanceof Notification) ? $this->model : new Notification();
 		parent::init();
-		//assets\AlertsAsset::register($this->getView());
+		assets\NotificationAsset::register($this->getView());
 	}
 	
 	public function run()

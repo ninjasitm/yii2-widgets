@@ -3,6 +3,9 @@ function Replies(items)
 {	
 	var self = this;
 	var editor;
+	this.polling = {
+		enabled: false
+	};
 	this.classes = {
 		warning: 'bg-warning',
 		success: 'bg-success',
@@ -174,19 +177,27 @@ function Replies(items)
 		});
 	}
 	
-	this.initChatActivity = function(containerId, url, interval) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-		setInterval(function () {
-			$.post(url, 
-				function (result) {
-					switch((result != false))
-					{
-						case true:
-						self.chatStatus(true, result, container);
-						break;
-					}
-				}, 'json');
-		}, interval);
+	this.initPolling = function (options) {
+		self.polling = options;
+		self.initActivity(options.container);
+	}
+	
+	this.initActivity = function(containerId) {
+		if(self.polling.enabled == true)
+		{
+			var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+			setInterval(function () {
+				$.post(self.polling.url, 
+					function (result) {
+						switch((result != false))
+						{
+							case true:
+							self.chatStatus(true, result, containerId);
+							break;
+						}
+					}, 'json');
+			}, self.polling.interval);
+		}
 	}
 	
 	this.initChatTabs = function (containerId) {

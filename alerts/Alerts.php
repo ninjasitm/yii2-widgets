@@ -41,7 +41,7 @@ class Alerts extends \yii\base\Widget
 	{
 		$this->model = ($this->model instanceof AlertsModel) ? $this->model : new AlertsModel();
 		parent::init();
-		assets\AlertsAsset::register($this->getView());
+		assets\Asset::register($this->getView());
 	}
 	
 	public function run()

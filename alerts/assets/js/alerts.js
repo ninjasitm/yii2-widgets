@@ -23,15 +23,22 @@ function Alerts () {
 		itemId: "alert"
 	};
 	
+	this.init = function (containerId) {
+		this.defaultInit.map(function (method, key) {
+			if(typeof self[method] == 'function')
+				self[method](containerId);
+		});
+	}
+	
 	this.initForms = function (containerId) {
 		var containerId = (containerId == undefined) ? self.views.listFormContainer : containerId;
 		var container = $nitm.getObj(containerId);
 		$.map(self.forms.roles, function(role, key) {
 			container.find("form[role='"+role+"']").map(function() {
-				$(this).unbind('submit');
+				$(this).off('submit');
 				$(this).on('submit', function (e) {
 					e.preventDefault();
-					$lab1.operation(this, undefined, 'alerts');
+					self.operation(this, undefined, 'alerts');
 					return false;
 				});
 			});
@@ -43,118 +50,132 @@ function Alerts () {
 		var container = $nitm.getObj(containerId);
 		
 		//Initializing the remove button here
-		container.find("[role='"+self.buttons.remove+"']").each(function () {
-			$(this).off('click');
+		container.find("[role~='"+self.buttons.remove+"']").each(function () {
 			$(this).on('click',function(event) {
 				event.preventDefault();
 				var button = this;
-				alert("Deleting");
-				$.post($(this).data('action'), function(result) {
-					self.afterDelete(result, button);
-				});
-			});
-		});
-		
-		//Initializing the disable button here
-		container.find("[role='"+self.buttons.disable+"']").each(function () {
-			$(this).off('click');
-			$(this).on('click',function(event) {
-				event.preventDefault();
-				var button = this;
-				$.post($(this).data('action'), function(result) {
-					self.afterDisable(result, button);
-				});
+				if(confirm("Are you sure you want to delete this alert?")) {
+					$.post($(this).data('action'), function(result) {
+						self.afterDelete(result, button);
+					});
+				}
 			});
 		});
 	}
 	
-	this.afterDisable = function (result, form) {
-		var alert = $nitm.getObj(self.views.itemId+result.id);
-		var list = alert.parents(self.views.container);
-		switch(result.data)
+	this.operation = function (form) {
+		console.log($(form).data('yiiActiveForm'));
+		/*
+		 * This is to support yii active form validation and prevent multiple submitssions
+		 */
+		/*try {
+			$data = $(form).data('yiiActiveForm');
+			if(!$data.validated)
+				return false;
+		} catch (error) {}*/
+		var _form = $(form);
+		data = _form.serializeArray();
+		data.push({'name':'__format', 'value':'json'});
+		data.push({'name':'getHtml', 'value':true});
+		data.push({'name':'do', 'value':true});
+		data.push({'name':'ajax', 'value':true});
+		switch(!_form.attr('action'))
 		{
-			//Item is disabled
-			case 1:
-			alert.addClass('disabled');
-			//Move item to the end of the list
-			alert.insertAfter(list.children('li:last-child'));
-			alert.find(":input").not("[role='"+self.buttons.disable+"']").attr('disabled', true);
-			alert.find("[role='"+self.buttons.disable+"']").removeClass('btn-warning').addClass('btn-success');	
-			break;
-			
-			default:
-			alert.removeClass('disabled');
-			alert.insertAfter(list.children('li:nth-child('+result.priority+')'));
-			alert.find(":input").not("[role='"+self.buttons.disable+"']").attr('disabled', false);
-			alert.find("[role='"+self.buttons.disable+"']").removeClass('btn-success').addClass('btn-warning');
+			case false:
+			$nitm.animateSubmit(form);
+			var request = $nitm.doRequest(_form.attr('action'), 
+				data,
+				function (result) {
+					switch(result.action)
+					{		
+						case 'create':
+						self.afterCreate(result, form);
+						break;
+							
+						case 'update':
+						self.afterUpdate(result, form);
+						break;
+							
+						case 'delete':
+						self.afterDelete(result, form);
+						break;
+					}
+				},
+				function () {
+					$nitm.notify('Error Could not perform Alert action. Please try again', $nitm.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+				}
+			);
+			request.done(function () {
+				$nitm.animateSubmit(form, true);
+			});
 			break;
 		}
-		self.sortElems(list.attr('id'));
 	}
 	
 	this.afterCreate = function (result, form) {
 		if(result.success)
 		{
 			$(form).get(0).reset();
-			$nitm.notify("Success! You can add another or view the newly added one", $nitm.classes.success);
+			$nitm.notify("Success! You can add another or view the newly added one", $nitm.classes.success, $(form).parents('div').find('#alert').last());
 			if(result.data)
 			{
-				var list = $(form).parents(self.views.listFormContainer).find(self.views.container).first();
-				var firstDisabled = list.find(".disabled").first().index();
-				var after = !firstDisabled ? (list.find("li:last-child").index())+1 : (firstDisabled - 1);
-				$nitm.place({append:true, index:after}, result.data, list.attr('id'));
+				var element = $(result.data);
+				var list = $nitm.getObj(self.views.container);
+				list.prepend(element);
+				element.addClass($nitm.classes.success).delay(5000).queue(function () {
+					$(this).removeClass($nitm.classes.success, 5000);
+				});
 			}
-			self.initForms(self.views.itemId+result.id);
-			self.initAlerts(self.views.itemId+result.id);
-			alert.addClass('list-group-item-success', 400, 'easeInBack').delay(1000).queue(function(next){
+			self.init(self.views.itemId+result.id);
+			/*$nitm.getObj(self.views.itemId+result.id).addClass('list-group-item-success', 400, 'easeInBack').delay(1000).queue(function(next){
 				 $(this).removeClass('list-group-item-success', 400, 'easeOutBack');
 				 next();
-			});
+			});*/
 			return true;
 		}
 		else
 		{
-			$nitm.notify("Couldn't create new alert", $nitm.classes.error);
+			$nitm.notify(!result.message ? "Couldn't create new alert" : result.message, $nitm.classes.error, $(form).parents('div').find('#alert').last());
 			return false;
 		}
 	}
 	
 	this.afterUpdate = function (result, form) {
-		switch($lab1.afterUpdate(result, form))
+		switch(result.success)
 		{
 			case true:
-			self.initForms(self.views.itemId+result.id);
-			self.initAlerts(self.views.itemId+result.id);
-			$nitm.tools.initVisibility(self.views.itemId+result.id);
-			var alert = $nitm.getObj(self.views.itemId+result.id);
+			$nitm.notify("Success! Your alert was updated properly", $nitm.classes.success, $(form).parents('div').find('#alert').last());
+			/*var alert = $nitm.getObj(self.views.itemId+result.id);
 			alert.addClass('list-group-item-success', 400, 'easeInBack').delay(1000).queue(function(next){
 				 $(this).removeClass('list-group-item-success', 400, 'easeOutBack');
 				 next();
-			});
+			});*/
 			break;
 			
 			default:
-			alert.addClass('list-group-item-danger', 400, 'easeInBack').delay(1000).queue(function(next){
-				 $(this).removeClass('list-group-item-danger', 400, 'easeOutBack');
-				 next();
-			});
+			$nitm.notify(!result.message ? "Couldnt update your alert" : result.message, $nitm.classes.success, $(form).parents('div').find('#alert').last());
 			break
 		}
 	}
 	
-	this.afterDelete = function (result, form) {
+	this.afterDelete = function (result, elem) {
 		switch(result.success)
 		{
 			case true:
-			var list = $(form).parents(self.views.container);
-			list.find('#'+self.views.itemId+result.id).remove();
+			try {
+				$nitm.module('tools').removeParent(elem);
+			} catch (error) {
+				var container = $nitm.getObj(self.views.itemId+result.id);
+				container.hide('slow').remove();
+			}
 			break;
 			
 			default:
-			$nitm.notify("Couldn't delete alert", $nitm.classes.error);
+			$nitm.notify("Couldn't delete alert", $nitm.classes.error, $(form).parents('div').find('#alert').last());
 			return false;
 		}
 	}
 }
-
-$nitm.initModule('alerts', new Alerts());
+$nitm.addOnLoadEvent(function () {
+	$nitm.initModule('alerts', new Alerts());
+});
