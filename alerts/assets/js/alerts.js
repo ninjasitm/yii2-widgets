@@ -64,7 +64,6 @@ function Alerts () {
 	}
 	
 	this.operation = function (form) {
-		console.log($(form).data('yiiActiveForm'));
 		/*
 		 * This is to support yii active form validation and prevent multiple submitssions
 		 */
@@ -116,6 +115,12 @@ function Alerts () {
 		if(result.success)
 		{
 			$(form).get(0).reset();
+			$(form).find('select').each(function () {
+				try {
+					$('#'+this.id).select2('val', '');
+				} catch (error) {
+				}
+			});
 			$nitm.notify("Success! You can add another or view the newly added one", $nitm.classes.success, $(form).parents('div').find('#alert').last());
 			if(result.data)
 			{
