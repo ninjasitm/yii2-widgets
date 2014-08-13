@@ -122,20 +122,20 @@ function Revisions(items)
 		{
 			case false:
 			var request = $nitm.doRequest($(element).data('save-path'), 
-					data,
-					function (result) {
-						switch(result.action)
-						{
-							case 'create':
-							self.afterAdd(result, element, container);
-							break;
-						}
-					},
-					function () {
-						notify('Error Could not perform Revisions action. Please try again', self.classes.error, false);
+				data,
+				function (result) {
+					switch(result.action)
+					{
+						case 'create':
+						self.afterAdd(result, element, container);
+						break;
 					}
-				);
-				break;
+				},
+				function () {
+					notify('Error Could not perform Revisions action. Please try again', self.classes.error, false);
+				}
+			);
+			break;
 		}
 	}
 	

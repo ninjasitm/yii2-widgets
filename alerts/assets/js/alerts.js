@@ -82,7 +82,7 @@ function Alerts () {
 		switch(!_form.attr('action'))
 		{
 			case false:
-			$nitm.animateSubmit(form);
+			$($nitm).trigger('nitm-animate-submit-start', [form]);
 			var request = $nitm.doRequest(_form.attr('action'), 
 				data,
 				function (result) {
@@ -106,7 +106,7 @@ function Alerts () {
 				}
 			);
 			request.done(function () {
-				$nitm.animateSubmit(form, true);
+				$($nitm).trigger('nitm-animate-submit-stop', [form]);
 			});
 			break;
 		}
@@ -171,7 +171,7 @@ function Alerts () {
 			break;
 			
 			default:
-			$nitm.notify("Couldn't delete alert", $nitm.classes.error, $(form).parents('div').find('#alert').last());
+			$nitm.notify("Couldn't delete alert", $nitm.classes.error, $(elem).parents('div').find('#alert').last());
 			return false;
 		}
 	}

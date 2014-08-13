@@ -169,6 +169,7 @@ function IssueTracker(items)
 		switch(!_form.attr('action'))
 		{
 			case false:
+			$($nitm).trigger('nitm-animate-submit-start', [form]);
 			var request = $nitm.doRequest(_form.attr('action'), 
 				data,
 				function (result) {
@@ -188,7 +189,7 @@ function IssueTracker(items)
 				}
 			);
 			request.done(function () {
-				$nitm.animateSubmit(form, true);
+				$($nitm).trigger('nitm-animate-submit-stop', [form]);
 			});
 			break;
 		}

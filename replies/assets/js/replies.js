@@ -255,26 +255,30 @@ function Replies(items)
 		switch(!$(form).attr('action'))
 		{
 			case false:
+			$($nitm).trigger('nitm-animate-submit-start', [form]);
 			var request = $nitm.doRequest($(form).attr('action'), 
-					data,
-					function (result) {
-						switch(result.action)
-						{
-							case 'hide':
-							self.afterHide(result, form);
-							break;
-								
-							case 'create':
-							case 'quote':
-							self.afterCreate(result, form);
-							break;
-						}
-					},
-					function () {
-						$nitm.notify('Error Could not perform Replies action. Please try again', 'alert '+self.classes.error, false);
+				data,
+				function (result) {
+					switch(result.action)
+					{
+						case 'hide':
+						self.afterHide(result, form);
+						break;
+							
+						case 'create':
+						case 'quote':
+						self.afterCreate(result, form);
+						break;
 					}
-				);
-				break;
+				},
+				function () {
+					$nitm.notify('Error Could not perform Replies action. Please try again', 'alert '+self.classes.error, false);
+				}
+			);
+			request.done(function () {
+				$($nitm).trigger('nitm-animate-submit-stop', [form]);
+			});
+			break;
 		}
 	}
 	
@@ -512,6 +516,24 @@ function Replies(items)
 			default:
 			$nitm.getObj(field).get(0).focus();
 			break;
+		}
+	}
+	
+	this.charsLeft = function(field, cntfield, maxlimit) 
+	{
+		field = this.getObj(field).get(0);
+		cntfield = this.getObj(cntfield).get(0);
+		switch(field.value.length >= maxlimit+1)
+		{
+			case true:
+				field.value = field.value.substring(0, maxlimit);
+				cntfield.innerHTML = maxlimit - field.value.length;
+				alert("You've maxed out the "+maxlimit+" character limit\n\nPlease shorten your message. :-).");
+				break;
+				
+			default:
+				cntfield.innerHTML = maxlimit - field.value.length;
+				break;
 		}
 	}
 }
