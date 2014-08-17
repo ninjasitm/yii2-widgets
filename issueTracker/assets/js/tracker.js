@@ -185,7 +185,7 @@ function IssueTracker(items)
 					}
 				},
 				function () {
-					$nitm.notify('Error Could not perform IssueTracker action. Please try again', self.classes.alerts.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
+					$nitm.notify('Error Could not perform IssueTracker action. Please try again', form);
 				}
 			);
 			request.done(function () {
@@ -201,7 +201,7 @@ function IssueTracker(items)
 		if(result.success)
 		{
 			_form.get(0).reset();
-			$nitm.notify("Added new issue. You can add another or view the newly added one", self.classes.alerts.success, $(form).parents('div').find(self.views.issuesAlerts).last());
+			$nitm.notify("Added new issue. You can add another or view the newly added one", form);
 			if(result.data)
 			{
 				var open = parent.find(self.views.issuesOpenTab).find('.badge');
@@ -211,7 +211,7 @@ function IssueTracker(items)
 		}
 		else
 		{
-			$nitm.notify("Couldn't create new issue", self.classes.alerts.error, $(form).parents('div').find(self.views.issuesAlerts).last());
+			$nitm.notify("Couldn't create new issue", self.classes.alerts.error, form);
 		}
 	}
 	
@@ -220,12 +220,12 @@ function IssueTracker(items)
 		var parent = _form.parents(self.views.roles.issues);
 		if(result.success)
 		{
-			$nitm.notify("Updated issue sucessfully", self.classes.alerts.success, $(form).parents('div').find(self.views.issuesAlerts).last());
+			$nitm.notify("Updated issue sucessfully", self.classes.alerts.success, form);
 			parent.find(self.views.issueUpdateFormTab).addClass('hidden');
 		}
 		else
 		{
-			$nitm.notify("Couldn't update the issue", self.classes.alerts.error, $(form).parents('div').find(self.views.issuesAlerts).last());
+			$nitm.notify("Couldn't update the issue", self.classes.alerts.error, form);
 		}
 	}
 	

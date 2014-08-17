@@ -17,7 +17,8 @@ use nitm\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
 class Chat extends BaseWidget
-{	
+{
+	public $notificationModel;
 	//the information that gets stored in the miscellaneous pane
 	public $miscPane = [
 		'title' => 'Alerts',
@@ -189,7 +190,7 @@ class Chat extends BaseWidget
 				]
 			]
 		]);
-		if($this->updateOptions['enable'])
+		if(isset($this->updateOptions['enable']) && $this->updateOptions['enable'])
 			$ret_val .= Html::script("\$nitm.module('replies').initChatActivity(\"[role='chatParent']\", '".$this->updateOptions['url']."', ".$this->updateOptions['interval'].")");
 		return $ret_val;
 	}

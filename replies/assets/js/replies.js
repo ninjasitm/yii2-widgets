@@ -272,7 +272,7 @@ function Replies(items)
 					}
 				},
 				function () {
-					$nitm.notify('Error Could not perform Replies action. Please try again', 'alert '+self.classes.error, false);
+					$nitm.notify('Error Could not perform Replies action. Please try again', 'alert '+self.classes.error, form);
 				}
 			);
 			request.done(function () {
@@ -299,17 +299,7 @@ function Replies(items)
 			break;
 			
 			default:
-			var notifyPane = $(form).find("#alert");
-			switch(notifyPane != undefined)
-			{
-				case true:
-				$nitm.notify('Unable to add message', 'alert '+self.classes.error, "#alert").delay(5000).fadeOut();
-				break;
-				
-				default:
-				alert('Unable to add message');
-				break;
-			}
+			$nitm.notify('Unable to add message', 'alert '+self.classes.error, form);
 			break;
 		}
 	}
