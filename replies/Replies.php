@@ -18,6 +18,7 @@ use kartik\icons\Icon;
 class Replies extends BaseWidget
 {
 	public $uniqid;	
+	public $formOptions = [];
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -138,16 +139,21 @@ class Replies extends BaseWidget
 		switch(isset($dataProvider))
 		{
 			case true:
-			$replies = $this->getView()->render('@nitm/views/replies/index', [
-				'dataProvider' => $dataProvider,
-				'searchModel' => $searchModel,
+			$defaultOptions = [
 				'parentId' => $this->parentId,
 				'parentType' => $this->parentType,
-				'useModal' => $this->useModal,
-				'widget' => $this,
+				'uniqid' => $this->uniqid,
+				'model' => $this->model,
+			];
+			$this->formOptions = array_merge($defaultOptions, $this->formOptions);
+			$viewOptions = array_merge($defaultOptions, [
+				'dataProvider' => $dataProvider,
+				'searchModel' => $searchModel,
 				'options' => $this->options,
-				'uniqid' => $this->uniqid
+				'widget' => $this,
+				'formOptions' => $this->formOptions
 			]);
+			$replies = $this->getView()->render('@nitm/views/replies/index', $viewOptions);
 			break;
 			
 			default:

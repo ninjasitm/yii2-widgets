@@ -256,9 +256,10 @@ function Replies(items)
 		{
 			case false:
 			$($nitm).trigger('nitm-animate-submit-start', [form]);
-			var request = $nitm.doRequest($(form).attr('action'), 
-				data,
-				function (result) {
+			var request = $nitm.doRequest({
+				url: $(form).attr('action'), 
+				data: data,
+				success: function (result) {
 					switch(result.action)
 					{
 						case 'hide':
@@ -271,10 +272,11 @@ function Replies(items)
 						break;
 					}
 				},
-				function () {
-					$nitm.notify('Error Could not perform Replies action. Please try again', 'alert '+self.classes.error, form);
+				error: function () {
+					$nitm.notify('Whoops something happened. If it keeps happening let someone know!', 'alert '+self.classes.error, form);
+					$($nitm).trigger('nitm-animate-submit-stop', [form]);
 				}
-			);
+			});
 			request.done(function () {
 				$($nitm).trigger('nitm-animate-submit-stop', [form]);
 			});
