@@ -126,7 +126,7 @@ function IssueTracker(items)
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					var elem = $(this);
-					$nitm.startSpinner(elem.get(0));
+					$($nitm).trigger('nitm-animate-submit-start', [elem]);
 					$.post($(this).attr('href'), 
 						function (result) { 
 							switch(result.action)
@@ -144,7 +144,7 @@ function IssueTracker(items)
 								break;
 							}
 						}, 'json');
-						$nitm.stopSpinner(elem.get(0));
+						$($nitm).trigger('nitm-animate-submit-stop', [elem]);
 				});
 			});
 		});
@@ -170,9 +170,10 @@ function IssueTracker(items)
 		{
 			case false:
 			$($nitm).trigger('nitm-animate-submit-start', [form]);
-			var request = $nitm.doRequest(_form.attr('action'), 
-				data,
-				function (result) {
+			var request = $nitm.doRequest({
+				url: _form.attr('action'), 
+				data: data,
+				success: function (result) {
 					switch(result.action)
 					{		
 						case 'create':
@@ -184,10 +185,11 @@ function IssueTracker(items)
 						break;
 					}
 				},
-				function () {
-					$nitm.notify('Error Could not perform IssueTracker action. Please try again', form);
+				error: function () {
+					$nitm.notify('Whoops, something happened. If this keeps happening tell the admin!', form);
+					$($nitm).trigger('nitm-animate-submit-stop', [form]);
 				}
-			);
+			});
 			request.done(function () {
 				$($nitm).trigger('nitm-animate-submit-stop', [form]);
 			});
