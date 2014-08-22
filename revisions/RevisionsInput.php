@@ -29,6 +29,12 @@ class RevisionsInput extends BaseWidget
 	 * The value for this input widget
 	 */
 	public $value;
+	
+	public $editorOptions = [
+		'role' => 'revisionsInput',
+		'toolbarSize' => 'medium',
+		'size' => 'medium'
+	];
 		
 	/*
 	 * HTML options for generating the widget
@@ -104,14 +110,11 @@ class RevisionsInput extends BaseWidget
 		switch($this->enableRedactor)
 		{
 			case true:
-			$editorOptions['toolbarSize'] = 'medium';
-			$editorOptions['size'] = 'medium';
-			$editorOptions['id'] = 'message'.uniqid();
-			$editorOptions['model'] = $this->model;
-			$editorOptions['attribute'] = $this->name;
-			$editorOptions['options']['value'] = $this->value;
-			$editorOptions['role'] = 'message';
-			$input = Editor::widget($editorOptions);
+			$this->editorOptions['id'] = 'message'.uniqid();
+			$this->editorOptions['model'] = $this->model;
+			$this->editorOptions['attribute'] = $this->name;
+			$this->editorOptions['options']['value'] = $this->value;
+			$input = Editor::widget($this->editorOptions);
 			break;
 			
 			default:

@@ -37,8 +37,8 @@ class ChatForm extends BaseWidget
 		'options' => [
 			'style' => 'resize:none;',
 			'autoresize' => false,
-			'maxHeight' => 80,
-			'minHeight' => 80
+			'maxHeight' => 60,
+			'minHeight' => 60
 		]
 	];
 	

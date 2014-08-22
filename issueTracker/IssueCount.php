@@ -57,11 +57,15 @@ class IssueCount extends BaseWidget
 		$this->options['title'] = \Yii::t('yii', 'View Issues');
 		$info = \nitm\widgets\modal\Modal::widget([
 			'options' => [
-				'id' => $this->options['id'].'-modal'
+				'id' => $this->options['id'].'-modal',
+				'style' => 'overflow: hidden'
 			],
 			'size' => 'large',
 			'header' => 'Issues',
 			'toggleButton' => $this->options,
+			'dialogOptions' => [
+				'class' => 'modal-full'
+			],
 		]);
 		$new = $this->model->hasNew();
 		switch($new >= 1)

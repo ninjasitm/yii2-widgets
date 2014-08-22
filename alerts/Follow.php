@@ -40,7 +40,7 @@ class Follow extends \yii\base\Widget
 	 * Options for the button
 	 * [
 	 *		'size' => [xs, sm, lg]
-	 *		'type' => [danger, info, warning, primary, default, info]
+	 *		'type' => [danger, info, warning, success, default, info]
 	 * ]
 	 */
 	public $buttonOptions = [
@@ -110,7 +110,7 @@ class Follow extends \yii\base\Widget
 					break;
 				}
 				$label = 'Unfollow '.Icon::show($methods);
-				$this->options['class'] = 'btn-primary';
+				$this->options['class'] = 'btn-success';
 				$this->options['data-url'] = '/alerts/un-follow/'.$this->model->getId();
 				$this->options['role'] .= ' dynamicValue';
 				$this->options['data-run-once'] = true;

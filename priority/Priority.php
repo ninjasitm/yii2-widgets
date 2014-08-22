@@ -153,7 +153,7 @@ class Priority extends BaseWidget
 		$itemsLabels = [];
 		$form = $this->form;
 		$attribute = $this->attribute;
-		$this->model->$attribute = !$this->model->$attribute ? 'normal' : $this->model->$attribute;
+		$this->model->$attribute = (!$this->model->$attribute || !array_key_exists($this->model->$attribute, $this->priorities)) ? 'normal' : $this->model->$attribute;
 		foreach($this->priorities as $name=>$priority)
 		{
 			$text = isset($priority['text']) ? $priority['text'] : ucfirst($name);

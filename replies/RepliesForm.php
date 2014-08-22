@@ -33,8 +33,6 @@ class RepliesForm extends BaseWidget
 	];
 	
 	public $editorOptions = [
-		"toolbarSize" => "medium",
-		"size" => "medium"
 	];
 	
 	/**

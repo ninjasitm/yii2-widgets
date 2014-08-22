@@ -60,6 +60,9 @@ class RepliesCount extends BaseWidget
 			'size' => 'large',
 			'header' => 'Comments',
 			'toggleButton' => $this->options,
+			'dialogOptions' => [
+				'class' => 'modal-full'
+			],
 		]);
 		$new = $this->model->hasNew();
 		switch($new >= 1)

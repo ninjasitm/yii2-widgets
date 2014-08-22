@@ -16,11 +16,25 @@ use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
 
 class Vote extends BaseWidget
-{	
+{
+	public $size;
+		
 	/**
 	 * The actions to enable
 	 */
 	public $actions;
+	
+	/**
+	 * Options for the vote Icons
+	 * [
+	 *		Action => [
+	 *			'icon' => String icon being used
+	 *			'text' => Text
+	 *			'class' => The class for the icon
+	 *		]
+	 * ]
+	 */
+	public $iconOptions;
 	
 	/*
 	 * HTML options for genevote the widget
@@ -41,6 +55,24 @@ class Vote extends BaseWidget
 	 */
 	public $rating;
 	
+	private $_defaultIconOptions = [
+		'up' => [
+			'class' => 'fa',
+			'text' => 'Up',
+			'icon' => 'thumbs-up'
+		],
+		'down' => [
+			'class' => 'fa',
+			'text' => 'Down',
+			'icon' => 'thumbs-down'
+		],
+		'reset' => [
+			'class' => 'fa',
+			'text' => 'Refresh',
+			'icon' => 'refresh'
+		]
+	];
+	
 	/**
 	 * The actions that are supported
 	 */
@@ -48,7 +80,6 @@ class Vote extends BaseWidget
 		'up' => [
 			'tag' => 'span',
 			'action' => '/vote/up',
-			'text' => 'thumbs-up',
 			'options' => [
 				'class' => 'col-md-6 col-lg-6 pull-left',
 				'role' => 'voteUp',
@@ -59,7 +90,6 @@ class Vote extends BaseWidget
 		'down' => [
 			'tag' => 'span',
 			'action' => '/vote/down',
-			'text' => 'thumbs-down',
 			'options' => [
 				'class' => 'col-md-6 col-lg-6 pull-right',
 				'role' => 'voteDown',
@@ -70,9 +100,8 @@ class Vote extends BaseWidget
 		'reset' => [
 			'tag' => 'span',
 			'action' => '/vote/reset',
-			'text' => 'refresh',
 			'options' => [
-				'class' => 'col-lg-12 col-md-12',
+				'class' => 'col-lg-12 col-md-12 text-danger',
 				'role' => 'resetVote',
 				'id' => 'vote-reset',
 				'title' => 'Reset the votes'
@@ -94,6 +123,7 @@ class Vote extends BaseWidget
 			$this->model = ($this->model instanceof VoteModel) ? $this->model : VoteModel::findModel([$this->parentId, $this->parentType]);
 		}
 		$this->uniqid = uniqid();
+		$this->iconOptions = !isset($this->iconOptions) ? $this->_defaultIconOptions: $this->iconOptions;
 		parent::init();
 	}
 	
@@ -152,51 +182,70 @@ class Vote extends BaseWidget
 		$ret_val = '';
 		foreach($actions as $name=>$action)
 		{
-			switch(isset($action['adminOnly']) && ($action['adminOnly'] == true))
+			$iconOptions = !isset($this->iconOptions[$name]) ? ['clas' => $name, 'text' => $name, 'icon' => $name] : $this->iconOptions[$name];
+			extract( $iconOptions, EXTR_PREFIX_ALL, '_');
+			if(isset($action['adminOnly']) && ($action['adminOnly'] == true) && !\Yii::$app->user->identity->isAdmin())
+			continue;
+			
+			$action['options']['id'] = $action['options']['id'].$this->parentId;
+			switch(1)
 			{
-				case true:
-				switch(\Yii::$app->user->identity->isAdmin())
-				{
-					case true:
-					$action['options']['id'] = $action['options']['id'].$this->parentId;
-					$ret_val .= Html::a(
-						Html::tag(
-							$action['tag'], 
-							Icon::show(
-								$action['text']
-							)
-						), 
-						$action['action'].'/'.$this->parentType.'/'.$this->parentId, $action['options']
-					);
-					break;
-				}
-				break;
-				
-				default:
-				$action['options']['id'] = $action['options']['id'].$this->parentId;
-				switch(1)
-				{
-					case ($name == 'up') && (($this->model->rating()['positive'] >= $this->model->getMax()) || ($this->model->currentUserVoted($name))):
-					case ($name == 'down') && (($this->model->rating()['positive'] <= 0) || ($this->model->currentUserVoted($name))):
-					$action['options']['style'] = 'display:none';
-					break;
-				}
-				$ret_val .= Html::a(
-					Html::tag(
-						$action['tag'], 
-						Icon::show(
-							$action['text'], 
-							['class' => 'fa-2x']
-						)
-					), 
-					$action['action'].'/'.$this->parentType.'/'.$this->parentId,
-					$action['options']
-				);
+				case ($name == 'up') && (($this->model->rating()['positive'] >= $this->model->getMax()) || ($this->model->currentUserVoted($name))):
+				case ($name == 'down') && (($this->model->rating()['positive'] <= 0) || ($this->model->currentUserVoted($name))):
+				$action['options']['style'] = 'display:none';
 				break;
 			}
+			$ret_val .= Html::a(
+				Html::tag(
+					$action['tag'], 
+					$this->getActionHtml($__text, $__class, $__icon)
+				), 
+				$action['action'].'/'.$this->parentType.'/'.$this->parentId,
+				$action['options']
+			);
 			
 		}
 		return Html::tag('div', $ret_val, ['class' => 'center-block text-center']);
+	}
+	
+	protected function getActionHtml($text, $class, $icon)
+	{
+		$options = ['class' => $class];
+		switch($class)
+		{
+			case 'fa':
+			switch($this->size)
+			{
+				case 'large':
+				$class .= '-2x';
+				break;
+				
+				case 'x-large':
+				$class .= '-4x';
+				break;
+			}
+			$options['class'] = $class;
+			break;
+			
+			default:
+			switch($this->size)
+			{
+				case 'x-large':
+				$style = 'font-size: 4rem';
+				break;
+				
+				case 'large':
+				$style = 'font-size: 2rem';
+				break;
+				
+				default:
+				$style = 'font-size: 1rem';
+				break;
+			}
+			$options['style'] = $style;
+			break;
+		}
+		return !empty($icon) ? Icon::show($icon, $options) : Html::span($text, ['class' => $class]);
 	}
 }
 ?>

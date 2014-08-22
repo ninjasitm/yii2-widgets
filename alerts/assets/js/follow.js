@@ -46,7 +46,7 @@ function Follow(items)
 			button.last().removeClass('disabled');
 			button.first().data('');
 			button.off('click');
-			var removeClass = 'btn-primary';
+			var removeClass = 'btn-success';
 			break;
 		}
 		button.first().html(result.actionHtml);
