@@ -15,8 +15,8 @@ use nitm\models\Replies as RepliesModel;
 use nitm\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
-class ChatMessages extends BaseWidget
-{	
+class ChatMessages extends Replies
+{
 	/*
 	 * Interval for updating new chat and chat info
 	 */
@@ -34,7 +34,7 @@ class ChatMessages extends BaseWidget
 	public $options = [
 		'role' => 'chatFormParent',
 		'id' => 'chat',
-		'class' => 'chat col-lg-4 col-md-4',
+		'class' => 'chat',
 	];
 	
 	/*
@@ -45,51 +45,6 @@ class ChatMessages extends BaseWidget
 		'role' => 'chatMessages',
 		'id' => 'chat-messages',
 		'data-parent' => 'chatParent'
-	];
-	
-	/**
-	 * \common\models\Reply $reply
-	 */
-	public $reply;
-	
-	/**
-	 * The actions that are supported
-	 */
-	private $_actions = [
-		'reply' => [
-			'tag' => 'span',
-			'action' => '/reply/to',
-			'text' => 'reply',
-			'options' => [
-				'class' => '',
-				'role' => 'replyTo',
-				'id' => 'reply_to_message',
-				'title' => 'Reply to this message'
-			]
-		],
-		'quote' => [
-			'tag' => 'span',
-			'action' => '/reply/quote',
-			'text' => 'quote',
-			'options' => [
-				'class' => '',
-				'role' => 'quoteReply',
-				'id' => 'quote_message',
-				'title' => 'Quote this message'
-			]
-		],
-		'hide' => [
-			'tag' => 'span',
-			'action' => '/reply/hide',
-			'text' => '',
-			'options' => [
-				'class' => '',
-				'role' => 'hideReply',
-				'id' => 'hide_message',
-				'title' => 'Hide this message'
-			],
-			'adminOnly' => true
-		],
 	];
 	
 	public function init()
@@ -119,11 +74,19 @@ class ChatMessages extends BaseWidget
 				break;
 			}
 			$searchModel = new RepliesSearch;
+			$this->model->withThese[] = 'replyTo';
 			$searchModel->addWith($this->model->withThese);
 			$get = \Yii::$app->request->getQueryParams();
 			$params = array_merge($get, $this->model->constraints);
 			unset($params['type']);
 			unset($params['id']);
+			
+			switch(\Yii::$app->user->identity->isAdmin())
+			{
+				case false:
+				$params['hidden'] = 0;
+				break;
+			}
 	
 			$dataProvider = $searchModel->search($params);
 			$dataProvider->setSort([
@@ -135,13 +98,7 @@ class ChatMessages extends BaseWidget
 			$replies = $this->getView()->render('@nitm/views/chat/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
-				'useModal' => $this->useModal,
 				'widget' => $this,
-				'options' => $this->options,
-				'listOptions' => $this->listOptions,
-				'withForm' => $this->withForm,
-				'primaryModel' => $this->model,
-				'updateOptions' => $this->updateOptions
 			]);
 			//RepliesAsset::register($this->getView());
 			break;
