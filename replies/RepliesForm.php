@@ -29,7 +29,7 @@ class RepliesForm extends BaseWidget
 	public $options = [
 		'class' => 'messages',
 		'role' => 'replyFormContainer',
-		'id' => 'messagesForm'
+		'id' => 'messages-form'
 	];
 	
 	public $editorOptions = [
@@ -45,7 +45,7 @@ class RepliesForm extends BaseWidget
 			'options' => [
 				'class' => 'btn btn-default',
 				'role' => 'resetForm',
-				'id' => 'reset_form',
+				'id' => 'reset-form',
 				'title' => 'Reset this form',
 				'type' => 'reset'
 			],
@@ -61,7 +61,7 @@ class RepliesForm extends BaseWidget
 			'options' => [
 				'class' => 'btn btn-success',
 				'role' => 'replyToFormMessage',
-				'id' => 'reply_to_form_message',
+				'id' => 'reply-to-form-message',
 				'title' => 'Reply',
 				'type' => 'submit'
 			],
@@ -85,7 +85,7 @@ class RepliesForm extends BaseWidget
 			break;
 		}
 		parent::init();
-		$this->uniqid = !$this->uniqid ? uniqid() : $this->uniqid;
+		$this->uniqid = !$this->uniqid ? '-'.uniqid() : $this->uniqid;
 		$this->options['id'] .= $this->uniqid;
 		assets\Asset::register($this->getView());
 	}
@@ -102,15 +102,7 @@ class RepliesForm extends BaseWidget
 			$this->model->setScenario('validateNew');
 			return $this->getView()->render('@nitm/views/replies/form/_form', [
 				'model' => $this->model,
-				'parentId' => $this->parentId,
-				'parentType' => $this->parentType,
-				'parentKey' => $this->parentKey,
-				'useModal' => $this->useModal,
 				'widget' => $this,
-				'inline' => $this->inline,
-				'editor' => $this->editor,
-				'editorOptions' => $this->editorOptions,
-				'uniqid' => $this->uniqid
 			]);
 			break;
 		}

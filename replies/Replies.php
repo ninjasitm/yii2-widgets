@@ -17,12 +17,17 @@ use kartik\icons\Icon;
 
 class Replies extends BaseWidget
 {
+	public $noContainer;
 	public $uniqid;	
 	public $formOptions = [];
 	/*
 	 * HTML options for generating the widget
 	 */
-	public $options = [];
+	public $options = [
+		'role' => 'entityMessages',
+		'id' => 'messages',
+		'data-parent' => 'replyFormParent'
+	];
 	
 	/**
 	 * \commond\models\Reply $reply
@@ -90,7 +95,7 @@ class Replies extends BaseWidget
 		}
 		parent::init();
 		$this->options = array_merge($this->_options, $this->options);
-		$this->uniqid = !$this->uniqid ? uniqid() : $this->uniqid;
+		$this->uniqid = '-'.$this->parentType.$this->parentId;
 		$this->options['id'] .= $this->uniqid;
 		assets\Asset::register($this->getView());
 	}
@@ -125,6 +130,13 @@ class Replies extends BaseWidget
 				$params = array_merge($get, $this->model->getConstraints());
 				unset($params['type']);
 				unset($params['id']);
+			
+				switch(\Yii::$app->user->identity->isAdmin())
+				{
+					case false:
+					$params['hidden'] = 0;
+					break;
+				}
 		
 				$dataProvider = $searchModel->search($params);
 				$dataProvider->setSort([
@@ -149,9 +161,7 @@ class Replies extends BaseWidget
 			$viewOptions = array_merge($defaultOptions, [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
-				'options' => $this->options,
 				'widget' => $this,
-				'formOptions' => $this->formOptions
 			]);
 			$replies = $this->getView()->render('@nitm/views/replies/index', $viewOptions);
 			break;

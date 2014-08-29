@@ -151,12 +151,18 @@
 */
 
 .chat {
-	position: fixed;
-	top: 6px; right: 6px;
-	bottom: 40px;
-	overflow: hidden;
-	padding: 0px;
-	box-shadow: 2px 2px 15px #000;
+	top: 0;
+	bottom: 0;
+	display: block;
+	overflow: auto;
+	padding: 0px !important;
+	z-index: 10000;
+	height: inherit;
+	min-height: 100px;
+}
+
+.chat * {
+	z-index: 10000;
 }
 
 .chat .message-avatar {
@@ -169,24 +175,32 @@
 	width: 100%;
 	height: auto;
 }
-.chat .chat-messages {
-	overflow: auto;
+
+.chat .chat-messages-container {
+	display: block;
 	position: absolute;
-	top: 0;
-	width: 100%;
 	height: 80%;
-	z-index: 1041;
+	width: 100%;
+	top: 0;
+	bottom: 20%;
+	overflow: auto;
+}
+
+.chat .chat-messages {
+	display: block;
+	position: relative;
+	overflow: auto;
+	padding-bottom: 40px;
 }
 
 .chat .chat-form {
-	width: 100%;
-	height: 20%;
+	display: block;
 	position: absolute;
-	top: 80%; botton: 0;
+	width: 100%;
+	bottom: 0;
 	overflow: auto;
 	background-color: rgba(0,0,0, 0.8);
 	padding: 8px;
-	z-index: 98;
 }
 
 .chat-form-btn {
@@ -196,6 +210,14 @@
 
 .chat .message-actions a {
 	font-size: smaller;
+}
+
+.chat-form-container .redactor_toolbar {
+	background-color: rgba(0,0,0, 0.8);
+}
+
+.chat-form-container .redactor_toolbar li a{
+	color: white;
 }
 
 .chat-form-container {

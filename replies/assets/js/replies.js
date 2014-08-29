@@ -15,7 +15,7 @@ function Replies(items)
 	};
 	this.views = {
 		containers: {
-			replyForm: 'reply_form',
+			replyForm: 'reply-form',
 			messages: 'messages',
 			message: 'message',
 		},
@@ -46,9 +46,9 @@ function Replies(items)
 	};
 	this.actions = {
 		ids: {
-			hide: 'hideMessage',
-			reply: 'replyToMessage',
-			quote: 'quoteMessage',
+			hide: 'hide-message',
+			reply: 'reply-to-message',
+			quote: 'quote-message',
 		}
 	};
 	this.defaultInit = [
@@ -138,7 +138,8 @@ function Replies(items)
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					self.startEditor($(this).data('container'));
-					var form = $('#'+self.views.containers.replyForm+$(this).data('parent'));
+					var form = $($(this).data('parent'));
+					console.log(form);
 					form.find("[role~='"+self.forms.inputs.reply_to+"']").val($(this).data('reply-to'));
 					var msgField = form.find("textarea");
 					msgField.val('').focus();
@@ -157,13 +158,13 @@ function Replies(items)
 				$(this).on('click', function (e) {
 					e.preventDefault();
 					self.startEditor($(this).data('container'));
-					var form = $('#'+self.views.containers.replyForm+$(this).data('parent'));
+					var form = $($(this).data('parent'));
 					form.find("[role~="+self.forms.inputs.reply_to+"]").val($(this).data('reply-to'));
 					var quote = {
 						author: $(this).data('author'),
 						parent: $(this).data('parent'),
-						reply_to: $(this).data('reply_to'),
-						message: $('#'+self.views.containers.message+$(this).data('reply-to')).find("div[id='messageBody"+$(this).data('reply-to')+"']").html()
+						reply_to: $(this).data('reply-to-id'),
+						message: $($(this).data('reply-to-message')).html()
 					};
 					var quoteString = "<blockquote>";
 					quoteString += quote.author+" said:<br>"+quote.message;
@@ -502,7 +503,7 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			$nitm.getObj(field).redactor('getObject').focus();
+			$nitm.getObj(field).redactor('focus');
 			break;
 			
 			default:
