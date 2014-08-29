@@ -4,25 +4,23 @@
  * @copyright Copyright (c) 2014 Ninjas In The Machine INC
  */
 
-namespace nitm\widgets\issueTracker\assets;
+namespace nitm\widgets\alerts;
 
 use yii\web\AssetBundle;
 
 /**
  * @author Malcolm Paul <lefteyecc@nitm.com>
  */
-class Asset extends AssetBundle
+class FollowAsset extends AssetBundle
 {
-	public $sourcePath = '@nitm/widgets/issueTracker/assets';
+	public $sourcePath = '@nitm/widgets/alerts/assets';
 	public $css = [
 	];
 	public $js = [
-		'js/tracker.js'
+		'js/follow.js'
 	];	
 	public $depends = [
 		'nitm\assets\AppAsset',
-		'nitm\widgets\replies\assets\Asset',
-		'nitm\widgets\activityIndicator\assets\Asset',
-		'nitm\widgets\vote\assets\Asset'
+		'kartik\widgets\DepDropAsset'
 	];
 }

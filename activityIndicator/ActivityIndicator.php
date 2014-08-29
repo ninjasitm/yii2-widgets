@@ -86,7 +86,7 @@ class ActivityIndicator extends Widget
 	public function init()
 	{
 		parent::init();
-		assets\Asset::register($this->getView());
+		Asset::register($this->getView());
 	}
 	
 	public function run()

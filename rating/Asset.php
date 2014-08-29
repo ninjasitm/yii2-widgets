@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2014 Ninjas In The Machine INC
  */
 
-namespace nitm\widgets\replies\assets;
+namespace nitm\widgets\rating;
 
 use yii\web\AssetBundle;
 
@@ -13,15 +13,11 @@ use yii\web\AssetBundle;
  */
 class Asset extends AssetBundle
 {
-	public $sourcePath = '@nitm/widgets/replies/assets';
-	public $css = [
-		'css/replies.css',
-	];
+	public $sourcePath = '@nitm/widgets/rating/assets';
 	public $js = [
-		'js/replies.js'
+		'js/rating.js'
 	];	
 	public $depends = [
-		'nitm\assets\AppAsset',
-		'yii\imperavi\ImperaviRedactorAsset',
+		'nitm\module\assets\AppAsset',
 	];
 }

@@ -125,6 +125,7 @@ class Vote extends BaseWidget
 		$this->uniqid = uniqid();
 		$this->iconOptions = !isset($this->iconOptions) ? $this->_defaultIconOptions: $this->iconOptions;
 		parent::init();
+		Asset::register($this->getView());
 	}
 	
 	public function run()

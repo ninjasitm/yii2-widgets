@@ -13,7 +13,6 @@ use yii\widgets\InputWidget;
 use nitm\models\Revisions as RevisionsModel;
 use nitm\widgets\models\BaseWidget;
 use kartik\icons\Icon;
-use nitm\widgets\revisions\assets\Asset as RevisionsAsset;
 use nitm\widgets\editor\Editor;
 
 class RevisionsInput extends BaseWidget
@@ -100,7 +99,7 @@ class RevisionsInput extends BaseWidget
 				'data-dave-path' => $this->autoSavePath,
 				'data-use-redactor' => $this->enableRedactor,
 			];
-			RevisionsAsset::register($this->getView());
+			Asset::register($this->getView());
 			break;
 			
 			default:

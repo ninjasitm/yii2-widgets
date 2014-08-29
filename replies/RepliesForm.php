@@ -87,7 +87,7 @@ class RepliesForm extends BaseWidget
 		parent::init();
 		$this->uniqid = !$this->uniqid ? '-'.uniqid() : $this->uniqid;
 		$this->options['id'] .= $this->uniqid;
-		assets\Asset::register($this->getView());
+		Asset::register($this->getView());
 	}
 	
 	public function run()

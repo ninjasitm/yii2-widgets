@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2014 Ninjas In The Machine INC
  */
 
-namespace nitm\widgets\rating\assets;
+namespace nitm\widgets\ias;
 
 use yii\web\AssetBundle;
 
@@ -13,11 +13,14 @@ use yii\web\AssetBundle;
  */
 class Asset extends AssetBundle
 {
-	public $sourcePath = '@nitm/widgets/rating/assets';
+	public $sourcePath = '@nitm/widgets/ias/assets';
+	public $css = [
+	];
 	public $js = [
-		'js/rating.js'
+		'js/nitm-ias.js'
 	];	
 	public $depends = [
-		'nitm\module\assets\AppAsset',
+		'kop\y2sp\assets\InfiniteAjaxScrollAsset',
+		'nitm\assets\AppAsset',
 	];
 }

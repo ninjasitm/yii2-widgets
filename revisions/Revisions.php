@@ -82,6 +82,7 @@ class Revisions extends BaseWidget
 			break;
 		}
 		parent::init();
+		Asset::register($this->getView());
 	}
 	
 	public function run()

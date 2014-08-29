@@ -88,7 +88,7 @@ class ChatForm extends BaseWidget
 		]);
 		$this->model->maxLength = 140;
 		parent::init();
-		assets\Asset::register($this->getView());
+		Asset::register($this->getView());
 	}
 	
 	public function run()

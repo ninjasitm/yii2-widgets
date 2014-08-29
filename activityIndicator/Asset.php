@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2014 Ninjas In The Machine INC
  */
 
-namespace nitm\widgets\vote\assets;
+namespace nitm\widgets\activityIndicator;
 
 use yii\web\AssetBundle;
 
@@ -13,11 +13,10 @@ use yii\web\AssetBundle;
  */
 class Asset extends AssetBundle
 {
-	public $sourcePath = '@nitm/widgets/vote/assets';
+	public $sourcePath = '@nitm/widgets/activityIndicator/assets';
+	public $css = [
+		'css/activity_indicator.css',
+	];
 	public $js = [
-		'js/vote.js'
-	];	
-	public $depends = [
-		'nitm\assets\AppAsset',
 	];
 }

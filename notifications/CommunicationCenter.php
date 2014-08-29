@@ -61,8 +61,8 @@ class CommunicationCenter extends \yii\base\Widget
 		parent::init();
 		$this->chatUpdateOptions = array_merge($this->_chatUpdateOptions, $this->chatUpdateOptions);
 		$this->notificationUpdateOptions = array_merge($this->_notificationUpdateOptions, $this->notificationUpdateOptions);
-		\nitm\widgets\replies\assets\Asset::register($this->getView());
-		\nitm\widgets\alerts\assets\NotificationAsset::register($this->getView());
+		\nitm\widgets\replies\Asset::register($this->getView());
+		\nitm\widgets\alerts\NotificationAsset::register($this->getView());
 	}
 	
 	public function run() 

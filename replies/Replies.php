@@ -97,7 +97,7 @@ class Replies extends BaseWidget
 		$this->options = array_merge($this->_options, $this->options);
 		$this->uniqid = '-'.$this->parentType.$this->parentId;
 		$this->options['id'] .= $this->uniqid;
-		assets\Asset::register($this->getView());
+		Asset::register($this->getView());
 	}
 	
 	public function run()

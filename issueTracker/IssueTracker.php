@@ -14,7 +14,6 @@ use nitm\models\Replies;
 use nitm\models\Issues as IssuesModel;
 use nitm\models\search\Issues as IssuesSearch;
 use nitm\widgets\models\BaseWidget;
-use nitm\widgets\issueTracker\assets\Asset as IssueAsset;
 
 /**the issues associated with a request with support for solving them
  */
@@ -48,7 +47,7 @@ class IssueTracker extends BaseWidget
 			$this->model = ($this->model instanceof IssuesModel) ? $this->model : (new IssuesModel(['initSearchClass' => false]))->findModel([$this->parentId, $this->parentType]);
 			break;
 		}
-		assets\Asset::register($this->getView());
+		Asset::register($this->getView());
 	}
 	
 	public function run()

@@ -103,7 +103,7 @@ class Chat extends BaseWidget
 		]);
 		$this->updateOptions = array_merge($this->_updateOptions, $this->updateOptions);
 		parent::init();
-		assets\Asset::register($this->getView());
+		Asset::register($this->getView());
 	}
 	
 	public function run()

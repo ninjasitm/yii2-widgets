@@ -4,23 +4,23 @@
  * @copyright Copyright (c) 2014 Ninjas In The Machine INC
  */
 
-namespace nitm\widgets\alerts\assets;
+namespace nitm\widgets\revisions;
 
 use yii\web\AssetBundle;
 
 /**
  * @author Malcolm Paul <lefteyecc@nitm.com>
  */
-class AlertsAsset extends AssetBundle
+class Asset extends AssetBundle
 {
-	public $sourcePath = '@nitm/widgets/alerts/assets';
+	public $sourcePath = '@nitm/widgets/revisions/assets';
 	public $css = [
 	];
 	public $js = [
-		'js/alerts.js'
+		'js/revisions.js'
 	];	
 	public $depends = [
 		'nitm\assets\AppAsset',
-		'kartik\widgets\DepDropAsset'
+		'yii\imperavi\ImperaviRedactorAsset',
 	];
 }

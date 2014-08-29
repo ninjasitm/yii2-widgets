@@ -154,10 +154,9 @@
 	top: 0;
 	bottom: 0;
 	display: block;
-	overflow: auto;
+	overflow: hidden;
 	padding: 0px !important;
 	z-index: 10000;
-	height: inherit;
 	min-height: 100px;
 }
 
@@ -179,18 +178,16 @@
 .chat .chat-messages-container {
 	display: block;
 	position: absolute;
-	height: 80%;
+	overflow-y: auto;
+	height: 78%;
 	width: 100%;
 	top: 0;
 	bottom: 20%;
-	overflow: auto;
 }
 
 .chat .chat-messages {
 	display: block;
 	position: relative;
-	overflow: auto;
-	padding-bottom: 40px;
 }
 
 .chat .chat-form {

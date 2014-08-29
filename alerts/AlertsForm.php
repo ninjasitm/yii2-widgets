@@ -30,7 +30,7 @@ class AlertsForm extends \yii\base\Widget
 	{
 		$this->model = ($this->model instanceof Alerts) ? $this->model : new Alerts();
 		parent::init();
-		assets\Asset::register($this->getView());
+		Asset::register($this->getView());
 	}
 	
 	public function run()

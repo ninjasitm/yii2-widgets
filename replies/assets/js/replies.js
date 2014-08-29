@@ -218,7 +218,7 @@ function Replies(items)
 	}
 	
 	this.chatStatus = function (update, result, container) {
-		container.find('[id="chat\-messages-nav"]').each(function(index, element) {
+		$nitm.getObj(container).find('[id="chat\-messages-nav"]').each(function(index, element) {
 			var tab = $(element);
 			switch(update)
 			{

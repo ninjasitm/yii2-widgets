@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2014 Ninjas In The Machine INC
  */
 
-namespace nitm\widgets\revisions\assets;
+namespace nitm\widgets\replies;
 
 use yii\web\AssetBundle;
 
@@ -13,11 +13,12 @@ use yii\web\AssetBundle;
  */
 class Asset extends AssetBundle
 {
-	public $sourcePath = '@nitm/widgets/revisions/assets';
+	public $sourcePath = '@nitm/widgets/replies/assets';
 	public $css = [
+		'css/replies.css',
 	];
 	public $js = [
-		'js/revisions.js'
+		'js/replies.js'
 	];	
 	public $depends = [
 		'nitm\assets\AppAsset',

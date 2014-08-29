@@ -82,7 +82,7 @@ class Follow extends \yii\base\Widget
 		}
 		$this->uniqid = uniqid();
 		$this->initializeMethods();
-		assets\FollowAsset::register($this->getView());
+		FollowAsset::register($this->getView());
 	}
 	
 	public function run()
