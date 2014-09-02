@@ -151,13 +151,10 @@
 */
 
 .chat {
-	top: 0;
-	bottom: 0;
 	display: block;
 	overflow: hidden;
 	padding: 0px !important;
 	z-index: 10000;
-	min-height: 100px;
 }
 
 .chat * {
@@ -188,6 +185,8 @@
 .chat .chat-messages {
 	display: block;
 	position: relative;
+	height: 100%;
+	padding-bottom: 20px;
 }
 
 .chat .chat-form {

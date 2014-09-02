@@ -32,7 +32,6 @@ function NitmIas ()
 			options = $.extend(options, defaultOptions);
 			var container = data.hasOwnProperty('container') ? $nitm.getObj(data.container) : $;
 			var ias = container.ias(options);
-			console.log(ias);
 			for(var extension in data.extensions)
 			{
 				switch(data.extensions.hasOwnProperty(extension))
@@ -45,8 +44,11 @@ function NitmIas ()
 			for(var event in data.events)
 			{
 				try {
-					ias.on(event, data.events[event]);
-				} catch (error) {};
+					eval("var func = "+data.events[event]);
+					ias.on(event, func);
+				} catch (error) {
+					console.log(error);
+				};
 			}
 		});
 	}

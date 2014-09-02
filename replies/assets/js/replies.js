@@ -54,9 +54,6 @@ function Replies(items)
 	this.defaultInit = [
 		'initCreating',
 		'initEditor',
-		'initHiding',
-		'initReplying',
-		'initQuoting'
 	];
 
 	this.init = function (containerId) {
@@ -119,15 +116,20 @@ function Replies(items)
 				$(this).off('click');
 				$(this).on('click', function (e) {
 					e.preventDefault();
-					var parent = $(this).parents("[class~='message']:first");
-					var element = this;
-					$.post($(this).attr('href'), 
-						function (result) {
-							self.afterHide(result, parent.get(0), element);
-						}, 'json');
+					self.hide(this);
 				});
 			});
 		});
+	}
+	
+	this.hide = function (event) {
+		event.preventDefault();
+		var elem = event.target;
+		var parent = $(elem).parents("[class~='message']:first");
+		$.post($(elem).attr('href'), 
+			function (result) {
+				self.afterHide(result, parent.get(0), elem);
+			}, 'json');
 	}
 	
 	this.initReplying = function (containerId) {
@@ -136,19 +138,24 @@ function Replies(items)
 			container.find("[role='"+v+"']").map(function() {
 				$(this).off('click');
 				$(this).on('click', function (e) {
-					e.preventDefault();
-					self.startEditor($(this).data('container'));
-					var form = $($(this).data('parent'));
-					console.log(form);
-					form.find("[role~='"+self.forms.inputs.reply_to+"']").val($(this).data('reply-to'));
-					var msgField = form.find("textarea");
-					msgField.val('').focus();
-					self.setEditorValue(msgField.get(0), '', false, self.editor);
-					self.setEditorFocus(msgField.get(0), self.editor);
-					container.find(self.views.roles.replyToIndicator).html("Replying to "+$(this).data('author'));
+					self.reply(e);
 				});
 			});
 		});
+	}
+	
+	this.replyTo = function (event)
+	{
+		event.preventDefault();
+		var elem = event.target;
+		self.startEditor($(elem).data('container'));
+		var form = $($(elem).data('parent'));
+		form.find("[role~='"+self.forms.inputs.reply_to+"']").val($(elem).data('reply-to'));
+		var msgField = form.find("textarea");
+		msgField.val('').focus();
+		self.setEditorValue(msgField.get(0), '', false, self.editor);
+		self.setEditorFocus(msgField.get(0), self.editor);
+		container.find(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
 	}
 	
 	this.initQuoting = function (containerId) {
@@ -156,26 +163,31 @@ function Replies(items)
 		this.forms.allowQuoting.map(function (v) {
 			container.find("[role='"+v+"']").map(function() {
 				$(this).on('click', function (e) {
-					e.preventDefault();
-					self.startEditor($(this).data('container'));
-					var form = $($(this).data('parent'));
-					form.find("[role~="+self.forms.inputs.reply_to+"]").val($(this).data('reply-to'));
-					var quote = {
-						author: $(this).data('author'),
-						parent: $(this).data('parent'),
-						reply_to: $(this).data('reply-to-id'),
-						message: $($(this).data('reply-to-message')).html()
-					};
-					var quoteString = "<blockquote>";
-					quoteString += quote.author+" said:<br>"+quote.message;
-					quoteString += "</blockquote><br>";
-					var msgField = form.find("textarea");
-					self.setEditorValue(msgField.get(0), quoteString, true, self.editor);
-					self.setEditorFocus(msgField.get(0), self.editor);
-					container.find(self.views.roles.replyToIndicator).html("Replying to "+$(this).data('author'));
+					self.quote(e);
 				});
 			});
 		});
+	}
+	
+	this.quote = function (event){
+		event.preventDefault();
+		var elem = event.target;
+		self.startEditor($(elem).data('container'));
+		var form = $($(elem).data('parent'));
+		form.find("[role~="+self.forms.inputs.reply_to+"]").val($(elem).data('reply-to'));
+		var quote = {
+			author: $(elem).data('author'),
+			parent: $(elem).data('parent'),
+			reply_to: $(elem).data('reply-to-id'),
+			message: $($(elem).data('reply-to-message')).html()
+		};
+		var quoteString = "<blockquote>";
+		quoteString += quote.author+" said:<br>"+quote.message;
+		quoteString += "</blockquote><br>";
+		var msgField = form.find("textarea");
+		self.setEditorValue(msgField.get(0), quoteString, true, self.editor);
+		self.setEditorFocus(msgField.get(0), self.editor);
+		container.find(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
 	}
 	
 	this.initPolling = function (options) {

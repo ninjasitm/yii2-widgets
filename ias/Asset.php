@@ -14,10 +14,11 @@ use yii\web\AssetBundle;
 class Asset extends AssetBundle
 {
 	public $sourcePath = '@nitm/widgets/ias/assets';
-	public $css = [
-	];
 	public $js = [
 		'js/nitm-ias.js'
+	];
+	public $css = [
+		'css/nitm-ias.css'
 	];	
 	public $depends = [
 		'kop\y2sp\assets\InfiniteAjaxScrollAsset',
