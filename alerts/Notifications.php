@@ -17,6 +17,7 @@ class Notifications extends \yii\base\Widget
 {	
 	public $model;
 	public $inline = true;
+	public $contentOnly;
 	
 	/*
 	 * HTML options for generating the widget
@@ -61,8 +62,6 @@ class Notifications extends \yii\base\Widget
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
 				'widget' => $this,
-				'options' => $this->options,
-				'primaryModel' => $this->model
 			]);
 			break;
 		}

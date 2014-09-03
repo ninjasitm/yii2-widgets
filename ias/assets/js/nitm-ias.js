@@ -47,7 +47,6 @@ function NitmIas ()
 					eval("var func = "+data.events[event]);
 					ias.on(event, func);
 				} catch (error) {
-					console.log(error);
 				};
 			}
 		});

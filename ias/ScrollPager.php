@@ -45,8 +45,8 @@ class ScrollPager extends \kop\y2sp\ScrollPager
 	public $triggerOffset = 150;
 	
 	
-	public $spinnerTemplate = "<div style='min-height: 20px; bottom: 0; width: 90%; left: 5%; right: 5%; text-align: center; padding: 6px;'><div class='loading'></div></div>";
-	public $noneLeftTemplate = "<h4 style='min-height: 20px; bottom: 0; width: 90%; left: 5%; right: 5%; text-align: center; padding: 6px;'>{text}</h4>";
+	public $spinnerTemplate = "<div class='loading-wrapper'><div class='loading'></div></div>";
+	public $noneLeftTemplate = "<h4 style='position: absolute; min-height: 20px; width: 90%; left: 5%; right: 5%; text-align: center; padding: 6px;'>{text}</h4>";
 	public $noneLeftText = 'To not be continued!';
 	
 	public function init()
