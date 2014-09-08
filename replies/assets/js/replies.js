@@ -52,7 +52,6 @@ function Replies(items)
 		}
 	};
 	this.defaultInit = [
-		'initCreating',
 		'initEditor',
 	];
 
@@ -66,46 +65,39 @@ function Replies(items)
 	}
 	
 	this.initEditor = function (containerId) {
-		var containers = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
 		this.elements.allowEditor.map(function (v) {
-			containers.each(function(index, element) {
-				var container = $(element);
-				container.find("[role='"+v+"']").map(function() {
-					$(this).off('click');
-					$(this).on('click', function (e) {
-						e.preventDefault();
-						$(this).addClass('hidden');
-						self.startEditor($(this).data('container'), '', this);
-					});
+			container.find("[role='"+v+"']").map(function() {
+				$(this).off('click');
+				$(this).on('click', function (e) {
+					e.preventDefault();
+					$(this).addClass('hidden');
+					self.startEditor($(this).data('container'), '', this);
 				});
 			});
 		});
 	}
 	
 	this.initCreating = function (containerId) {
-		var containers = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
 		this.forms.allowCreate.map(function (v) {
-			containers.each(function(index, element) {
-				var container = $(element);
-				container.find("form[role='"+v+"']").map(function() {
-					//console.log(this);
-					//$(this).find("[data-toggle='buttons'] .btn").map(function() {
-					//	$(this).button();
-					//});
-					$(this).off('submit');
-					$(this).on('submit', function (e) {
-						e.preventDefault();
-						$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
-						self.operation(this);
-					});
-					$(this).on('reset', function (e) {
-						this.reset();
-						var msgField = $(this).find("textarea");
-						self.setEditorValue(msgField.get(0), '', false, self.editor);
-						$(this).find(self.views.roles.replyToIndicator).html("");
-					});
-				})
-			});
+			container.find("form[role='"+v+"']").map(function() {
+				//$(this).find("[data-toggle='buttons'] .btn").map(function() {
+				//	$(this).button();
+				//});
+				$(this).off('submit');
+				$(this).on('submit', function (e) {
+					e.preventDefault();
+					$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
+					self.operation(this);
+				});
+				$(this).on('reset', function (e) {
+					this.reset();
+					var msgField = $(this).find("textarea");
+					self.setEditorValue(msgField.get(0), '', false, self.editor);
+					$(this).find(self.views.roles.replyToIndicator).html("");
+				});
+			})
 		});
 	}
 	

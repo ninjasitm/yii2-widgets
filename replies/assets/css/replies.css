@@ -1,3 +1,4 @@
+
 /* CSS Document */
 
 .messages {
@@ -197,6 +198,10 @@
 	overflow: auto;
 	background-color: rgba(0,0,0, 0.8);
 	padding: 8px;
+}
+
+.chat-form .alert {
+	color: black;
 }
 
 .chat-form-btn {
