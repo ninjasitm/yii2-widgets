@@ -52,11 +52,8 @@ class Modal extends \yii\bootstrap\Modal
 	
 	public function init()
 	{
-		$this->initOptions();
-	}
-	
-	public function run()
-	{
+		if(empty($this->content)) 
+			$this->initOptions();
 		$this->options = array_merge($this->_defaultOptions, $this->options);
 		$this->options['id'] = $this->options['id'].uniqid();
 		$this->contentOptions = array_merge($this->_defaultContentOptions, $this->contentOptions);
@@ -79,12 +76,29 @@ class Modal extends \yii\bootstrap\Modal
 			$this->dialogOptions['class'] .= " modal-sm";
 			break;
 		}
-		return $this->renderTogglebutton().Html::tag('div',
+		$this->size = $this->dialogOptions['class'];
+		if(!empty($this->content)) 
+			parent::init();
+	}
+	
+	public function run()
+	{
+		switch(empty($this->content))
+		{
+			case false:
+			echo $this->content;
+			parent::run();
+			break;
+			
+			default:
+			echo $this->renderTogglebutton().Html::tag('div',
 				Html::tag('div', 
 					Html::tag('div', $this->renderHeader().$this->content, $this->contentOptions), 
 				$this->dialogOptions),
 			$this->options
-		);
+			);
+			break;
+		}
 	}
 	
 	protected function renderToggleButton()
