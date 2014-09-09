@@ -15,6 +15,7 @@ use kartik\icons\Icon;
  */
 class ShortLink extends \yii\base\Widget
 {
+	public $title = 'Short Link';
 	public $url = '#';
 	public $header = '';
 	public $type;
@@ -22,6 +23,7 @@ class ShortLink extends \yii\base\Widget
 	public $useLabel = true;
 	public $viewOptions = [];
 	public $inputOptions = [];
+	public $modalOptions = [];
 	
 	protected $urlParts = [];
 	protected $isIp;
@@ -41,14 +43,14 @@ class ShortLink extends \yii\base\Widget
 	{
 		$shortLinkLabel = $this->useLabel ? Html::tag(
 			'span',
-			"Short Link: ",
+			$this->title,
 			[
 				'class' => 'input-group-addon'
 			]
 		) : '';
 		$shortLinkInput = Html::input(
 			'text', 
-			'shortLink',
+			$this->title,
 			(empty($this->inputOptions['text']) ? $this->url : $this->inputOptions['text']), 
 			array_merge([
 				'class' => 'form-control',
@@ -66,7 +68,7 @@ class ShortLink extends \yii\base\Widget
 		switch($this->type)
 		{
 			case 'modal':
-			$shortLinkButton = \nitm\widgets\modal\Modal::widget([
+			$this->modalOptions = array_merge([
 				'size' => $this->size,
 				'header' => $this->header,
 				'toggleButton' => [
@@ -82,7 +84,8 @@ class ShortLink extends \yii\base\Widget
 				'options' => [
 					'id' => 'short-link'.uniqid()
 				]
-			]);
+			], $this->modalOptions);
+			$shortLinkButton = \nitm\widgets\modal\Modal::widget($this->modalOptions);
 			break;
 			
 			default:
@@ -110,7 +113,8 @@ class ShortLink extends \yii\base\Widget
 			'div',
 			$shortLinkLabel.$shortLinkInput.$shortLinkButton.$newWindowLinkButton,
 			[
-				'class' => 'input-group'
+				'class' => 'input-group',
+				'style' => 'width:100%'
 			]
 		);
 		echo $shortLink;
