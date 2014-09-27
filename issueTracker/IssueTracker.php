@@ -53,7 +53,9 @@ class IssueTracker extends BaseWidget
 	public function run()
 	{
 		$dataProvdier = null;
-		$searchModel = new IssuesSearch;
+		$searchModel = new IssuesSearch([
+			'withThese' => ['author', 'editor']
+		]);
 		$get = \Yii::$app->request->getQueryParams();
 		$params = array_merge($get, $this->model->getConstraints());
 		switch(is_array($this->items) && !empty($this->items))

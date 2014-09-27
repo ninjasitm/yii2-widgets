@@ -30,8 +30,8 @@ function NitmIas ()
 				next: '.next a'
 			}
 			options = $.extend(options, defaultOptions);
-			var container = data.hasOwnProperty('container') ? $nitm.getObj(data.container) : $;
-			var ias = container.ias(options);
+			var overFlowContainer = data.hasOwnProperty('container') ? $(data.container) : $;
+			var ias = overFlowContainer.ias(options);
 			for(var extension in data.extensions)
 			{
 				switch(data.extensions.hasOwnProperty(extension))

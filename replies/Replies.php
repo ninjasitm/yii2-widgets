@@ -102,8 +102,9 @@ class Replies extends BaseWidget
 	
 	public function run()
 	{
-		$searchModel = new RepliesSearch;
-		$searchModel->addWith(['author', 'replyTo']);
+		$searchModel = new RepliesSearch([
+			'withThese' => ['author', 'replyTo']
+		]);
 		$dataProvider = null;
 		switch(isset($this->items) && is_array($this->items))
 		{
