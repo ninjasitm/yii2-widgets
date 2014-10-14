@@ -3,7 +3,7 @@ namespace nitm\widgets\notifications;
 
 use Yii;
 use yii\helpers\Html;
-use kartik\icons\Icon;
+use nitm\helpers\Icon;
 use yii\bootstrap\Tabs;
 use yii\bootstrap\Nav;
 use nitm\models\Issues;
@@ -88,7 +88,7 @@ class CommunicationCenter extends \yii\base\Widget
 			'encodeLabels' => false,
 			'items' => [
 				[
-					'label' => 'Messages '.Html::tag('span', $chatModel->hasNew(),['class' => 'badge']),
+					'label' => Icon::show('comment').Html::tag('span', $chatModel->hasNew(),['class' => 'badge']),
 					'active' => false,
 					'content' =>Html::tag('div', '',
 						[
@@ -99,8 +99,7 @@ class CommunicationCenter extends \yii\base\Widget
 					),
 					'options' => [
 						'id' => 'communication-center-messages'.$uniqid,
-						'class' => 'chat col-md-4 col-lg-4',
-						'style' => 'position: fixed; top: 72px; right: 6px; bottom: 44px; overflow: hidden; padding: 0px; box-shadow: 0px 0px 8px #999; background-color: rgba(255,255,255,0.9);'
+						'class' => 'chat col-md-4 col-lg-4 communication-center-item',
 					],
 					'headerOptions' => [
 						'id' => 'communication-center-messages-tab'.$uniqid,
@@ -115,7 +114,7 @@ class CommunicationCenter extends \yii\base\Widget
 					]
 				],
 				[
-					'label' => 'Alerts '.Html::tag('span', $notificationModel->count(), ['class' => 'badge']),
+					'label' => Icon::show('bell').Html::tag('span', $notificationModel->count(), ['class' => 'badge']),
 					'content' =>Html::tag('div', '',
 						[
 							'id' => 'communication-center-notifications'.$uniqid,
@@ -123,8 +122,7 @@ class CommunicationCenter extends \yii\base\Widget
 					),
 					'options' => [
 						'id' => 'communication-center-notifications'.$uniqid,
-						'class' => 'col-md-4 col-lg-4',
-						'style' => 'position: fixed;top: 72px; right: 6px; bottom: 44px; overflow: hidden; padding: 0px; box-shadow: 0px 0px 8px #999; background-color: rgba(255,255,255,0.9);'
+						'class' => 'col-md-4 col-lg-4 communication-center-item',
 					],
 					'headerOptions' => [
 						'id' => 'communication-center-notifications-tab'.$uniqid,
@@ -173,7 +171,14 @@ class CommunicationCenter extends \yii\base\Widget
 		{
 			$js = Html::script($js, ['type' => 'text/javascript']);
 		}
-		return $widget.$js;
+		return $widget.$js.Html::tag('style', ".communication-center-item {
+				position: fixed !important; 
+				top: 60px; right: 6px; bottom: 10px; 
+				overflow: hidden; 
+				padding: 0px; box-shadow: 0px 4px 8px #999; 
+				background-color: rgba(255,255,255,0.9);
+				z-index: 10000;
+			}");
 	}
 }
 ?>
