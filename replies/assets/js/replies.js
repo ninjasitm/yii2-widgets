@@ -147,7 +147,7 @@ function Replies(items)
 		msgField.val('').focus();
 		self.setEditorValue(msgField.get(0), '', false, self.editor);
 		self.setEditorFocus(msgField.get(0), self.editor);
-		container.find(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
+		form.find(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
 	}
 	
 	this.initQuoting = function (containerId) {

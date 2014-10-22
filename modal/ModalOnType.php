@@ -12,7 +12,7 @@ use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use yii\base\Widget;
 
-class Modal extends \yii\bootstrap\Modal
+class DynamicModal
 {	
 	/*
 	 * The size of the widget [large, mediaum, small, normal]
@@ -22,7 +22,11 @@ class Modal extends \yii\bootstrap\Modal
 	/*
 	 * HTML options for generating the widget
 	 */
-	public $options = [];
+	public $options = [
+		'class' => 'modal fade in',
+		'role' => 'dialog',
+		'id' => 'modal'
+	];
 		
 	/*
 	 * HTML options for generating the widget content
@@ -34,7 +38,7 @@ class Modal extends \yii\bootstrap\Modal
 	 */
 	public $dialogOptions = [];
 	
-	public $content;
+	public $content = '';
 	
 	private $_defaultOptions = [
 		'class' => 'modal fade in',
@@ -52,8 +56,11 @@ class Modal extends \yii\bootstrap\Modal
 	
 	public function init()
 	{
-		if(empty($this->content)) 
-			$this->initOptions();
+		$this->initOptions();
+	}
+	
+	public function run()
+	{
 		$this->options = array_merge($this->_defaultOptions, $this->options);
 		$this->options['id'] = $this->options['id'].uniqid();
 		$this->contentOptions = array_merge($this->_defaultContentOptions, $this->contentOptions);
@@ -76,34 +83,16 @@ class Modal extends \yii\bootstrap\Modal
 			$this->dialogOptions['class'] .= " modal-sm";
 			break;
 		}
-		$this->size = $this->dialogOptions['class'];
-	}
-	
-	public function run()
-	{
-		switch(empty($this->content))
-		{
-			case false:
-			parent::init();
-			echo $this->content;
-			parent::run();
-			break;
-			
-			default:
-			echo $this->renderTogglebutton().Html::tag('div',
+		return $this->renderTogglebutton().Html::tag('div',
 				Html::tag('div', 
 					Html::tag('div', $this->renderHeader().$this->content, $this->contentOptions), 
 				$this->dialogOptions),
 			$this->options
-			);
-			break;
-		}
+		);
 	}
 	
 	protected function renderToggleButton()
 	{
-		if(!$this->toggleButton)
-			return '';
 		$options = isset($this->toggleButton['wrapper']) ? $this->toggleButton['wrapper'] : [];
 		unset($this->toggleButton['wrapper']);
 		$this->toggleButton['data-target'] = '#'.$this->options['id'];
