@@ -8,11 +8,12 @@ function SearchModal () {
 	this.modalOptions = {
 		'show': false
 	};
-	this.modalId = '#search-modal';
 	this.events = [
 		'keypress'
 	];
-	this.id = '#search-modal';
+	this.modalId = '#search-modal';
+	this.searchField = '#search-field';
+	this.resultContainer = '#search-results';
 	this.defaultInit = [
 	];
 
@@ -34,48 +35,47 @@ function SearchModal () {
 				//If any special jeys were hit then ignore this
 				switch(true)
 				{
-					case e.ctrlKey:
-					case e.shiftkey:
-					case e.altKey:
-					case e.metaKey:
-					case e.key == 'Esc':
-					case e.key == 'Escape':
+					case $(e.target).is('input, textarea, .redactor-editor'):
+					case e.ctrlKey || e.shiftkey || e.altKey || e.metaKey:
+					case Array(
+						'Esc', 'Escape', 'Backspace',
+						'F1', 'F2', 'F3', 'F4', 
+						'F5', 'F6', 'F7', 'F8', 
+						'F7', 'F10', 'F11', 'F12'
+					).indexOf(e.Key) != -1:
 					return;
 					break;
 				}
-				switch($(e.target).is('input', 'textarea'))
+				
+				if(self.modal == undefined)
 				{
-					case false:
-					if(self.modal == undefined)
-					{
-						self.modal = $(modalId);
-						var $form = self.modal.find('form');
-						$form.find('#search-field').focus().val(e.key);
-						$form.on('submit', function (event) {
-							event.preventDefault();
-							$nitm.module('entity').operation(this, function (result, form) {
-								$(form).find('#search-field').val(result.query);
-								self.modal.find('#search-results').html(result.data);
-							});
+					self.modal = $(modalId);
+					var $form = self.modal.find('form');
+					$form.find(self.searchField).focus().val(e.key);
+					$form.on('submit', function (event) {
+						event.preventDefault();
+						$nitm.module('entity').operation(this, function (result, form) {
+							self.modal.find(self.resultContainer).html(result.data);
+							$(form).find(self.searchField).val(result.query);
 						});
-						self.modal.on('hidden.bs.modal', function (e) {
-							self.isActive = false;
-							self.modal.modal('hide');
-							e.stopPropagation();
-						});
-						self.modal.on('shown.bs.modal', function () {
-							self.isActive = true;
-							var $modal = $(this);
-							var $form = $(this).find('form');
-							$form.find('#search-field').focus().val(e.key);
-						});
-						self.modal.modal(self.modalOptions);
-					}
-					if(!self.isActive)
-					{
-						self.modal.modal('show');
-					}
-					break;
+					});
+					self.modal.on('hidden.bs.modal', function (e) {
+						self.isActive = false;
+						self.modal.modal('hide');
+						e.stopPropagation();
+					});
+					self.modal.on('shown.bs.modal', function () {
+						self.isActive = true;
+						var $modal = $(this);
+						var $form = $(this).find('form');
+						var $input = $form.find(self.searchField) ;
+						$input.val(e.key).focus().val($input.val());
+					});
+					self.modal.modal(self.modalOptions);
+				}
+				if(!self.isActive)
+				{
+					self.modal.modal('show');
 				}
 			});
 		});

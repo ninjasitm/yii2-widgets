@@ -46,7 +46,7 @@ class SearchModal extends Modal
 			<div class="row"><br>
 			  <div class="col-lg-12 col-sm-12 col-md-12">
 				<div class="input-group">
-				  <input type="text" name="q" class="form-control" id="search-field">
+				  <input onFocus="this.value = this.value;" type="text" name="q" class="form-control" id="search-field">
 				  <span class="input-group-btn">
 					<button class="btn btn-default" type="submit">Search</button>
 				  </span>

@@ -213,21 +213,24 @@
 	font-size: smaller;
 }
 
-.chat-form-container .redactor_toolbar {
-	background-color: rgba(0,0,0, 0.8);
+.chat-form-container .redactor-toolbar {
+	background-color: transparent;
+	margin-top: -15px !important;
 }
 
-.chat-form-container .redactor_toolbar li a{
+.chat-form-container .redactor-toolbar li a {
 	color: white;
 }
 
 .chat-form-container {
 	color: white;
 }
+.chat-form-container .redactor-editor {
+	padding: 6px;
+}
 
-.chat-form-container textarea, .chat-form-container .redactor_box  {
+.chat-form-container textarea, .chat-form-container .redactor-box  {
 	color: black;
-	margin-top: -15px;
 }
 
 .input-group .btn-group > .btn, .btn-group-vertical > .btn {
