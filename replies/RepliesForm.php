@@ -73,7 +73,7 @@ class RepliesForm extends BaseWidget
 	];
 	
 	public function init()
-	{	
+	{
 		switch(1)
 		{
 			case !($this->model instanceof RepliesModel) && (($this->parentType == null) || ($this->parentId == null) || ($this->parentKey == null)):
