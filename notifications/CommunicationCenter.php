@@ -108,6 +108,7 @@ class CommunicationCenter extends \yii\base\Widget
 					'linkOptions' => [
 						'role' => 'visibility',
 						'data-type' => 'html',
+						'data-on' => '#communication-center-messages'.$uniqid.':hidden',
 						'data-id' => '#communication-center-messages'.$uniqid,
 						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\models\Replies::FORM_PARAM => true]),
 						'id' => 'communication-center-messages-link'.$uniqid
@@ -131,6 +132,7 @@ class CommunicationCenter extends \yii\base\Widget
 					'linkOptions' => [
 						'role' => 'visibility',
 						'data-type' => 'html',
+						'data-on' => '#communication-center-notifications'.$uniqid.':hidden',
 						'data-id' => '#communication-center-notifications'.$uniqid,
 						'data-url' => \Yii::$app->urlManager->createUrl(['/alerts/notifications', '__format' => 'html']),
 						'id' => 'communication-center-notifications-link'.$uniqid
