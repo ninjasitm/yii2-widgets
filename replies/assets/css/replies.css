@@ -147,6 +147,15 @@
 	opacity: 0.3;
 }
 
+.message-form .redactor-toolbar, .message-form .redactor-box {
+	background-color: transparent;
+	box-shadow: none;
+}
+
+.message-form .redactor-editor {
+	background-color: #fff;
+}
+
 /**
 * Chat section
 */

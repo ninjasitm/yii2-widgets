@@ -42,7 +42,7 @@ class SearchModal extends Modal
 	
 	protected function getDefaultHeader()
 	{
-		return '<form action="/search" method="get">
+		return '<br><form action="/search" method="get">
 			<div class="row"><br>
 			  <div class="col-lg-12 col-sm-12 col-md-12">
 				<div class="input-group">

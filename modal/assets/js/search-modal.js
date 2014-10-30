@@ -68,8 +68,9 @@ function SearchModal () {
 						self.isActive = true;
 						var $modal = $(this);
 						var $form = $(this).find('form');
-						var $input = $form.find(self.searchField) ;
-						$input.val(e.key).focus().val($input.val());
+						var $input = $form.find(self.searchField);
+						$input.focus().val(e.key);
+						console.log('here');
 					});
 					self.modal.modal(self.modalOptions);
 				}
