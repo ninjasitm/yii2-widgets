@@ -147,15 +147,6 @@
 	opacity: 0.3;
 }
 
-.message-form .redactor-toolbar, .message-form .redactor-box {
-	background-color: transparent;
-	box-shadow: none;
-}
-
-.message-form .redactor-editor {
-	background-color: #fff;
-}
-
 /**
 * Chat section
 */
@@ -222,6 +213,31 @@
 	font-size: smaller;
 }
 
+.chat-form-container {
+	color: white;
+}
+
+.input-group .btn-group > .btn, .btn-group-vertical > .btn {
+    position: relative;
+	float: none;
+}
+
+/**
+ * Redactor styling section
+ */
+.message-form .redactor-toolbar, .message-form .redactor-box,
+.chat-form-container textarea, .chat-form-container .redactor-box {
+	background-color: transparent;
+	box-shadow: none;
+	color: black;
+}
+
+.message-form .redactor-editor, .chat-form-container .redactor-editor {
+	padding: 6px;
+	background-color: #fff;
+	border: none !important;
+}
+
 .chat-form-container .redactor-toolbar {
 	background-color: transparent;
 	margin-top: -15px !important;
@@ -229,20 +245,4 @@
 
 .chat-form-container .redactor-toolbar li a {
 	color: white;
-}
-
-.chat-form-container {
-	color: white;
-}
-.chat-form-container .redactor-editor {
-	padding: 6px;
-}
-
-.chat-form-container textarea, .chat-form-container .redactor-box  {
-	color: black;
-}
-
-.input-group .btn-group > .btn, .btn-group-vertical > .btn {
-    position: relative;
-	float: none;
 }

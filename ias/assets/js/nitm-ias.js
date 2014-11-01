@@ -41,6 +41,12 @@ function NitmIas ()
 					break;
 				}
 			}
+			ias.on('rendered', function (items) {
+				/**
+				 * Initialize loaded items using $nitm Tools
+				 */
+				$nitm.module('tools').init($(items));
+			});
 			for(var event in data.events)
 			{
 				try {
