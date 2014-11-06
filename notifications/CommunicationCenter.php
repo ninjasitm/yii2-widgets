@@ -22,7 +22,6 @@ class CommunicationCenter extends \yii\base\Widget
 	public $options = [
 		'role' => 'communicationCenterWrapper',
 		'id' => 'communication-center-wrapper',
-		'class' => 'pull-right'
 	];
 	public $wrapperOptions = [
 		'role' => 'communicationCenterContainer',
@@ -175,7 +174,7 @@ class CommunicationCenter extends \yii\base\Widget
 		}
 		return $widget.$js.Html::tag('style', ".communication-center-item {
 				position: fixed !important; 
-				top: 60px; right: 6px; bottom: 10px; 
+				top: 60px; right: 6px; bottom: 0px; 
 				overflow: hidden; 
 				padding: 0px; box-shadow: 0px 4px 8px #999; 
 				background-color: rgba(255,255,255,0.9);

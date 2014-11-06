@@ -37,7 +37,9 @@ function NitmIas ()
 				switch(data.extensions.hasOwnProperty(extension))
 				{
 					case true:
-					ias.extension( new window[extension](data.extensions[extension]));
+					try {
+						ias.extension(new window[extension](data.extensions[extension]));
+					} catch (error) {};
 					break;
 				}
 			}
