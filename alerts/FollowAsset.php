@@ -21,6 +21,5 @@ class FollowAsset extends AssetBundle
 	];	
 	public $depends = [
 		'nitm\assets\AppAsset',
-		'kartik\widgets\DepDropAsset'
 	];
 }
