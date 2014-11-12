@@ -70,7 +70,6 @@ function SearchModal () {
 						var $form = $(this).find('form');
 						var $input = $form.find(self.searchField);
 						$input.focus().val(e.key);
-						console.log('here');
 					});
 					self.modal.modal(self.modalOptions);
 				}

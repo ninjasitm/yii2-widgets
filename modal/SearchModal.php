@@ -58,7 +58,7 @@ class SearchModal extends Modal
 	
 	protected function getDefaultContent()
 	{
-		return '<div id="search-results"></div>';
+		return '<div id="search-results" style="color: #000"></div>';
 	}
 }
 ?>
