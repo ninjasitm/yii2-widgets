@@ -26,33 +26,47 @@ function Follow(items)
 	
 	this.afterAction = function (xhr, elem) {
 		var result = xhr.responseJSON;
-		
-		switch(result.action)
+		if(result.success)
 		{
-			case 'create':
-			var button = $(elem).closest('div').find("[role~='followButton']");
-			button.first().data('type', 'callback');
-			button.first().data('run-once', true);
-			button.first().data('url', '/alerts/un-follow/'+result.id);
-			button.first().data('callback', function (_result, _elem) {$nitm.module('follow').afterAction(_result, _elem)});
-			button.first().off('click');
-			button.last().addClass('disabled');
-			$nitm.module('tools').dynamicValue(button.first());
-			var removeClass = 'btn-default';
-			break;
-			
-			case 'delete':
-			var button = $(elem).parent().find("[role~='followButton']");
-			button.last().removeClass('disabled');
-			button.first().data('');
-			button.off('click');
-			var removeClass = 'btn-success';
-			break;
+			switch(result.action)
+			{
+				case 'create':
+				var button = $(elem).closest('div').find("[role~='followButton']");
+				button.first().data('type', 'callback');
+				button.first().data('run-once', true);
+				button.first().data('url', '/alerts/un-follow/'+result.id);
+				button.first().data('callback', function (_result, _elem) {$nitm.module('follow').afterAction(_result, _elem)});
+				button.first().off('click');
+				button.last().addClass('disabled');
+				//$nitm.module('tools').dynamicValue(button.first());
+				var removeClass = 'btn-default';
+				break;
+				
+				case 'delete':
+				var button = $(elem).parent().find("[role~='followButton']");
+				button.last().removeClass('disabled');
+				button.first().data('');
+				button.off('click');
+				var removeClass = 'btn-success';
+				break;
+			}
+			button.first().html(result.actionHtml);
+			button.each(function (key, elem) {
+				$(elem).removeClass(removeClass).addClass(result.class);
+			});
 		}
-		button.first().html(result.actionHtml);
-		button.each(function (key, elem) {
-			$(elem).removeClass(removeClass).addClass(result.class);
-		});
+		else
+		{
+			var button = $($(elem).data('parent'));
+			try {
+				button.tooltip('destroy');
+			} catch (error) {}
+			button.tooltip({
+				title: result.message
+			});
+			button.tooltip('show');
+			button.addClass('btn-danger');
+		}
 	}
 }
 

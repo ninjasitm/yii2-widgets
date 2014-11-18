@@ -81,6 +81,7 @@ class Follow extends \yii\base\Widget
 			break;
 		}
 		$this->uniqid = uniqid();
+		$this->options['id'] .= $this->uniqid;
 		$this->initializeMethods();
 		FollowAsset::register($this->getView());
 	}
@@ -88,7 +89,6 @@ class Follow extends \yii\base\Widget
 	public function run()
 	{
 		$label = 'Follow';
-		$this->options['id'] .= $this->uniqid;
 		switch(($this->model instanceof Alerts))
 		{
 			case true:
@@ -131,6 +131,7 @@ class Follow extends \yii\base\Widget
 		if(!isset($this->buttonOptions['type']))
 			$this->options['class'].= ' btn-default';
 		
+		$this->options['onchange'] = Html::script("\$nitm.module('tools').dynamicValue(this);");
 		$ret_val = \yii\bootstrap\ButtonDropdown::widget([
 			'encodeLabel' => false,
 			'split' => true,
@@ -138,16 +139,15 @@ class Follow extends \yii\base\Widget
 			'dropdown' => [
 				'encodeLabels' => false,
 				'options' => [
-					'class' => '',
+					'class' => $this->model->getIsNewRecord() ? '' : 'disabled',
 					'role' => 'followDropdown'
 				],
 				'items' => $this->followMethods
 			],
 			'options' => $this->options
 		]);
-		$ret_val .= Html::script("\$nitm.onModuleLoad('tools', function () {\$nitm.module('tools').initDynamicValue('".$this->options['id']."');});", ['type' => 'text/javascript']);
-		if(!$this->model->getIsNewRecord())
-			$ret_val .= Html::script("\$nitm.addOnLoadEvent(function () {\$('#".$this->options['id']."').parent().find(\"[role~='followButton']\").last().addClass('disabled');});", ["type" => "text/javascript"]);
+		if($this->model->getId())
+			$ret_val .= Html::script("\$nitm.addOnLoadEvent(function () {\$('#".$this->options['id']."').parent().find(\"[class~='dropdown-toggle']\").addClass('disabled');});", ["type" => "text/javascript"]);
 		return $ret_val;
 	}
 	
@@ -167,6 +167,7 @@ class Follow extends \yii\base\Widget
 					'data-pjax' => 0,
 					'data-run-once' => true,
 					'data-type' => 'callback',
+					'data-parent' => '#'.$this->options['id'],
 					'data-callback' => "function (result, elem) { \$nitm.module('follow').afterAction(result, elem);}"
 				];
 				$this->followMethods[$idx] = $method;
