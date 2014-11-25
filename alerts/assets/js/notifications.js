@@ -1,6 +1,7 @@
 function Notification(items)
 {	
 	var self = this;
+	this.id = 'notifications';
 	this.polling = {
 		enabled: false
 	};
@@ -76,4 +77,4 @@ function Notification(items)
 	}
 }
 
-$nitm.initModule('notifications', new Notification());
+$nitm.initModule(new Notification());

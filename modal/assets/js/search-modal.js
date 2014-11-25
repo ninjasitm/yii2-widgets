@@ -2,6 +2,7 @@
 
 function SearchModal () {
 	var self = this;
+	this.id = 'search-modal';
 	this.selfInit = true;
 	this.modal;
 	this.isActive = false;
@@ -83,5 +84,5 @@ function SearchModal () {
 }
 
 $nitm.addOnLoadEvent(function () {
-	$nitm.initModule('search-modal', new SearchModal());
+	$nitm.initModule(new SearchModal());
 });

@@ -3,6 +3,7 @@ function Replies(items)
 {	
 	var self = this;
 	var editor;
+	this.id = 'replies';
 	this.polling = {
 		enabled: false
 	};
@@ -89,7 +90,7 @@ function Replies(items)
 				$(this).on('submit', function (e) {
 					e.preventDefault();
 					$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
-					self.operation(this);
+					$nitm.module('entity').operation(this);
 				});
 				$(this).on('reset', function (e) {
 					this.reset();
@@ -147,7 +148,7 @@ function Replies(items)
 		msgField.val('').focus();
 		self.setEditorValue(msgField.get(0), '', false, self.editor);
 		self.setEditorFocus(msgField.get(0), self.editor);
-		form.find(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
+		$(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
 	}
 	
 	this.initQuoting = function (containerId) {
@@ -179,7 +180,7 @@ function Replies(items)
 		var msgField = form.find("textarea");
 		self.setEditorValue(msgField.get(0), quoteString, true, self.editor);
 		self.setEditorFocus(msgField.get(0), self.editor);
-		container.find(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
+		$(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
 	}
 	
 	this.initPolling = function (options) {
@@ -249,44 +250,6 @@ function Replies(items)
 				break;
 			}
 		});
-	}
-	
-	this.operation = function (form) {
-		data = $(form).serializeArray();
-		data.push({'name':'__format', 'value':'json'});
-		data.push({'name':'getHtml', 'value':true});
-		data.push({'name':'do', 'value':true});
-		data.push({'name':'ajax', 'value':true});
-		switch(!$(form).attr('action'))
-		{
-			case false:
-			$($nitm).trigger('nitm-animate-submit-start', [form]);
-			var request = $nitm.doRequest({
-				url: $(form).attr('action'), 
-				data: data,
-				success: function (result) {
-					switch(result.action)
-					{
-						case 'hide':
-						self.afterHide(result, form);
-						break;
-							
-						case 'create':
-						case 'quote':
-						self.afterCreate(result, form);
-						break;
-					}
-				},
-				error: function () {
-					$nitm.notify('Whoops something happened. If it keeps happening let someone know!', 'alert '+self.classes.error, form);
-					$($nitm).trigger('nitm-animate-submit-stop', [form]);
-				}
-			});
-			request.done(function () {
-				$($nitm).trigger('nitm-animate-submit-stop', [form]);
-			});
-			break;
-		}
 	}
 	
 	this.afterCreate = function(result, form, element) {
@@ -381,7 +344,7 @@ function Replies(items)
 				$nitm.getObj("[id='"+textarea.prop('id')+"']").each(function (index, element) {
 					var textarea = $(element);
 					try {
-						textarea.redactor('getObject');
+						textarea.redactor('get');
 					} catch (error) {
 						textarea.redactor({
 							air: true,
@@ -423,7 +386,7 @@ function Replies(items)
 				switch(type)
 				{
 					case 'redactor':
-					$('#'+textarea.prop('id')).redactor('getObject').destroyEditor();
+					$('#'+textarea.prop('id')).redactor('core.destroy');
 					break;
 				}
 				//container.find('.redactor_box').remove();
@@ -461,19 +424,18 @@ function Replies(items)
 				break;
 			}
 			editor.resize("100%", editor.config.height, true);
-			editor.focus();
 			break;
 			
 			case 'redactor':
-			$nitm.getObj(field).redactor('getObject').set(value, false);
+			$nitm.getObj(field).redactor('code.set', value, false);
 			break;
 			
 			default:
 			var msgField = $nitm.getObj(field);
 			msgField.val(value);
-			msgField.get(0).focus();
 			break;
 		}
+		this.setEditorFocus(field);
 	}
 	
 	this.getEditorValue = function (field) {
@@ -487,7 +449,7 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			ret_val = $nitm.getObj(field).redactor('getObject').get();
+			ret_val = $nitm.getObj(field).redactor('get');
 			break;
 			
 			default:
@@ -507,7 +469,9 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			$nitm.getObj(field).redactor('focus');
+			$nitm.getObj(field).redactor({
+					focusEnd: true
+			});
 			break;
 			
 			default:
@@ -535,4 +499,4 @@ function Replies(items)
 	}
 }
 
-$nitm.initModule('replies', new Replies());
+$nitm.initModule(new Replies());

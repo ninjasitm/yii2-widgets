@@ -3,6 +3,7 @@ function Vote(items)
 {	
 	var self = this;
 	var editor;
+	this.id = 'votes';
 	this.classes = {
 		warning: 'bg-warning',
 		success: 'bg-success',
@@ -137,5 +138,5 @@ function Vote(items)
 }
 
 $nitm.addOnLoadEvent(function () {
-	$nitm.initModule('vote', new Vote());
+	$nitm.initModule(new Vote());
 });

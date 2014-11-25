@@ -1,6 +1,7 @@
 function Notification(items)
 {	
 	var self = this;
+	this.id = 'notifications';
 	var options = {
 		activity: false
 	};
@@ -71,4 +72,4 @@ function Notification(items)
 	}
 }
 
-$nitm.initModule('notifications', new Notification());
+$nitm.initModule(new Notification());

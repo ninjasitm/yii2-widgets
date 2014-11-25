@@ -2,6 +2,7 @@
 function Revisions(items)
 {	
 	var self = this;
+	this.id = 'revisions';
 	var saveInterval = 10; //In seconds
 	this.classes = {
 		success: 'bg-success',
@@ -156,5 +157,5 @@ function Revisions(items)
 }
 
 $nitm.addOnLoadEvent(function () {
-	$nitm.initModule('revisions', new Revisions());
+	$nitm.initModule(new Revisions());
 });

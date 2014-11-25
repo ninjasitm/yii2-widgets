@@ -1,8 +1,9 @@
 
-function Rating(items)
+function Rating()
 {	
 	var self = this;
 	var editor;
+	this.id = 'rating';
 	this.classes = {
 		warning: 'bg-warning',
 		success: 'bg-success',
@@ -47,35 +48,13 @@ function Rating(items)
 			$(container+" "+"[role='"+v+"']").map(function() {
 				$(this).on('click', function (e) {
 					e.preventDefault();
-					self.operation(this);
+					$nitm.module('entity').operation(this);
 				});
 			})
 		});
 	}
 	
-	this.operation = function (form) {
-		data = $(form).serializeArray();
-		data.push({'name':'__format', 'value':'json'});
-		data.push({'name':'getHtml', 'value':true});
-		data.push({'name':'do', 'value':true});
-		data.push({'name':'ajax', 'value':true});
-		switch(!$(form).attr('action'))
-		{
-			case false:
-			var request = doRequest($(form).attr('href'), 
-					data,
-					function (result) {
-						self.afterrating(result);
-					},
-					function () {
-						notify('Error Could not perform Rating action. Please try again', self.classes.error, false);
-					}
-				);
-				break;
-		}
-	}
-	
-	this.afterrating = function (result) {
+	this.afterRating = function (result) {
 		if(result.success)
 		{
 			var $down = $nitm.getObj(self.elements.vote.down+result.id);
@@ -125,6 +104,5 @@ function Rating(items)
 }
 
 $nitm.addOnLoadEvent(function () {
-	$nitm.rating = new Rating();
-	$nitm.rating.init();
+	$nitm.initModule(new Rating());
 });

@@ -3,6 +3,7 @@ function IssueTracker(items)
 {	
 	var self = this;
 	var editor;
+	this.id = 'issue-tracker';
 	this.classes = {
 		items: {
 			warning: 'bg-warning',
@@ -283,4 +284,4 @@ function IssueTracker(items)
 	}
 }
 
-$nitm.initModule('issueTracker', new IssueTracker());
+$nitm.initModule(new IssueTracker());
