@@ -1,6 +1,8 @@
 
 function Replies(items)
-{	
+{
+	NitmEntity.call(this);
+	
 	var self = this;
 	var editor;
 	this.id = 'replies';
@@ -54,16 +56,8 @@ function Replies(items)
 	};
 	this.defaultInit = [
 		'initEditor',
+		'initCreating'
 	];
-
-	this.init = function (containerId) {
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-			{
-				self[method](containerId);
-			}
-		});
-	}
 	
 	this.initEditor = function (containerId) {
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
@@ -90,7 +84,7 @@ function Replies(items)
 				$(this).on('submit', function (e) {
 					e.preventDefault();
 					$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
-					$nitm.module('entity').operation(this);
+					self.operation(this);
 				});
 				$(this).on('reset', function (e) {
 					this.reset();
@@ -131,7 +125,7 @@ function Replies(items)
 			container.find("[role='"+v+"']").map(function() {
 				$(this).off('click');
 				$(this).on('click', function (e) {
-					self.reply(e);
+					self.replyTo(e);
 				});
 			});
 		});
@@ -181,45 +175,6 @@ function Replies(items)
 		self.setEditorValue(msgField.get(0), quoteString, true, self.editor);
 		self.setEditorFocus(msgField.get(0), self.editor);
 		$(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
-	}
-	
-	this.initPolling = function (options) {
-		self.polling = options;
-		self.initActivity(options.container);
-	}
-	
-	this.initActivity = function(containerId) {
-		if(self.polling.enabled == true)
-		{
-			var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-			setInterval(function () {
-				$.post(self.polling.url, 
-					function (result) {
-						switch((result != false))
-						{
-							case true:
-							self.chatStatus(true, result, containerId);
-							break;
-						}
-					}, 'json');
-			}, self.polling.interval);
-		}
-	}
-	
-	this.initChatTabs = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-		$nitm.getObj(containerId).find('[data-toggle="tab"]').map(function() {
-			$(this).on('click', function (e) {
-				var tab = $(this);
-				self.chatStatus(false, null, container);
-				if(tab.parent('li').hasClass('active')){
-					window.setTimeout(function(){
-						$(".tab-pane").toggleClass('active', false, 500, 'linear');
-						tab.parent('li').toggleClass('active', false, 500, 'linear');
-					}, 1);
-				}
-			});
-		});
 	}
 	
 	this.chatStatus = function (update, result, container) {
@@ -487,14 +442,14 @@ function Replies(items)
 		switch(field.value.length >= maxlimit+1)
 		{
 			case true:
-				field.value = field.value.substring(0, maxlimit);
-				cntfield.innerHTML = maxlimit - field.value.length;
-				alert("You've maxed out the "+maxlimit+" character limit\n\nPlease shorten your message. :-).");
-				break;
+			field.value = field.value.substring(0, maxlimit);
+			cntfield.innerHTML = maxlimit - field.value.length;
+			alert("You've maxed out the "+maxlimit+" character limit\n\nPlease shorten your message. :-).");
+			break;
 				
 			default:
-				cntfield.innerHTML = maxlimit - field.value.length;
-				break;
+			cntfield.innerHTML = maxlimit - field.value.length;
+			break;
 		}
 	}
 }

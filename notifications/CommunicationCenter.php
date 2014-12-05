@@ -60,8 +60,7 @@ class CommunicationCenter extends \yii\base\Widget
 		parent::init();
 		$this->chatUpdateOptions = array_merge($this->_chatUpdateOptions, $this->chatUpdateOptions);
 		$this->notificationUpdateOptions = array_merge($this->_notificationUpdateOptions, $this->notificationUpdateOptions);
-		\nitm\widgets\replies\Asset::register($this->getView());
-		\nitm\widgets\alerts\NotificationAsset::register($this->getView());
+		CommunicationCenterAsset::register($this->getView());
 	}
 	
 	public function run() 
@@ -148,25 +147,27 @@ class CommunicationCenter extends \yii\base\Widget
 			]
 		]);
 		$widget = Html::tag('div', $tabs, $this->options);
-		$js = '';
+		$js = "\$nitm.onModuleLoad('communication-center', function (module) {
+			module.initChatTabs('#".$this->options['id']."');
+		});";
 		if($this->chatUpdateOptions['enabled'])
-			$js .= "\$nitm.onModuleLoad('replies', function () {
-				\$nitm.module('replies').initPolling({
+			$js .= "\$nitm.onModuleLoad('polling', function (module) {
+				module.initPolling('chat', {
 					enabled: true,
 					url: '".$this->chatUpdateOptions['url']."', 
 					interval: ".$this->chatUpdateOptions['interval'].",
 					container: '#nitm-communication-center-widget".$uniqid."'
-				});
+				}, {object: \$nitm.module('replies'), method: 'chatStatus'});
 			});";
 		if($this->notificationUpdateOptions['enabled'])
 			$js .= "
-			\$nitm.onModuleLoad('notifications', function () {
-				\$nitm.module('notifications').initPolling({
+			\$nitm.onModuleLoad('polling', function (module) {
+				module.initPolling('notifications', {
 					enabled: true,
 					interval: ".$this->notificationUpdateOptions['interval'].",
 					url: '".$this->notificationUpdateOptions['url']."',
 					container: '#nitm-communication-center-widget".$uniqid."'
-				});
+				}, {object: \$nitm.module('notifications'), method: 'notificationStatus'});
 			});";
 		if($js)
 		{

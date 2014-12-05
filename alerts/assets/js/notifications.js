@@ -15,38 +15,6 @@ function Notification(items)
 	};
 	this.defaultInit = [
 	];
-
-	this.init = function (containerId) {
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-			{
-				self[method](containerId);
-			}
-		});
-	}
-	
-	this.initPolling = function (options) {
-		self.polling = options;
-		self.initActivity(options.container);
-	}
-	
-	this.initActivity = function(containerId) {
-		if(self.polling.enabled == true)
-		{
-			var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-			setInterval(function () {
-				$.post(self.polling.url, 
-					function (result) {
-						switch((result != false))
-						{
-							case true:
-							self.notificationStatus(true, result, containerId);
-							break;
-						}
-					}, 'json');
-			}, self.polling.interval);
-		}
-	}
 	
 	this.notificationStatus = function (update, result, container){
 		container.find(self.views.notificationTab).each(function(index, element) {
