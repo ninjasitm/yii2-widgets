@@ -8,8 +8,8 @@
 namespace nitm\widgets\replies;
 
 use Yii;
-use nitm\widgets\models\BaseWidget;
-use nitm\models\Replies as RepliesModel;
+use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\models\Replies as RepliesModel;
 
 class RepliesMessage extends BaseWidget
 {	

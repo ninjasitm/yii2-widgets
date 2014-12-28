@@ -73,25 +73,27 @@ function Replies(items)
 		});
 	}
 	
+	this.resetForm = function (event) {
+		event.target.reset();
+		self.setEditorValue($(event.target).find("textarea").get(0), '', false, self.editor);
+		$(event.target).find(self.views.roles.replyToIndicator).html("");
+	}
+	
+	this.reply = function (event) {
+		event.preventDefault();
+		var $form = $(event.target);		
+		$form.find('textarea').val(self.getEditorValue($form.find('textarea').attr('id'), self.editor));
+		self.operation(event.target);
+		return false;
+	}
+	
 	this.initCreating = function (containerId) {
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
 		this.forms.allowCreate.map(function (v) {
 			container.find("form[role='"+v+"']").map(function() {
-				//$(this).find("[data-toggle='buttons'] .btn").map(function() {
-				//	$(this).button();
-				//});
 				$(this).off('submit');
-				$(this).on('submit', function (e) {
-					e.preventDefault();
-					$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
-					self.operation(this);
-				});
-				$(this).on('reset', function (e) {
-					this.reset();
-					var msgField = $(this).find("textarea");
-					self.setEditorValue(msgField.get(0), '', false, self.editor);
-					$(this).find(self.views.roles.replyToIndicator).html("");
-				});
+				$(this).on('submit', self.reply);
+				$(this).on('reset', self.resetForm);
 			})
 		});
 	}
@@ -215,9 +217,9 @@ function Replies(items)
 			var _form = $(form);
 			_form.find(".empty").remove();
 			$nitm.place({append:true, index:-1}, result.data, _form.data('parent'));
-			self.initHiding('#'+result.unique_id);
-			self.initQuoting('#'+result.unique_id);
-			self.initReplying('#'+result.unique_id);
+			//self.initHiding('#'+result.unique_id);
+			//self.initQuoting('#'+result.unique_id);
+			//self.initReplying('#'+result.unique_id);
 			_form.find('[role~="'+self.forms.inputs.reply_to+'"]').val('');
 			self.setEditorValue(_form.find('textarea').attr('id'), '', false, self.editor);
 			_form.find(self.views.roles.replyToIndicator).html("");

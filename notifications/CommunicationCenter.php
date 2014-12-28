@@ -6,7 +6,7 @@ use yii\helpers\Html;
 use nitm\helpers\Icon;
 use yii\bootstrap\Tabs;
 use yii\bootstrap\Nav;
-use nitm\models\Issues;
+use nitm\widgets\models\Issues;
 
 class CommunicationCenter extends \yii\base\Widget
 {
@@ -65,12 +65,12 @@ class CommunicationCenter extends \yii\base\Widget
 	
 	public function run() 
 	{
-		$chatModel = new \nitm\models\Replies([
+		$chatModel = new \nitm\widgets\models\Replies([
 			'constrain' => [
 				'type' => 'chat'
 			]
 		]);
-		$notificationModel = new \nitm\models\Notification([
+		$notificationModel = new \nitm\widgets\models\Notification([
 			'constrain' => [
 				'user_id' => \Yii::$app->user->getId()
 			],
@@ -108,7 +108,7 @@ class CommunicationCenter extends \yii\base\Widget
 						'data-type' => 'html',
 						'data-on' => '#communication-center-messages'.$uniqid.':hidden',
 						'data-id' => '#communication-center-messages'.$uniqid,
-						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\models\Replies::FORM_PARAM => true]),
+						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\widgets\models\Replies::FORM_PARAM => true]),
 						'id' => 'communication-center-messages-link'.$uniqid
 					]
 				],

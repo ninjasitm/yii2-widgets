@@ -9,10 +9,10 @@ namespace nitm\widgets\replies;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\widgets\models\BaseWidget;
-use nitm\models\User;
-use nitm\models\Replies as RepliesModel;
-use nitm\models\search\Replies as RepliesSearch;
+use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\models\User;
+use nitm\widgets\models\Replies as RepliesModel;
+use nitm\widgets\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
 class ChatMessages extends Replies

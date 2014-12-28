@@ -9,7 +9,7 @@ namespace nitm\widgets\alerts;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\models\Alerts;
+use nitm\widgets\models\Alerts;
 use kartik\icons\Icon;
 
 class AlertsForm extends \yii\base\Widget

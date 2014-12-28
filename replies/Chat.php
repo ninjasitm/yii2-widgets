@@ -10,10 +10,10 @@ namespace nitm\widgets\replies;
 use Yii;
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
-use nitm\widgets\models\BaseWidget;
-use nitm\models\User;
-use nitm\models\Replies as RepliesModel;
-use nitm\models\search\Replies as RepliesSearch;
+use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\models\User;
+use nitm\widgets\models\Replies as RepliesModel;
+use nitm\widgets\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
 class Chat extends BaseWidget
@@ -96,7 +96,7 @@ class Chat extends BaseWidget
 				'type' => 'chat'
 			]
 		]);
-		$this->notificationModel = new \nitm\models\Notification([
+		$this->notificationModel = new \nitm\widgets\models\Notification([
 			'constrain' => [
 				'user_id' => \Yii::$app->user->getId()
 			]
@@ -176,7 +176,7 @@ class Chat extends BaseWidget
 						'data-type' => 'html',
 						'data-on' => '#chat-widget-messages'.$uniqid.':hidden',
 						'data-id' => '#chat'.$uniqid,
-						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\models\Replies::FORM_PARAM => true]),
+						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\widgets\models\Replies::FORM_PARAM => true]),
 						'id' => 'chat-widget-messages-link'.$uniqid
 					]
 				],

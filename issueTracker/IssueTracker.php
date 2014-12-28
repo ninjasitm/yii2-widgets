@@ -10,10 +10,10 @@ namespace nitm\widgets\issueTracker;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\icons\Icon;
-use nitm\models\Replies;
-use nitm\models\Issues as IssuesModel;
-use nitm\models\search\Issues as IssuesSearch;
-use nitm\widgets\models\BaseWidget;
+use nitm\widgets\models\Replies;
+use nitm\widgets\models\Issues as IssuesModel;
+use nitm\widgets\models\search\Issues as IssuesSearch;
+use nitm\widgets\helpers\BaseWidget;
 
 /**the issues associated with a request with support for solving them
  */

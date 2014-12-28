@@ -10,8 +10,8 @@ namespace nitm\widgets\revisions;
 use Yii;
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
-use nitm\models\Revisions as RevisionsModel;
-use nitm\widgets\models\BaseWidget;
+use nitm\widgets\models\Revisions as RevisionsModel;
+use nitm\widgets\helpers\BaseWidget;
 use kartik\icons\Icon;
 use nitm\widgets\editor\Editor;
 

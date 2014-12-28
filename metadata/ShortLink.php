@@ -15,7 +15,7 @@ use kartik\icons\Icon;
  */
 class ShortLink extends \yii\base\Widget
 {
-	public $title = 'Short Link';
+	public $label = 'Short Link';
 	public $url = '#';
 	public $header = '';
 	public $type;
@@ -43,14 +43,14 @@ class ShortLink extends \yii\base\Widget
 	{
 		$shortLinkLabel = $this->useLabel ? Html::tag(
 			'span',
-			$this->title,
+			$this->label,
 			[
 				'class' => 'input-group-addon'
 			]
 		) : '';
 		$shortLinkInput = Html::input(
 			'text', 
-			$this->title,
+			$this->label,
 			(empty($this->inputOptions['text']) ? $this->url : $this->inputOptions['text']), 
 			array_merge([
 				'class' => 'form-control',
@@ -137,11 +137,11 @@ class ShortLink extends \yii\base\Widget
 			switch($type)
 			{
 				case 'modal':
-				$args = array_replace($args, ["__format" => "modal", "__contentOnly" => "1"]);
+				$args = array_replace($args, ["__format" => "modal", "__noNav" => "1"]);
 				break;
 				
 				case 'popup':
-				$args = array_replace($args, ["__format" => "html", "__contentOnly" => "1"]);
+				$args = array_replace($args, ["__format" => "html", "__noNav" => "1"]);
 				break;
 				
 				default:

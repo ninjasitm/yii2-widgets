@@ -11,8 +11,8 @@ use Yii;
 use yii\helpers\Html;
 use yii\widgets\ActiveChat;
 use yii\redactor\widgets\Redactor;
-use nitm\widgets\models\BaseWidget;
-use nitm\models\Replies as RepliesModel;
+use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\models\Replies as RepliesModel;
 use kartik\icons\Icon;
 
 class ChatForm extends BaseWidget
@@ -101,7 +101,7 @@ class ChatForm extends BaseWidget
 			
 			default:		
 			$this->model->setScenario('validateNew');
-			return $this->getView()->render('@nitm/views/chat/form/_form', [
+			return $this->getView()->render('@nitm/widgets/views/chat/form/_form', [
 				'model' => $this->model,
 				'parentId' => $this->parentId,
 				'parentType' => $this->parentType,

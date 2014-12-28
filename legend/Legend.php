@@ -8,7 +8,7 @@
 namespace nitm\widgets\legend;
 
 use yii\helpers\Html;
-use nitm\widgets\models\BaseWidget;
+use nitm\widgets\helpers\BaseWidget;
 
 /**
  * Alert widget renders a message from session flash. All flash messages are displayed

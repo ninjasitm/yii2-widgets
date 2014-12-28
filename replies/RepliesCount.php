@@ -9,9 +9,9 @@ namespace nitm\widgets\replies;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\widgets\models\BaseWidget;
-use nitm\models\Replies as RepliesModel;
-use nitm\models\User;
+use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\models\Replies as RepliesModel;
+use nitm\widgets\models\User;
 use kartik\icons\Icon;
 
 class RepliesCount extends BaseWidget

@@ -9,8 +9,8 @@ namespace nitm\widgets\alerts;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\models\Notification;
-use nitm\models\search\Notification as NotificationSearch;
+use nitm\widgets\models\Notification;
+use nitm\widgets\models\search\Notification as NotificationSearch;
 use kartik\icons\Icon;
 
 class Notifications extends \yii\base\Widget

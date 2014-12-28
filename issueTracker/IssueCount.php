@@ -10,9 +10,9 @@ namespace nitm\widgets\issueTracker;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use nitm\models\User;
-use nitm\models\Issues as IssuesModel;
-use nitm\widgets\models\BaseWidget;
+use nitm\widgets\models\User;
+use nitm\widgets\models\Issues as IssuesModel;
+use nitm\widgets\helpers\BaseWidget;
 use kartik\icons\Icon;
 
 class IssueCount extends BaseWidget
