@@ -95,9 +95,9 @@ class ChatMessages extends Replies
 				]
 			]);
 			$this->options['id'] .= $this->parentId;
-			$replies = $this->getView()->render('@nitm/views/chat/index', [
+			$replies = $this->getView()->render('@nitm/widgets/views/chat/index', [
 				'dataProvider' => $dataProvider,
-				'searchModel' => $searchModel,
+				'searchModel' => $searchModel ,
 				'widget' => $this,
 			]);
 			//RepliesAsset::register($this->getView());

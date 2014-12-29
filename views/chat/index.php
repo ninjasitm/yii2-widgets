@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ListView;
 use kartik\icons\Icon;
 use nitm\widgets\replies\ChatModal;
-use nitm\models\Replies;
+use nitm\widgets\models\Replies;
 
 /**
  * @var yii\web\View $this
@@ -39,7 +39,7 @@ $widget->withForm = isset($widget->withForm) ? $widget->withForm : \Yii::$app->r
 		'dataProvider' => $dataProvider,
 		'itemOptions' => ['class' => 'item'],
 		'itemView' => function ($model, $key, $index, $_widget) use($widget) {
-				return $widget->render('@nitm/views/chat/view',['model' => $model, 'primaryModel' => $widget->model]);
+				return $widget->render('@nitm/widgets/views/chat/view',['model' => $model, 'primaryModel' => $widget->model]);
 		},
 		'pager' => [
 			'class' => \nitm\widgets\ias\ScrollPager::className(),

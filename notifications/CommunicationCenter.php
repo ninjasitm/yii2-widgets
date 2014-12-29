@@ -79,77 +79,93 @@ class CommunicationCenter extends \yii\base\Widget
 			]
 		]);
 		$uniqid = uniqid();
-		$tabs = Tabs::widget([
-			'options' => [
-				'id' => 'nitm-communication-center-widget'.$uniqid,
-			],
+		
+		$chatWidget = Nav::widget([
 			'encodeLabels' => false,
+			'options' => [
+				'id' => 'communication-center-messages-wrapper'.$uniqid,
+				'class' => 'nav navbar-right navbar-nav'
+			],
 			'items' => [
 				[
 					'label' => Icon::show('comment').Html::tag('span', $chatModel->hasNew(),['class' => 'badge']),
-					'active' => false,
-					'content' =>Html::tag('div', '',
-						[
-							'id' => 'communication-center-messages'.$uniqid,
-							'role' => 'chatParent',
-							'id' => 'chat'.$uniqid,
-						]
-					),
 					'options' => [
-						'id' => 'communication-center-messages'.$uniqid,
-						'class' => 'chat col-md-4 col-lg-4 communication-center-item',
-					],
-					'headerOptions' => [
-						'id' => 'communication-center-messages-tab'.$uniqid,
-						'class' => !$chatModel->hasNew() ? '' : 'bg-success'
+						'class' => !$chatModel->hasNew() ? 'text-disabled' : 'text-success',
 					],
 					'linkOptions' => [
-						'role' => 'visibility',
+						'id' => 'communication-center-messages-button'.$uniqid,
+						'title' => 'Click here again to refresh the info',
+						'role' => 'dynamicValue',
+						'data-animation-target' => '#chat'.$uniqid,
+						'data-animation-start-only' => 1,
 						'data-type' => 'html',
-						'data-on' => '#communication-center-messages'.$uniqid.':hidden',
-						'data-id' => '#communication-center-messages'.$uniqid,
-						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\widgets\models\Replies::FORM_PARAM => true]),
-						'id' => 'communication-center-messages-link'.$uniqid
-					]
-				],
-				[
-					'label' => Icon::show('bell').Html::tag('span', $notificationModel->count(), ['class' => 'badge']),
-					'content' =>Html::tag('div', '',
+						'data-id' => '#chat'.$uniqid,
+						//'data-on' => '#communication-center-notifications-button'.$uniqid.':hidden',
+						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\widgets\models\Replies::FORM_PARAM => true])
+					],
+					'items' => [
 						[
-							'id' => 'communication-center-notifications'.$uniqid,
+							'label' => Html::tag('div', Html::tag('h2', 'Loading Messages...', ['class' => 'text-center']).Html::script("\$('#communication-center-messages-button$uniqid').one('mouseover', function (event) {
+								$(this).trigger('click');
+							})", ['type' => 'text/javascript']), [
+								'role' => 'chatParent',
+								'id' => 'chat'.$uniqid,
+								'class' => '',
+							]),
+							'options' => [
+								'class' => 'col-md-4 col-lg-4 communication-center-item',
+							]
 						]
-					),
-					'options' => [
-						'id' => 'communication-center-notifications'.$uniqid,
-						'class' => 'col-md-4 col-lg-4 communication-center-item',
-					],
-					'headerOptions' => [
-						'id' => 'communication-center-notifications-tab'.$uniqid,
-						'class' => !$notificationModel->count() ? '' : 'bg-success'
-					],
-					'linkOptions' => [
-						'role' => 'visibility',
-						'data-type' => 'html',
-						'data-on' => '#communication-center-notifications'.$uniqid.':hidden',
-						'data-id' => '#communication-center-notifications'.$uniqid,
-						'data-url' => \Yii::$app->urlManager->createUrl(['/alerts/notifications', '__format' => 'html']),
-						'id' => 'communication-center-notifications-link'.$uniqid
 					]
 				],
-				[
-					'label' => '',
-					'content' => '',
-					'active' => true,
-					'headerOptions' => [
-						'class' => 'hidden'
-					]
-				]
 			]
 		]);
-		$widget = Html::tag('div', $tabs, $this->options);
-		$js = "\$nitm.onModuleLoad('communication-center', function (module) {
-			module.initChatTabs('#".$this->options['id']."');
-		});";
+		
+		$alertWidget = Nav::widget([
+			'encodeLabels' => false,
+			'options' => [
+				'id' => 'communication-center-notifications-wrapper'.$uniqid,
+				'class' => 'nav navbar-right navbar-nav'
+			],
+			'items' => [
+				[
+					'label' => Icon::show('bell').Html::tag('span', $notificationModel->count(), ['class' => 'badge']),
+					'options' => [
+						'class' => !$notificationModel->count() ? 'bg-disabled' : 'bg-success',
+					],
+					'linkOptions' => [
+						'id' => 'communication-center-notifications-button'.$uniqid,
+						'title' => 'Click here again to refresh the info',
+						'role' => 'dynamicValue',
+						'data-animation-target' => '#communication-center-notifications'.$uniqid,
+						'data-animation-start-only' => 1,
+						'data-type' => 'html',
+						//'data-on' => '#communication-center-notifications-button'.$uniqid.':hidden',
+						'data-id' => '#communication-center-notifications'.$uniqid,
+						'data-url' => \Yii::$app->urlManager->createUrl(['/alerts/notifications', '__format' => 'html']),
+					],
+					'items' => [
+						[
+							'label' => Html::tag('div', Html::tag('h2', 'Loading Alerts...', ['class' => 'text-center']).Html::script("\$('#communication-center-notifications-button$uniqid').one('mouseover', function (event) {
+								$(this).trigger('click');
+							})", ['type' => 'text/javascript']), [
+								'id' => 'communication-center-notifications'.$uniqid,
+								'class' => '',
+							]),
+							'options' => [
+								'class' => 'col-md-4 col-lg-4 communication-center-item',
+							]
+						]
+					]
+				],
+			]
+		]);
+		$widget = $alertWidget.$chatWidget;
+		
+		//$js = "\$nitm.onModuleLoad('communication-center', function (module) {
+		//	module.initChatTabs('#".$this->options['id']."');
+		//});";
+		$js = "";
 		if($this->chatUpdateOptions['enabled'])
 			$js .= "\$nitm.onModuleLoad('polling', function (module) {
 				module.initPolling('chat', {
@@ -174,12 +190,15 @@ class CommunicationCenter extends \yii\base\Widget
 			$js = Html::script($js, ['type' => 'text/javascript']);
 		}
 		return $widget.$js.Html::tag('style', ".communication-center-item {
-				position: fixed !important; 
-				top: 60px; right: 6px; bottom: 0px; 
+				position: fixed !important;
+				top: 40px; bottom: 40px; left: auto; right: auto;
+				margin-left: -60px;
 				overflow: hidden; 
-				padding: 0px; box-shadow: 0px 4px 8px #999; 
-				background-color: rgba(255,255,255,0.9);
+				background-color: #222 !important;
 				z-index: 10000;
+				padding: 15px;
+				box-shadow: 0px 4px 8px #999; 
+				color: #fff;
 			}");
 	}
 }

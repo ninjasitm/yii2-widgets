@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use kartik\widgets\ActiveForm;
 use kartik\widgets\Select2;
-use nitm\models\Issues;
+use nitm\widgets\models\Issues;
 
 /**
  * @var yii\web\View $this
@@ -42,7 +42,7 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 								'type' => 'addon',
 								'inputsInline' => true,
 								'addonType' => 'radiolist',
-								'fieldName' => 'status',
+								'attribute' => 'status',
 								'model' => $model,
 								'form' => $form
 							]),

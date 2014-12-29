@@ -102,7 +102,7 @@ class IssueTracker extends BaseWidget
 			$dataProviderUnresolved = $searchModel->search(array_replace($params, ['resolved' => 0]));
 			$dataProviderOpen->query->orderBy(['id' => SORT_DESC]);
 			$dataProviderClosed->query->orderBy(['closed_at' => SORT_DESC]);
-			$issues = $this->render('@nitm/views/issue/index', [
+			$issues = $this->render('@nitm/widgets/views/issue/index', [
 				'dataProviderOpen' => $dataProviderOpen,
 				'dataProviderClosed' => $dataProviderClosed,
 				'dataProviderResolved' => $dataProviderResolved,

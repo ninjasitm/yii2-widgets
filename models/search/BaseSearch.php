@@ -11,7 +11,7 @@ use yii\data\ActiveDataProvider;
  */
 class BaseSearch extends \nitm\search\BaseSearch
 {	
-	use \lab1\traits\Relations, \lab1\traits\Lab1, \nitm\traits\Nitm, \nitm\traits\Relations,\nitm\traits\Cache,
+	use \nitm\traits\Nitm, \nitm\traits\Relations,\nitm\traits\Cache,
 		\nitm\widgets\traits\Relations;
 	
 	public $engine = 'elasticsearch';

@@ -38,6 +38,10 @@
 	border-radius: 0;
 }
 
+.message.bg-danger, .message.bg-info {
+	color: black;
+}
+
 .message .date {
 	font-size: 11px;
 	float: right;
@@ -48,7 +52,6 @@
 
 .message .author, .message .reply-to-author {
 	font-size: normal;
-	color: black;
 	font-weight: bold;
 }
 
@@ -133,7 +136,6 @@
 }
 
 .message .message-actions a {
-	color: black;
 	font-size: small;
 	padding: 2px 4px;
 }
@@ -178,8 +180,7 @@
 	position: absolute;
 	overflow-y: auto;
 	height: 78%;
-	width: 100%;
-	top: 0;
+	top: 15px; right: 15px; left : 15px;
 	bottom: 20%;
 }
 
@@ -193,8 +194,8 @@
 .chat .chat-form {
 	display: block;
 	position: absolute;
-	width: 100%;
-	bottom: 0;
+	width: auto;
+	right: 15px; left : 15px; bottom: 0;
 	overflow: auto;
 	background-color: rgba(0,0,0, 0.8);
 	padding: 8px;

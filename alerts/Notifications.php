@@ -58,7 +58,7 @@ class Notifications extends \yii\base\Widget
 			$dataProvider->query->andWhere([
 				'user_id' => \Yii::$app->user->getId()
 			]);
-			$alerts = $this->getView()->render('@nitm/views/alerts/notifications', [
+			$alerts = $this->getView()->render('@nitm/widgets/views/alerts/notifications', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
 				'widget' => $this,

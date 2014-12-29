@@ -64,7 +64,7 @@ class Alerts extends \yii\base\Widget
 			$dataProvider->query->andWhere([
 				'user_id' => \Yii::$app->user->getId()
 			]);
-			$alerts = $this->getView()->render('@nitm/views/alerts/index', [
+			$alerts = $this->getView()->render('@nitm/widgets/views/alerts/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
 				'widget' => $this,

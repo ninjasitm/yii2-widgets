@@ -5,7 +5,7 @@ use yii\widgets\ListView;
 use kartik\icons\Icon;
 use yii\bootstrap\Modal;
 use yii\bootstrap\Tabs;
-use nitm\models\Issues;
+use nitm\widgets\models\Issues;
 
 /**
  * @var yii\web\View $this

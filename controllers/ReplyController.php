@@ -160,11 +160,11 @@ class ReplyController extends \nitm\controllers\DefaultController
 				switch($type)
 				{
 					case 'chat':
-					$ret_val['data'] = $this->renderAjax('@nitm/views/chat/view', $viewOptions);
+					$ret_val['data'] = $this->renderAjax('@nitm/widgets/views/chat/view', $viewOptions);
 					break;
 					
 					default:
-					$ret_val['data'] = $this->renderAjax('@nitm/views/replies/view', $viewOptions);
+					$ret_val['data'] = $this->renderAjax('@nitm/widgets/views/replies/view', $viewOptions);
 					break;
 				}
 				$ret_val['success'] = true;

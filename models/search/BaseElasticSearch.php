@@ -11,7 +11,7 @@ use yii\data\ActiveDataProvider;
  */
 class BaseElasticSearch extends \nitm\search\BaseElasticSearch
 {	
-	use \lab1\traits\Relations, \nitm\traits\Cache, \lab1\traits\Lab1, \nitm\traits\Nitm;
+	use \nitm\traits\Cache, \nitm\traits\Nitm;
 	
 	public static $namespace = "\\nitm\widgets\\models\\";
 }

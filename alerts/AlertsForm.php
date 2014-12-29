@@ -37,7 +37,7 @@ class AlertsForm extends \yii\base\Widget
 	{	
 		$action = $this->model->isNewRecord ? 'create' : 'update';
 		$this->model->setScenario($action);
-		return $this->render('@nitm/views/alerts/'.$action, [
+		return $this->render('@nitm/widgets/views/alerts/'.$action, [
 			'model' => $this->model,
 			'widget' => $this,
 			'inline' => $this->inline,

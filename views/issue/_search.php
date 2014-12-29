@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\widgets\ActiveForm;
-use nitm\models\Issues;
+use nitm\widgets\models\Issues;
 use nitm\helpers\Icon;
 
 /**
