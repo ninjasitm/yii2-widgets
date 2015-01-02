@@ -16,6 +16,8 @@ class CommunicationCenter extends \yii\base\Widget
 	public $chatUpdateOptions = [];
 	public $notificationUpdateOptions = [];
 	
+	public $contentOptions = [];
+	
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -30,36 +32,12 @@ class CommunicationCenter extends \yii\base\Widget
 		'style' => 'display: none'
 	];
 	
-	public $tabOptions = [
-		'class' => 'tabs-left'
-	];
-	
-	public $contentTabOptions = [
-	];
-	
-	/*
-	 * Interval for updating new chat and chat info
-	 */
-	private $_chatUpdateOptions = [
-		"interval" => 30000,
-		"enabled" => true,
-		'url' => '/reply/get-new/chat/0'
-	];
-	
-	/*
-	 * Interval for updating new notifications info
-	 */
-	private $_notificationUpdateOptions = [
-		"interval" => 30000,
-		"enabled" => true,
-		'url' => '/alerts/get-new-notifications'
-	];
-	
 	public function init()
 	{
 		parent::init();
-		$this->chatUpdateOptions = array_merge($this->_chatUpdateOptions, $this->chatUpdateOptions);
-		$this->notificationUpdateOptions = array_merge($this->_notificationUpdateOptions, $this->notificationUpdateOptions);
+		$this->chatUpdateOptions = array_merge($this->defaultChatUpdateOptions(), $this->chatUpdateOptions);
+		$this->notificationUpdateOptions = array_merge($this->defaultNotificationUpdateOptions(), $this->notificationUpdateOptions);
+		$this->contentOptions = array_merge($this->defaultContentOptions(), $this->contentOptions);
 		CommunicationCenterAsset::register($this->getView());
 	}
 	
@@ -100,7 +78,6 @@ class CommunicationCenter extends \yii\base\Widget
 						'data-animation-start-only' => 1,
 						'data-type' => 'html',
 						'data-id' => '#chat'.$uniqid,
-						//'data-on' => '#communication-center-notifications-button'.$uniqid.':hidden',
 						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\widgets\models\Replies::FORM_PARAM => true])
 					],
 					'items' => [
@@ -112,9 +89,7 @@ class CommunicationCenter extends \yii\base\Widget
 								'id' => 'chat'.$uniqid,
 								'class' => '',
 							]),
-							'options' => [
-								'class' => 'col-md-4 col-lg-4 communication-center-item',
-							]
+							'options' => $this->contentOptions
 						]
 					]
 				],
@@ -152,9 +127,7 @@ class CommunicationCenter extends \yii\base\Widget
 								'id' => 'communication-center-notifications'.$uniqid,
 								'class' => '',
 							]),
-							'options' => [
-								'class' => 'col-md-4 col-lg-4 communication-center-item',
-							]
+							'options' => $this->contentOptions
 						]
 					]
 				],
@@ -189,17 +162,38 @@ class CommunicationCenter extends \yii\base\Widget
 		{
 			$js = Html::script($js, ['type' => 'text/javascript']);
 		}
-		return $widget.$js.Html::tag('style', ".communication-center-item {
-				position: fixed !important;
-				top: 40px; bottom: 40px; left: auto; right: auto;
-				margin-left: -60px;
-				overflow: hidden; 
-				background-color: #222 !important;
-				z-index: 10000;
-				padding: 15px;
-				box-shadow: 0px 4px 8px #999; 
-				color: #fff;
-			}");
+		return $widget.$js;
+	}
+	
+	protected function defaultContentOptions()
+	{
+		return [
+			'class' => 'col-md-4 col-lg-4 communication-center-item',
+		];
+	}
+	
+	/*
+	 * Interval for updating new chat and chat info
+	 */
+	protected function defaultChatUpdateOptions()
+	{
+		return [
+			"interval" => 30000,
+			"enabled" => true,
+			'url' => '/reply/get-new/chat/0'
+		];
+	}
+	
+	/*
+	 * Interval for updating new notifications info
+	 */
+	protected function defaultNotificationUpdateOptions()
+	{
+		return [
+			"interval" => 30000,
+			"enabled" => true,
+			'url' => '/alerts/get-new-notifications'
+		];
 	}
 }
 ?>

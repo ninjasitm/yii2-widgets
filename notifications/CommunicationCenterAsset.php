@@ -21,6 +21,7 @@ class CommunicationCenterAsset extends AssetBundle
 		'alerts/assets/js/notifications.js',
 	];
 	public $css = [
+		'notifications/assets/css/communication-center.css',
 	];	
 	public $depends = [
 		'nitm\assets\AppAsset',

@@ -2,6 +2,8 @@
 
 namespace nitm\widgets\models;
 
+use nitm\models\User;
+
 /**
  * This is the model class for table "vote".
  *

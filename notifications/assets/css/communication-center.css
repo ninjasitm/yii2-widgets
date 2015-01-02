@@ -1,0 +1,9 @@
+.communication-center-item {
+	position: fixed !important;
+	top: 40px; bottom: 40px; left: auto; right: 6px;
+	margin-left: -60px;
+	overflow: hidden;
+	z-index: 10000;
+	padding: 15px;
+	box-shadow: 0px 4px 8px #999;
+}

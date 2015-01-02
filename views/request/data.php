@@ -144,20 +144,6 @@ $this->params['breadcrumbs'][] = $this->title;
 				'class' => 'visible-lg visible-md'
 			]
 		],
-		[
-			'sortLinkOptions' => [
-				'data-pjax' => 1
-			],
-			'attribute' => 'updated_at',
-			'format' => 'datetime',
-			'contentOptions' => [
-				'style' => 'vertical-align:middle',
-				'class' => 'visible-lg visible-md'
-			],
-			'headerOptions' => [
-				'class' => 'visible-lg visible-md'
-			]
-		],
 
 		[
 			'class' => 'yii\grid\ActionColumn',
@@ -245,12 +231,9 @@ $this->params['breadcrumbs'][] = $this->title;
 				'size' => 'normal'
 			]
 		]);
-		$title = Html::tag('div',
-			Html::tag(
-				'h4', 
-				$model->title
-			),
-			['class' => 'row']
+		$title = Html::tag(
+			'h4', 
+			$model->title
 		);
 		
 		$activityInfo = Html::tag('div',
@@ -259,18 +242,18 @@ $this->params['breadcrumbs'][] = $this->title;
 			Html::tag('div', $issues, ['class' => 'col-md-3 col-lg-3 text-center']).
 			Html::tag('div', $follow, ['class' => 'col-md-3 col-lg-3 text-center']),
 			[
-				'class' => 'col-md-12 col-lg-12'
+				'class' => 'row'
 			]
 		);
-		$viewLink = Html::tag('div', \nitm\widgets\metadata\ShortLink::widget([
-			'title' => 'View',
+		$links = Html::tag('div', \nitm\widgets\metadata\ShortLink::widget([
+			'label' => 'View',
 			'url' => \Yii::$app->urlManager->createAbsoluteUrl([$model->isWhat().'/view/'.$model->getId()]),
 			'header' => $model->title,
 			'type' => 'modal',
 			'size' => 'large'
 		]));
-		$editLink = Html::tag('div', \nitm\widgets\metadata\ShortLink::widget([
-			'title' => 'Update',
+		$links .= Html::tag('div', \nitm\widgets\metadata\ShortLink::widget([
+			'label' => 'Update',
 			'url' => \Yii::$app->urlManager->createAbsoluteUrl([$model->isWhat().'/form/update/'.$model->getId()]),
 			'header' => $model->title,
 			'type' => 'modal',
@@ -281,14 +264,46 @@ $this->params['breadcrumbs'][] = $this->title;
 				]
 			]
 		]));
+			
+		$statusInfo = \lab1\widgets\StatusInfo::widget([
+			'items' => [
+				[
+					'blamable' => $model->editor(),
+					'date' => $model->updated_at,
+					'value' => $model->edits,
+					'label' => [
+						'true' => "Updated ",
+						'false' => "No updates"
+					]
+				],
+				[
+					'blamable' => $model->completedBy(),
+					'date' => $model->completed_at,
+					'value' => $model->completed,
+					'label' => [
+						'true' => "Completed ",
+						'false' => "Not completed"
+					]
+				],
+				[
+					'blamable' => $model->closedBy(),
+					'date' => $model->closed_at,
+					'value' => $model->closed,
+					'label' => [
+						'true' => "Closed ",
+						'false' => "Not closed"
+					]
+				],
+			],
+		]);
+		
 		$metaInfo = Html::tag('div', 
 			Html::tag('div', 
-				implode('<br>', [$title, $editLink, $viewLink, $activityInfo])
-			),
-			[
+				implode('<br>', [$title, $statusInfo, $activityInfo, $links])
+			),[
 				'class' => 'wrapper'
 			]
-		)."<br>";
+		);
 		return Html::tag('tr', 
 			Html::tag(
 				'td', 

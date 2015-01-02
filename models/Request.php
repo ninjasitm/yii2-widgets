@@ -25,9 +25,9 @@ namespace nitm\widgets\models;
  * @property integer $rating
  * @property string $rated_on
  */
-class Request extends Entity
+class Request extends \nitm\models\Entity
 {	
-	use \nitm\widgets\traits\relations\Request;
+	use \nitm\traits\Relations, \nitm\widgets\traits\relations\Request, \nitm\widgets\traits\Relations;
 	
 	protected $is = 'request';
 	

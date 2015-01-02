@@ -19,7 +19,7 @@
 .messages .message-reply-to, .chat .message-reply-to {
 	width: auto;
 	float: left;
-	font-size: 14px;
+	font-size: larger;
 	line-height: 28px;
 }
 
@@ -32,6 +32,8 @@
 	border-radius: 6px;
 	padding: 6px;
 	border-bottom: solid thin gray;
+	white-space: normal;
+	font-size: larger;
 }
 
 .chat .message {
@@ -52,7 +54,7 @@
 
 .message .author, .message .reply-to-author {
 	font-size: normal;
-	font-weight: bold;
+	font-weight: bold !important;
 }
 
 .message .message-avatar {
@@ -138,6 +140,7 @@
 .message .message-actions a {
 	font-size: small;
 	padding: 2px 4px;
+	font-weight: bold;
 }
 
 .message .message-reply-to {
@@ -158,6 +161,11 @@
 	overflow: hidden;
 	padding: 0px !important;
 	z-index: 10000;
+	color: #000;
+}
+
+.chat.dark {
+	color: #fff;
 }
 
 .chat * {
@@ -180,7 +188,7 @@
 	position: absolute;
 	overflow-y: auto;
 	height: 78%;
-	top: 15px; right: 15px; left : 15px;
+	top: 0; right: 0; left : 0;
 	bottom: 20%;
 }
 
@@ -195,7 +203,7 @@
 	display: block;
 	position: absolute;
 	width: auto;
-	right: 15px; left : 15px; bottom: 0;
+	right: 0; left : 0; bottom: 0;
 	overflow: auto;
 	background-color: rgba(0,0,0, 0.8);
 	padding: 8px;
@@ -211,7 +219,8 @@
 }
 
 .chat .message-actions a {
-	font-size: smaller;
+	font-size: smaller !important;
+	font-weight: bold !important;
 }
 
 .chat-form-container {
@@ -241,9 +250,11 @@
 
 .chat-form-container .redactor-toolbar {
 	background-color: transparent;
-	margin-top: -15px !important;
 }
 
 .chat-form-container .redactor-toolbar li a {
 	color: white;
+	padding: 6px 10px;
+	height: auto !important;
+	line-height: 1em !important;
 }

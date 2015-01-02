@@ -136,15 +136,15 @@ function Replies(items)
 	this.replyTo = function (event)
 	{
 		event.preventDefault();
-		var elem = event.target;
-		self.startEditor($(elem).data('container'));
-		var form = $($(elem).data('parent'));
-		form.find("[role~='"+self.forms.inputs.reply_to+"']").val($(elem).data('reply-to'));
+		var $elem = $(event.target);
+		self.startEditor(!$elem.data('container') ? $elem.data('parent') : $elem.data('container'));
+		var form = $($elem.data('parent'));
+		form.find("[role~='"+self.forms.inputs.reply_to+"']").val($elem.data('reply-to'));
 		var msgField = form.find("textarea");
 		msgField.val('').focus();
 		self.setEditorValue(msgField.get(0), '', false, self.editor);
 		self.setEditorFocus(msgField.get(0), self.editor);
-		$(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
+		$(self.views.roles.replyToIndicator).html("Replying to "+$elem.data('author'));
 	}
 	
 	this.initQuoting = function (containerId) {
@@ -253,65 +253,69 @@ function Replies(items)
 	
 	this.startEditor = function (containerId, value, button) {
 		var activator = $(button);
-		var containers = $("[id='"+containerId+"']");
+		var containers = $(containerId);
 		containers.each(function(index, element) {
 			var container = $(element);
-			var textarea = $("<textarea id='"+container.attr('id')+"editor' role='editor' class='form-control' name='Replies[message]' rows=10>");
-			var actions = container.find("[role='"+self.elements.replyActions+"']");
-			actions.removeClass('hidden');
-			switch(activator.data('use-modal'))
+			var textareaId = container.attr('id')+"editor";
+			var textarea = $('#'+textareaId);
+			if(!textarea.get(0))
 			{
-				case true:
-				if(container.find('.modal').get(0) == undefined)
+				textarea = $("<textarea id='"+textareaId+"' role='editor' class='form-control' name='Replies[message]' rows=10>");
+				var actions = container.find("[role='"+self.elements.replyActions+"']");
+				actions.removeClass('hidden');
+				switch(activator.data('use-modal'))
 				{
-					var content = $("<div class='modal fade in' role='dialog' aria-hidden='true'>");
-					var modalDialog = $("<div class='modal-dialog'>");
-					var modalContent = $("<div class='modal-content'>");
-					var modalBody = $("<div class='modal-body'>");
-					var modalTitle = $("<div class='modal-title'>").html("<h3>Your message:</h3>");
-					var modalHeader = $("<div class='modal-header'>");
-					var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
-					modalHeader.append(modalClose);
-					modalBody.append(modalHeader);
-					modalBody.append(modalTitle);
-					modalBody.append(textarea);
-					modalBody.append(actions);
-					$('body').append(content.append(modalDialog.append(modalContent.append(modalBody))));
+					case true:
+					if(container.find('.modal').get(0) == undefined)
+					{
+						var content = $("<div class='modal fade in' role='dialog' aria-hidden='true'>");
+						var modalDialog = $("<div class='modal-dialog'>");
+						var modalContent = $("<div class='modal-content'>");
+						var modalBody = $("<div class='modal-body'>");
+						var modalTitle = $("<div class='modal-title'>").html("<h3>Your message:</h3>");
+						var modalHeader = $("<div class='modal-header'>");
+						var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
+						modalHeader.append(modalClose);
+						modalBody.append(modalHeader);
+						modalBody.append(modalTitle);
+						modalBody.append(textarea);
+						modalBody.append(actions);
+						$('body').append(content.append(modalDialog.append(modalContent.append(modalBody))));
+					}
+					else
+					{
+						content = container;
+					}
+					content.modal({
+						keyboard: true
+					});
+					content.on('hidden.bs.modal', function () {
+						self.closeEditor(container.attr('id'));
+					});
+					break;
+					
+					default:
+					textarea.insertBefore(actions);
+					break;
 				}
-				else
-				{
-					content = container;
-				}
-				content.modal({
-					keyboard: true
-				});
-				content.on('hidden.bs.modal', function () {
-					self.closeEditor(container.attr('id'));
-				});
-				break;
-				
-				default:
-				textarea.insertBefore(actions);
-				break;
 			}
 			var type = textarea.parent('form').data('editor');
 			switch(type)
 			{
 				case 'redactor':
-				$nitm.getObj("[id='"+textarea.prop('id')+"']").each(function (index, element) {
+				$nitm.getObj("#"+textarea.prop('id')).each(function (index, element) {
 					var textarea = $(element);
 					try {
 						textarea.redactor('get');
 					} catch (error) {
 						textarea.redactor({
-							air: true,
-							airButtons: ['bold', 'italic', 'deleted', 'link'],
+							air: false,
 							focus: true,
 							autoresize: true,
 							initCallback: function(){
 								if(value != undefined)
 								{
-									this.set(value);
+									this.insert.set(value);
 								}
 							},
 							setCode: function(html){
@@ -324,12 +328,13 @@ function Replies(items)
 				});
 				break;
 			}
+			textarea.parents('form').find("[role='startEditor']").remove();
 		});
 		self.initCreating(containerId);
 	}
 	
 	this.closeEditor = function (containerId) {
-		var containers = $("[id='"+containerId+"']");
+		var containers = $(containerId);
 		containers.each(function(index, element) {
 			var container = $(element);
 			var content = $(container.attr('id')).find('.modal-dialog');

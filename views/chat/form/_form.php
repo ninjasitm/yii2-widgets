@@ -92,7 +92,7 @@ switch(1)
 					]
 				])->textInput([
 				'placeholder' => "Optional title",
-				'tag' => 'span'
+				'tag' => 'span',
 			])->label("Title", ['class' => 'sr-only']);
 			$editorOptions['id'] = 'chat-message'.$parentId;
 			$editorOptions['model'] = $model;

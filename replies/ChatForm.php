@@ -25,22 +25,9 @@ class ChatForm extends BaseWidget
 	/*
 	 * HTML options for generating the widget
 	 */
-	public $options = [
-		'class' => 'messages',
-		'role' => 'replyChatContainer',
-		'id' => 'messagesChat'
-	];
+	public $options = [];
 	
-	public $editorOptions = [
-		"toolbarSize" => "small",
-		"size" => "small",
-		'options' => [
-			'style' => 'resize:none;',
-			'autoresize' => false,
-			'maxHeight' => 60,
-			'minHeight' => 60
-		]
-	];
+	public $editorOptions = [];
 	
 	/**
 	 * The actions that are supported
@@ -87,6 +74,9 @@ class ChatForm extends BaseWidget
 			]
 		]);
 		$this->model->maxLength = 140;
+		$this->editorOptions = array_merge($this->defaultEditorOptions(), $this->editorOptions);
+		$this->options = array_merge($this->defaultOptions(), $this->options);
+		
 		parent::init();
 		Asset::register($this->getView());
 	}
@@ -148,6 +138,29 @@ class ChatForm extends BaseWidget
 				'class' => 'text-right '.(($hidden == true) ? 'hidden' : ''),
 			]
 		);
+	}
+	
+	protected function defaultEditorOptions()
+	{
+		return [
+			"toolbarSize" => "small",
+			"size" => "small",
+			'options' => [
+				'style' => 'resize:none;',
+				'autoresize' => false,
+				'maxHeight' => 200,
+				'minHeight' => 60
+			]
+		];
+	}
+	
+	protected function defaultOptions()
+	{
+		return [
+			'class' => 'messages',
+			'role' => 'replyChatContainer',
+			'id' => 'messagesChat'
+		];
 	}
 }
 ?>
