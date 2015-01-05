@@ -80,7 +80,7 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 <br>
 
 <script type='text/javascript'>
-$nitm.onModuleLoad('issueTracker', function () {
-	$nitm.module('issueTracker').initCreateUpdate('#issues-form<?=$uniqid?>');
+$nitm.onModuleLoad('issue-tracker', function (module) {
+	module.initCreateUpdate('#issues-form<?=$uniqid?>');
 });
 </script>

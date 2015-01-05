@@ -36,30 +36,18 @@ class IssueController extends \nitm\controllers\DefaultController
 	
     public function behaviors()
     {
-        return [
+		$behaviors = [
 			'access' => [
-				'class' => \yii\filters\AccessControl::className(),
-				//'only' => ['index', 'update', 'create', 'index', 'get', 'delete', 'convert', 'undelete'],
 				'rules' => [
 					[
-						'actions' => ['index',  'create',  'update',  'delete', 'resolve','close', 'duplicate', 'form', 'issues'],
+						'actions' => ['issues', 'duplicate'],
 						'allow' => true,
 						'roles' => ['@'],
 					],
 				],
 			],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
-                    'create' => ['post'],
-                    'update' => ['post'],
-                    'close' => ['post'],
-                    'resolve' => ['post'],
-                    'duplicate' => ['post'],
-                ],
-            ],
-        ];
+		];
+        return array_merge_recursive(parent::behaviors(), $behaviors);
     }
 	
 	public static function has()

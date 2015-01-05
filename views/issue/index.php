@@ -42,13 +42,13 @@ $baseModel = new Issues;
 	$issuesResolved = Html::tag('div', '', ['id' => 'alert'.$parentId]).Html::tag('div', '', ['class' => 'issues']);
 	$issuesUnResolved = Html::tag('div', '', ['id' => 'alert'.$parentId]).Html::tag('div', '', ['class' => 'issues']);
 	$issuesForm =  $this->render('create', [
-		'model' => new Issues,
+		'model' => $baseModel,
 		'parentId' => $parentId,
 		'parentType' => $parentType,
 		'enableComments' => $enableComments
 	]);
 ?>
-<div class="issues-index wrapper" id="issue-tracker<?=$uniqid?>">
+<div class="issues-index" id="issue-tracker<?=$uniqid?>">
 	<h3><?= Html::encode($title) ?></h3>
 	<?=
 		Tabs::widget([
@@ -206,13 +206,12 @@ $baseModel = new Issues;
 
 <script type="text/javascript">
 <?php if(\Yii::$app->request->isAjax): ?>
-$nitm.onModuleLoad('issueTracker', function () {
-	console.log('Waiting for issueTracker');
-	$nitm.module('issueTracker').init("issue-tracker<?=$uniqid?>");
-}, 'issueTrackerIndex');
+$nitm.onModuleLoad('issue-tracker', function (module) {
+	module).init("issue-tracker<?=$uniqid?>");
+});
 $nitm.onModuleLoad('tools', function () {
 	$nitm.module('tools').initVisibility("issue-tracker<?=$uniqid?>");
 	$nitm.module('tools').initDynamicValue("issue-tracker<?=$uniqid?>");
-}, 'issueTrackerIndex');
+});
 <?php endif ?>
 </script>

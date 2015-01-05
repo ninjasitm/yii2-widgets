@@ -27,7 +27,7 @@ echo $this->render('_search', [
 	'enableComments' => $enableComments,
 	'parentType' => $parentType,
 	'parentId' => $parentId
-]);
+])."<br><br>";
 echo Html::tag('div', '', ['id' => 'issues-alerts-message']);
 echo ListView::widget([
 	'options' => [
@@ -38,7 +38,7 @@ echo ListView::widget([
 	'itemOptions' => ['class' => 'item'],
 	'itemView' => function ($model, $key, $index, $widget) use($options){
 		$viewOptions = array_merge(['model' => $model], $options);
-		return $widget->render('@nitm/views/issue/view', $viewOptions);
+		return $widget->render('@nitm/widgets/views/issue/view', $viewOptions);
 	},
 	/*'pager' => [
 		'class' => \kop\y2sp\ScrollPager::className(),
@@ -54,9 +54,9 @@ echo ListView::widget([
 ]);
 ?>
 <script type="text/javascript">
-$nitm.onModuleLoad('issueTracker', function () {
-	$nitm.module('issueTracker').init("issues-<?=$filterType.'-list'.$uniqid?>");
-	$nitm.module('tools').initVisibility("issues-<?=$filterType.'-list'.$uniqid?>");
+$nitm.onModuleLoad('issue-tracker', function (module) {
+	module.init("issues-<?=$filterType.'-list'.$uniqid?>");
+	module.initVisibility("issues-<?=$filterType.'-list'.$uniqid?>");
 }, 'issueTrackerIssues');
 </script>
 <br>

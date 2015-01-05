@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use nitm\helpers\Icon;
 use nitm\widgets\activityIndicator\ActivityIndicator;
-use nitm\models\Issues;
+use nitm\widgets\models\Issues;
 
 /**
  * @var yii\web\View $this
@@ -15,7 +15,7 @@ use nitm\models\Issues;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Issues'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request->get(Issues::COMMENT_PARAM);
-if($enableComments == true) $repliesModel = new \nitm\models\Replies([
+if($enableComments == true) $repliesModel = new \nitm\widgets\models\Replies([
 	"constrain" => [$model->getId(), $model->isWhat()]
 ]);
 $uniqid = uniqid();
@@ -24,11 +24,13 @@ $uniqid = uniqid();
 	<div class="row">
 		<div class="col-md-12 col-lg-12">
 			<div class="row">
-				<h4 class="col-md-7 col-lg-7 text-left">
-					<?php if(isset($isNew) && ($isNew === true) || $model->isNew()) echo ActivityIndicator::widget();?>
-					<?= $model->title; ?>&nbsp;<span class="badge"><?= $model->status ?></span>
-				</h4>
-				<h4 class="col-md-5 col-lg-5 text-right"><small>by <b><?= $model->author()->fullName(true) ?></b> on <?= $model->created_at ?></small></h4>
+				<div class="col-md-12 col-lg-12">
+                	<h4>
+						<?php if(isset($isNew) && ($isNew === true) || $model->isNew()) echo ActivityIndicator::widget();?>
+                        <?= $model->title; ?>&nbsp;<span class="badge"><?= $model->status ?></span>
+                    </h4>
+                    <h6>by <b><?= $model->author()->fullName(true) ?></b> on <?= $model->created_at ?></h6>
+                </div>
 			</div>
 			<p class="text-left"><?= $model->notes; ?></p>
 		</div>
@@ -94,8 +96,8 @@ $uniqid = uniqid();
 
 <?php if(\Yii::$app->request->isAjax): ?>
 <script type="text/javascript">
-$nitm.onModuleLoad('issueTracker', function () {
-	$nitm.module('tools').initVisibility("issue<?= $uniqid ?>");
+$nitm.onModuleLoad('issue-tracker', function (module) {
+	module.initVisibility("issue<?= $uniqid ?>");
 }, 'issueTrackerView');
 </script>
 <?php endif ?>

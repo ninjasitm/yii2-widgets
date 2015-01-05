@@ -14,7 +14,6 @@ use nitm\helpers\Icon;
 $uniqid = uniqid();
 ?>
 
-<br>
 <div class="issues-search">
 	
 	<?php $form = ActiveForm::begin([
