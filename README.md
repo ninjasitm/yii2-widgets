@@ -26,13 +26,30 @@ to the require section of your `composer.json` file.
 Usage
 -----
 
-Once the extension is installed, simply use it in your code by  :
+Once the extension is installed enable the module:
 
 ```php
-<?= \nitm\widgets\AutoloadExample::widget(); ?>```
+'nitm-widgets' => [
+    'class' => '/nitm/widgets/Module'
+]
+<?=
+
+Then simply use it in your code by  :
+
+```php
+<?= \nitm\widgets\<group>\<widget>::widget(); ?>```
 =======
 yii2-nitm-widgets
 =================
 
-Widgets for NITM
->>>>>>> e4f60e27ab029878a993e23ae9868088d8080c62
+```php
+<?=
+
+	/**
+	 * NITM reply widget routes
+	 */
+	'<controller:(reply|alerts|vote|issue)/<action>' => 'nitm-widgets/<controller>/<action>',
+	'<controller:(reply|alerts|vote|issue)/<action>/<type>' => 'nitm-widgets/<controller>/<action>',
+	'<controller:(reply|alerts|vote|issue)/<action>/<type></id>' => 'nitm-widgets/<controller>/<action>',
+
+?>```
