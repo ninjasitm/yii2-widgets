@@ -23,9 +23,9 @@ class Vote extends BaseWidget
 	{
 		parent::init();
 		$this->initConfig(static::isWhat());
-		static::$allowMultiple = isset(static::$allowMultiple) ? static::$allowMultiple : \Yii::$app->getModule('nitm')->voteOptions['allowMultiple'];
-		static::$usePercentages = isset(static::$usePercentages) ? static::$usePercentages : \Yii::$app->getModule('nitm')->voteOptions['usePercentages'];
-		static::$individualCounts = isset(static::$individualCounts) ? static::$individualCounts : \Yii::$app->getModule('nitm')->voteOptions['individualCounts'];
+		static::$allowMultiple = isset(static::$allowMultiple) ? static::$allowMultiple : \Yii::$app->getModule('nitm-widgets')->voteOptions['allowMultiple'];
+		static::$usePercentages = isset(static::$usePercentages) ? static::$usePercentages : \Yii::$app->getModule('nitm-widgets')->voteOptions['usePercentages'];
+		static::$individualCounts = isset(static::$individualCounts) ? static::$individualCounts : \Yii::$app->getModule('nitm-widgets')->voteOptions['individualCounts'];
 	}
 	
     /**

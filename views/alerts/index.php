@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ListView;
-use nitm\models\Alerts;
+use nitm\widgets\models\Alerts;
 
 /* @var $this yii\web\View */
 /* @var $searchModel nitm\models\search\Alerts */
@@ -10,12 +10,16 @@ use nitm\models\Alerts;
 
 $this->title = Yii::t('app', 'Alerts');
 $this->params['breadcrumbs'][] = $this->title;
+$alertsModel = new Alerts();
 ?>
 <div class="alerts-index" role="alertsListForm">
 <div class="wrapper">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?= $this->render("_form", ["model" => new Alerts]);  ?>
+    <?= $this->render("_form", [
+		"model" => $alertsModel, 
+		'formOptions' => []
+	]);  ?>
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,

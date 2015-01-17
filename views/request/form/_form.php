@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $action = $model->getIsNewRecord() ? 'create' : 'update';
 ?>
 
-<div id="<?= $model->isWhat()?>_form_container" class='row'>
+<div id="<?= $model->isWhat()?>_form_container">
 	<?php if (!$model->getIsNewRecord()) : ?>
 	<div class="col-md-7 col-lg-7">
 	<?= $this->render('meta_info', ['model' => $model]); ?>
@@ -40,7 +40,9 @@ $action = $model->getIsNewRecord() ? 'create' : 'update';
 					'labelOptions' => ['class' => 'col-lg-2 control-label'],
 				],
 				'enableAjaxValidation' => true,
-			], $formOptions)); 
+			], array_diff_key($formOptions, [
+				'container' => null
+			]))); 
 		?>
 	
 		<?= $form->field($model, 'title') ?>

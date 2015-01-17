@@ -60,9 +60,9 @@ class AlertsController extends \nitm\controllers\DefaultController
      */
     public function actionIndex()
     {
-        Response::$viewOptions['args']['content'] = \nitm\widgets\alerts\Alerts::widget();
+        Response::viewOptions('args.content', \nitm\widgets\alerts\Alerts::widget());
 		$this->setResponseFormat('html');
-		return $this->renderResponse(null, Response::$viewOptions, \Yii::$app->request->isAjax);
+		return $this->renderResponse(null, Response::viewOptions(), \Yii::$app->request->isAjax);
     }
 	
     /**
@@ -71,11 +71,11 @@ class AlertsController extends \nitm\controllers\DefaultController
      */
     public function actionNotifications()
     {
-        Response::$viewOptions['args']['content'] = \nitm\widgets\alerts\Notifications::widget([
+        Response::viewOptions('args.content', \nitm\widgets\alerts\Notifications::widget([
 			'contentOnly' => (bool)\Yii::$app->request->get('__contentOnly')
-		]);
+		]));
 		$this->setResponseFormat('html');
-		return $this->renderResponse(null, Response::$viewOptions, \Yii::$app->request->isAjax);
+		return $this->renderResponse(null, Response::viewOptions(), \Yii::$app->request->isAjax);
     }
 	
     /**
@@ -95,7 +95,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 			$ret_val = false;
 		}
 		$this->setResponseFormat('json');
-		return $this->renderResponse($ret_val, Response::$viewOptions, \Yii::$app->request->isAjax);
+		return $this->renderResponse($ret_val, Response::viewOptions(), \Yii::$app->request->isAjax);
     }
 	
 	public function actionFollow($type, $id, $key)
@@ -223,14 +223,14 @@ class AlertsController extends \nitm\controllers\DefaultController
 			{
 				$ret_val['data'] .= $this->renderAjax('@nitm/views/alerts/view-notification', ['model' => $newReply, 'isNew' => true]);
 			}
-			Response::$viewOptions = [
+			Response::viewOptions(null, [
 				'args' => [
 					"content" => $ret_val['data'],
 				],
 				'modalOptions' => [
 					'contentOnly' => true
 				]
-			];
+			]);
 			break;
 		}
 		$this->setResponseFormat(\Yii::$app->request->isAjax ? 'json' : 'html');

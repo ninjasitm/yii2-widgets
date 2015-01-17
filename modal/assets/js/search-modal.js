@@ -55,7 +55,7 @@ function SearchModal () {
 					$form.find(self.searchField).focus().val(e.key);
 					$form.on('submit', function (event) {
 						event.preventDefault();
-						$nitm.module('entity').operation(this, function (result, form) {
+						(new NitmEntity).operation(this, function (result, form) {
 							self.modal.find(self.resultContainer).html(result.data);
 							$(form).find(self.searchField).val(result.query);
 						});

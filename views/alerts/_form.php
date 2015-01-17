@@ -14,15 +14,17 @@ $model->setScenario($action);
 $uniqid = uniqid();
 ?>
 
-<div id="alerts-form-container<?=$model->getId();?>">
+<div id="alerts-form-container<?=$model->getId();?>" class="row">
+	<div class="col-md-12 col-lg-12">
 	<?php
 		echo Html::tag('div', '', ['id' => 'alert']);
 		$form = ActiveForm::begin(array_merge([
-			"type" => ActiveForm::TYPE_HORIZONTAL,
+			'id' => 'create-'.$model->isWhat().'-form',
+			"type" => ActiveForm::TYPE_INLINE,
 			'fieldConfig' => [
 				'inputOptions' => ['class' => 'form-control'],
-				'template' => "{label}\n<div class=\"col-lg-10\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
-				'labelOptions' => ['class' => 'col-lg-2 control-label'],
+				'template' => "{label}\n<div class=\"\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
+				'labelOptions' => ['class' => 'sr-only'],
 			],
 			'enableAjaxValidation' => true,
 		], $formOptions)); 
@@ -98,8 +100,8 @@ $uniqid = uniqid();
 	<?php endif; ?>
 	
 	<?php ActiveForm::end(); ?>
-
-</div>
+	</div>
+</div><br>
 <?php if(\Yii::$app->request->isAjax): ?>
 <script type='text/javascript'>
 $nitm.onModuleLoad('alerts', function () {

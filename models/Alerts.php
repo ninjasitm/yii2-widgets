@@ -4,7 +4,8 @@ namespace nitm\widgets\models;
 
 use Yii;
 use yii\db\ActiveRecord;
-use \yii\base\Event;
+use yii\base\Event;
+use nitm\models\User;
 
 /**
  * This is the model class for table "alerts".
