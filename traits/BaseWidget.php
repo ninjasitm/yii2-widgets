@@ -46,16 +46,16 @@ trait BaseWidget {
 		if($this->initSearchClass)
 			//static::initCache($this->constrain, self::cacheKey($this->getId()));
 		static::$currentUser =  isset(\Yii::$app->user) ? \Yii::$app->user->identity : new \nitm\models\User(['id' => 1]);
-		static::$userLastActive = is_null(static::$userLastActive) ? static::$currentUser->lastActive() : static::$userLastActive;
+		static::$userLastActive = date('Y-m-d G:i:s', (is_null(static::$userLastActive) ? static::$currentUser->lastActive() : static::$userLastActive));
 		$this->initEvents();
 	}
 	
 	protected function initEvents()
 	{
-		Event::on(ActiveRecord::className(), ActiveRecord::EVENT_BEFORE_INSERT, [$this, 'beforeSaveEvent']);
-		Event::on(ActiveRecord::className(), ActiveRecord::EVENT_BEFORE_UPDATE, [$this, 'beforeSaveEvent']);
-		Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_INSERT, [$this, 'afterSaveEvent']);
-		Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_UPDATE, [$this, 'afterSaveEvent']);
+		Event::on(static::className(), ActiveRecord::EVENT_BEFORE_INSERT, [$this, 'beforeSaveEvent']);
+		Event::on(static::className(), ActiveRecord::EVENT_BEFORE_UPDATE, [$this, 'beforeSaveEvent']);
+		Event::on(static::className(), ActiveRecord::EVENT_AFTER_INSERT, [$this, 'afterSaveEvent']);
+		Event::on(static::className(), ActiveRecord::EVENT_AFTER_UPDATE, [$this, 'afterSaveEvent']);
 	}
 	
 	public function scenarios()
@@ -242,7 +242,7 @@ trait BaseWidget {
 	{
 		$primaryKey = $this->primaryKey()[0];
 		$ret_val = $this->hasOne(static::className(), $this->link);
-		$andWhere = ['or', 'UNIX_TIMESTAMP(created_at)>='.static::$currentUser->lastActive()];
+		$andWhere = ['or', 'created_at>='.static::$currentUser->lastActive()];
 		$ret_val->select([
 				'_new' => 'COUNT('.$primaryKey.')'
 			])
@@ -259,7 +259,7 @@ trait BaseWidget {
 	public function isNew()
 	{
 		static::$userLastActive = is_null(static::$userLastActive) ? static::$currentUser->lastActive() : static::$userLastActive;
-		return strtotime($this->created_at) > static::$userLastActive;
+		return strtotime($this->created_at) > strtotime(static::$userLastActive);
 	}
 	
 	/*
@@ -291,7 +291,7 @@ trait BaseWidget {
 			case true:
 			$sql = static::find()->select([
 				"_count" => 'COUNT(id)',
-				"_hasNew" => 'SUM(IF(UNIX_TIMESTAMP(created_at)>='.static::$currentUser->lastActive().", 1, 0))"
+				"_hasNew" => 'SUM(IF(created_at>='.static::$currentUser->lastActive().", 1, 0))"
 			])
 			->where($this->getConstraints());
 			$metadata = $sql->createCommand()->queryAll();

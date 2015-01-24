@@ -33,17 +33,7 @@ class RevisionsController extends WidgetController
      */
     public function actionIndex($type=null, $id=null)
     {
-        /*$searchModel = new RevisionsSearch;
-		$params = ['remote_type' => $type, 'id' => $id];
-        $dataProvider = $searchModel->search(array_merge(array_filter($params), Yii::$app->request->getQueryParams()));*/
-
-        /*$ret_val = [
-			'args' => [
-				'dataProvider' => $dataProvider,
-				'searchModel' => $searchModel,
-        	],
-		];*/
-		Response::$viewOptions = [
+		Response::viewOptions(null, [
 			'args' => [
 				"content" => RevisionsWidget::widget([
 					"parentId" => $id, 
@@ -53,7 +43,7 @@ class RevisionsController extends WidgetController
 			'modalOptions' => [
 				'contentOnly' => true
 			]
-		];
+		], true);
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);
     }
 
@@ -76,7 +66,7 @@ class RevisionsController extends WidgetController
 			]
 		];
 		$this->setResponseFormat('modal');
-		echo $this->renderResponse(null, $ret_val);
+		return $this->renderResponse(null, $ret_val);
     }
 
     /**
@@ -122,7 +112,7 @@ class RevisionsController extends WidgetController
                 'model' => $model,
             ]);*/
         }
-		echo $this->renderResponse($ret_val);
+		return $this->renderResponse($ret_val);
     }
 
     /**

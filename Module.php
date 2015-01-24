@@ -15,6 +15,14 @@ class Module extends \yii\base\Module
 	
 	public $useFullnames;
 	
+	/**
+	 * The classnames for the activity elements
+	 */
+	public $checkActivityFor = [
+		'\nitm\widgets\models\Issues',
+		'\nitm\widgets\models\Replies',
+	];
+	
 	/*
 	 * @var array options for nitm\models\Votes
 	 */

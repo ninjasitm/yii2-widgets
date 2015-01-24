@@ -141,7 +141,7 @@ class IssueController extends \nitm\controllers\DefaultController
 		}
 		$dataProvider = $searchModel->search($params);
 		$dataProvider->query->orderBy($orderBy);
-		Response::$viewOptions = [
+		Response::viewOptions(null, [
 			'args' => [
 				"content" => $this->renderAjax('issues', [
 					'enableComments' => $this->enableComments,
@@ -156,7 +156,7 @@ class IssueController extends \nitm\controllers\DefaultController
 			'modalOptions' => [
 				'contentOnly' => true
 			]
-		];
+		], true);
 		//$this->setResponseFormat(\Yii::$app->request->isAjax ? 'modal' : 'html');
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);
     }

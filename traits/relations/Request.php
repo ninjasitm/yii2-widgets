@@ -31,7 +31,7 @@ trait Request {
 	
 	public function requestFor()
 	{
-		return $this->requestFor instanceof Category ? $this->requestFor : new Category();
+		return \nitm\helpers\Relations::getRelatedRecord('requestFor', $this, new Category);
 	}
 }
 ?>

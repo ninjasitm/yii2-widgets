@@ -107,14 +107,14 @@ class ReplyController extends \nitm\controllers\DefaultController
 			]);
 			break;
 		}
-		Response::$viewOptions = [
+		Response::viewOptions(null, [
 			'args' => [
 				"content" => $replies,
 			],
 			'modalOptions' => [
 				'contentOnly' => true
 			]
-		];
+		], true);
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);
     }
 
@@ -172,12 +172,12 @@ class ReplyController extends \nitm\controllers\DefaultController
 				$ret_val['id'] = $this->model->getId();
 				$ret_val['unique_id'] = 'message'.$this->model->getId();
 				$this->setResponseFormat(\Yii::$app->request->isAjax ? 'json' : 'html');
-				Response::$viewOptions['args']['content'] = $ret_val['data'];
+				Response::viewOptions('args.content', $ret_val['data']);
 				break;
 				
 				case false:
 				$this->setResponseFormat('json');
-				Response::$viewOptions['args']['content'] = $ret_val;
+				Response::viewOptions('args.content', $ret_val);
 				break;
 			}
 			break;
@@ -256,14 +256,14 @@ class ReplyController extends \nitm\controllers\DefaultController
 					break;
 				}
 			}
-			Response::$viewOptions = [
+			Response::viewOptions(null, [
 				'args' => [
 					"content" => $ret_val['data'],
 				],
 				'modalOptions' => [
 					'contentOnly' => true
 				]
-			];
+			], true);
 			break;
 		}
 		$this->setResponseFormat(\Yii::$app->request->isAjax ? 'json' : 'html');
