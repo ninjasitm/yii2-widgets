@@ -87,7 +87,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		$this->model = \nitm\widgets\models\Notification::findOne($id);
 		if($this->model)
 		{
-			$this->model->read = 1;
+			$this->model->read = true;
 			$ret_val = $this->model->save();
 		}
 		else
@@ -193,7 +193,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		$this->model = new \nitm\widgets\models\Notification([
 			'constrain' => [
 				'user_id' => \Yii::$app->user->getId(),
-				'read' => 0
+				'read' => false
 			],
 		]);
 		$ret_val = false;
@@ -230,6 +230,14 @@ class AlertsController extends \nitm\controllers\DefaultController
 				'modalOptions' => [
 					'contentOnly' => true
 				]
+			]);
+			break;
+			
+			default:
+			Response::viewOptions(null, [
+				'args' => [
+					"content" => $ret_val,
+				],
 			]);
 			break;
 		}

@@ -46,7 +46,7 @@ trait BaseWidget {
 		if($this->initSearchClass)
 			//static::initCache($this->constrain, self::cacheKey($this->getId()));
 		static::$currentUser =  isset(\Yii::$app->user) ? \Yii::$app->user->identity : new \nitm\models\User(['id' => 1]);
-		static::$userLastActive = date('Y-m-d G:i:s', (is_null(static::$userLastActive) ? static::$currentUser->lastActive() : static::$userLastActive));
+		static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::$currentUser->lastActive() : static::$userLastActive));
 		$this->initEvents();
 	}
 	
@@ -242,7 +242,7 @@ trait BaseWidget {
 	{
 		$primaryKey = $this->primaryKey()[0];
 		$ret_val = $this->hasOne(static::className(), $this->link);
-		$andWhere = ['or', 'created_at>='.static::$currentUser->lastActive()];
+		$andWhere = ['or', "created_at>='".static::$currentUser->lastActive()."'"];
 		$ret_val->select([
 				'_new' => 'COUNT('.$primaryKey.')'
 			])

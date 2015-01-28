@@ -48,7 +48,7 @@ class Notifications extends \yii\base\Widget
 	
 			$dataProvider = $searchModel->search(array_merge($params));
 			$dataProvider->query->andWhere([
-				'read' => 0
+				'read' => false
 			]);
 			$dataProvider->setSort([
 				'defaultOrder' => [

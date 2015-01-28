@@ -66,7 +66,7 @@ class IssueController extends \nitm\controllers\DefaultController
      */
     public function actionIndex($type, $id)
     {
-		Response::$viewOptions = [
+		Response::viewOptions(null, [
 			'args' => [
 				"content" => IssueTracker::widget([
 					"parentId" => $id, 
@@ -78,7 +78,7 @@ class IssueController extends \nitm\controllers\DefaultController
 			'modalOptions' => [
 				'contentOnly' => true
 			]
-		];
+		], true);
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);
     }
 
@@ -111,27 +111,27 @@ class IssueController extends \nitm\controllers\DefaultController
 		switch($key)
 		{
 			case 'duplicate':
-			$params = array_merge($params, ['duplicate' => 1]);
+			$params = array_merge($params, ['duplicate' => true]);
 			$orderBy = ['id' => SORT_DESC];
 			break;
 			
 			case 'closed':
-			$params = array_merge($params, ['closed' => 1]);
+			$params = array_merge($params, ['closed' => true]);
 			$orderBy = ['closed_at' => SORT_DESC];
 			break;
 			
 			case 'open':
-			$params = array_merge($params, ['closed' => 0]);
+			$params = array_merge($params, ['closed' => false]);
 			$orderBy = ['id' => SORT_DESC];
 			break;
 			
 			case 'resolved':
-			$params = array_merge($params, ['resolved' => 1]);
+			$params = array_merge($params, ['resolved' => true]);
 			$orderBy = ['resolved_at' => SORT_DESC];
 			break;
 			
 			case 'unresolved':
-			$params = array_merge($params, ['resolved' => 0]);
+			$params = array_merge($params, ['resolved' => false]);
 			$orderBy = ['id' => SORT_DESC];
 			break;
 			
