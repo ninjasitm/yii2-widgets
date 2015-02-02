@@ -42,7 +42,7 @@ trait Relations {
 			'parent_type' => $this->isWhat()
 		];
 		$idKey = is_null($idKey) ? ['getId', 'isWhat'] : $idKey;
-		return $this->getCachedRelation(Cache::cacheKey($this, $idKey, $relation, $many), $className, $options, $many, $relation);
+		return $this->getCachedRelation($idKey, $className, $options, $many, $relation);
 	}
 	
 	public function replyModel()
@@ -84,7 +84,7 @@ trait Relations {
 	
 	public function replies()
 	{
-		return $this->getCachedRelation(Cache::cacheKey($this, 'id', 'replies', true), \nitm\widgets\models\Replies::className(), [], true);
+		return $this->getCachedRelation('id', \nitm\widgets\models\Replies::className(), [], true, 'replies');
 	}
 	
 	public function issueModel()
@@ -115,7 +115,7 @@ trait Relations {
 	
 	public function issues()
 	{
-		return $this->getCachedRelation(Relations::cacheKey($this, 'id', 'issues', true), \nitm\widgets\models\Issues::className(), [], true);
+		return $this->getCachedRelation('id', \nitm\widgets\models\Issues::className(), [], true, 'issues');
 	}
 
     /**
@@ -133,7 +133,7 @@ trait Relations {
 	
 	public function revisions()
 	{
-		return $this->getCachedRelation(Relations::cacheKey($this, 'id', 'revisions', true), \nitm\widgets\models\Revisions::className(), [], true);
+		return $this->getCachedRelation('id', \nitm\widgets\models\Revisions::className(), [], true, 'revisions');
 	}
 	
 	public function revisionModel()
@@ -161,7 +161,7 @@ trait Relations {
 	
 	public function votes()
 	{
-		return $this->getCachedRelation(Relations::cacheKey($this, 'id', 'votes', true), \nitm\widgets\models\Vote::className(), [], true);
+		return $this->getCachedRelation('id', \nitm\widgets\models\Vote::className(), [], true, 'votes');
 	}
 	
 	public function voteModel()

@@ -147,8 +147,14 @@ class MetaInfo extends \yii\base\Widget
 				}
 				return $ret_val;
 			};
-			$title = $attrGetter($model, explode('.', array_shift(explode(':', $attr))), $value, (strpos(':', $attr) === false));
-			$value = $attrGetter($model, explode('.', array_pop(explode(':', $attr))), $value, false);
+			$attr = is_array($attr) ? $attr : explode(':', $attr);
+			$titleAttr = array_shift($attr);
+			$valueAttr = count($attr) ? array_pop($attr) : '';
+			$title = $attrGetter($model, explode('.', $titleAttr), $value, (strpos(':', $titleAttr) === false));
+			if(is_callable($valueAttr))
+				$value = $valueAttr($model);
+			else
+				$value = strlen($valueAttr) ? $attrGetter($model, explode('.', $valueAttr), $value, false) : null;
 			switch(isset($this->index))
 			{
 				case true:

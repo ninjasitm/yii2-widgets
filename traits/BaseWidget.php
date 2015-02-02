@@ -307,7 +307,7 @@ trait BaseWidget {
 			$class = static::className();
 			$model = new $class(['initSearchClass' => false]);
 			$model->setConstraints($constrain);
-			$key = is_null($key) ? \nitm\helpers\Cache::cacheKey($model, ['parent_id', 'parent_key']) : array_keys($constrain);
+			$key = is_null($key) ? \nitm\helpers\Cache::cacheKey($model, ['parent_id', 'parent_type']) : array_keys($constrain);
 			\nitm\helpers\Cache::setModel($key, [$model->className(), \yii\helpers\ArrayHelper::toArray($model)]);
 		}
 		else {
