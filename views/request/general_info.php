@@ -93,7 +93,7 @@ echo GridView::widget([
 	],
 	'afterRow' => function ($model, $key, $index, $grid) {
 		
-		$shortLink = \lab1\widgets\ShortLink::widget([
+		$shortLink = \nitm\widgets\metadata\ShortLink::widget([
 			'url' => \Yii::$app->urlManager->createAbsoluteUrl([$model->isWhat().'/view/'.$model->getId()]),
 			'viewOptions' => [
 				'data-toggle' => 'modal',
@@ -101,7 +101,7 @@ echo GridView::widget([
 			]
 		]);
 		
-		$statusInfo = \lab1\widgets\StatusInfo::widget([
+		$statusInfo = \nitm\widgets\metadata\StatusInfo::widget([
 			'items' => [
 				[
 					'blamable' => $model->author(),

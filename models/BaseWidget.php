@@ -19,17 +19,8 @@ use nitm\helpers\Cache;
  *
  */
 
-class BaseWidget extends \nitm\models\Data implements DataInterface
+class BaseWidget extends \nitm\models\Entity implements DataInterface
 {
-	use \nitm\traits\Nitm, \nitm\traits\Alerts, \nitm\widgets\traits\BaseWidget;
-	
-	public function beforeSaveEvent($event)
-	{
-		static::prepareAlerts($event);
-	}
-	
-	public function afterSaveEvent($event)
-	{
-	}
+	use \nitm\traits\Nitm, \nitm\widgets\traits\BaseWidget;
 }
 ?>

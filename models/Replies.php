@@ -194,13 +194,15 @@ class Replies extends BaseWidget
 	
 	public function afterSaveEvent($event)
 	{
-		if($event->sender->className() != static::className())
-			return;
-		$message = [];
-		$this->_alerts->addVariables([
+		$event->data['variables'] = array_merge($event->data['variables'], [
 			'%id%' => $event->sender->getId(),
 			"%viewLink%" => \yii\helpers\Html::a(\Yii::$app->urlManager->createAbsoluteUrl($event->sender->parent_type."/view/".$event->sender->parent_id), \Yii::$app->urlManager->createAbsoluteUrl($event->sender->parent_type."/view/".$event->sender->parent_id))
 		]);
+	}
+	
+	public function getAlertOptions($event)
+	{
+		$message = [];
 		$type = $event->sender->isWhat();;
 		switch($event->sender->getScenario())
 		{
@@ -241,31 +243,32 @@ class Replies extends BaseWidget
 		}
 		if(!empty($message) && $event->sender->getId())
 		{
-			$this->_alerts->criteria([
-				'remote_type',
-				'remote_for',
-				'remote_id',
-				'action',
-				'priority'
-			], [
-				$type,
-				$event->sender->parent_type,
-				$event->sender->parent_id,
-				($event->sender->reply_to != null ? 'reply' : 'create'),
-				$event->sender->priority
-			]);
+			$$event->data['criteria'] = [
+				[
+					'remote_type',
+					'remote_for',
+					'remote_id',
+					'action',
+					'priority'
+				], [
+					$type,
+					$event->sender->parent_type,
+					$event->sender->parent_id,
+					($event->sender->reply_to != null ? 'reply' : 'create'),
+					$event->sender->priority
+				]
+			];
 			switch($event->sender->reply_to != null)
 			{
 				case true:
-				$this->_alerts->reportedAction = 'replied';
+				$event->data['reportedAction'] = 'replied';
 				break;
 				
 				default:
-				$this->_alerts->reportedAction = 'create';
+				$event->data['reportedAction'] = 'create';
 				break;
 			}
 			$message['owner_id'] = $event->sender->hasAttribute('author_id') ? $event->sender->author_id : null;
-			if(!$event->handled) static::processAlerts($event, $message);
 		}
 		return $message;
 	}

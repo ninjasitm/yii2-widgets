@@ -265,7 +265,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			]
 		]));
 			
-		$statusInfo = \lab1\widgets\StatusInfo::widget([
+		$statusInfo = \nitm\widgets\metadata\StatusInfo::widget([
 			'items' => [
 				[
 					'blamable' => $model->editor(),

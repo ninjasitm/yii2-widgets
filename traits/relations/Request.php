@@ -31,7 +31,7 @@ trait Request {
 	
 	public function requestFor()
 	{
-		return \nitm\helpers\Relations::getRelatedRecord('requestFor', $this, new Category);
+		return \nitm\helpers\Relations::getRelatedRecord('requestFor', $this, Category::className());
 	}
 }
 ?>

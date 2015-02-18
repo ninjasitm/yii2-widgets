@@ -119,13 +119,12 @@ class Request extends \nitm\models\Entity
 	
 	public function afterSaveEvent($event)
 	{
-		$this->_alerts->addVariables([
-			'%type%' => $event->sender->type()->name,
+		$event->data['variables'] = array_merge((array)$event->data['variables'], [
+			'%type%' => $event->sender->typeOf()->name,
 			'%requestFor%' => $event->sender->requestFor()->name,
 			'%urgency%' => $event->sender->getUrgency(),
 			'%title%' => $event->sender->title,
 		]);
-		$message = parent::afterSaveEvent($event);
-		if(!empty($message) && !$event->handled) static::processAlerts($event, $message);
+		parent::afterSaveEvent($event);
 	}
 }

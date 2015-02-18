@@ -31,7 +31,7 @@ $uniqid = uniqid();
 	?>
 	<?=
 		$form->field($model, 'action')->widget(Select2::className(), [
-			'data' => $model::setting($model->isWhat().'.actions'),
+			'data' => $model::setting('actions'),
 			'options' => ['id' => 'alert-action'.$uniqid, 'placeholder' => 'Alert me when someone...', "allowClear" => true]
 		])->label("Action");
 	?>    
