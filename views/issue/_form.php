@@ -10,9 +10,9 @@ use yii\widgets\ActiveForm;
  */
 ?>
 
-<div class="issues-form">
+<div id="<?= $model->isWhat()?>_form_container">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php")); ?>
 
     <?= $form->field($model, 'unique') ?>
 

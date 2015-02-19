@@ -32,17 +32,7 @@ $action = $model->getIsNewRecord() ? 'create' : 'update';
 	<?php endif ?>
 		<?php
 			echo Html::tag('div', '', ['id' => 'alert']);
-			$form = ActiveForm::begin(array_merge([
-				"type" => ActiveForm::TYPE_HORIZONTAL,
-				'fieldConfig' => [
-					'inputOptions' => ['class' => 'form-control'],
-					'template' => "{label}\n<div class=\"col-lg-10\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
-					'labelOptions' => ['class' => 'col-lg-2 control-label'],
-				],
-				'enableAjaxValidation' => true,
-			], array_diff_key($formOptions, [
-				'container' => null
-			]))); 
+			$form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php"));
 		?>
 	
 		<?= $form->field($model, 'title') ?>

@@ -14,30 +14,32 @@ use nitm\widgets\editor\Editor;
 
 $widget->uniqid = !isset($widget->uniqid) ? uniqid() : $widget->uniqid;
 $action = ($model->getIsNewRecord()) ? "create" : "update";
+
+$formOptions = array_merge($formOptions, [
+	'id' => $widget->options['id'],
+	'type' => ActiveForm::TYPE_HORIZONTAL,
+	'method' => 'post',
+	"action" => "/reply/new/".$widget->parentType."/".$widget->parentId.(isset($widget->parentKey) ? "/".urlencode($widget->parentKey) : ''),
+	"options" => [
+		'data-editor' => $widget->editor,
+		'data-parent' => 'messages'.$widget->uniqid,
+		"role" => "replyForm",
+		'onsubmit' => '$nitm.module("replies").reply(event)',
+		'onreset' => '$nitm.module("replies").resetForm(event)'
+	],
+	"fieldConfig" => [
+		"inputOptions" => ["class" => "form-control"]
+	],
+	"validateOnSubmit" => true,
+	"enableAjaxValidation" => true
+]);
 ?>
 
 <div class="message-form" id='messages-form-container<?= $widget->uniqid ?>'>
 	<br>
 	<?= \nitm\widgets\alert\Alert::widget(); ?>
 	<h3>Reply</h3>
-	<?php $form = ActiveForm::begin([
-			'id' => $widget->options['id'],
-			'type' => ActiveForm::TYPE_HORIZONTAL,
-			'method' => 'post',
-			"action" => "/reply/new/".$widget->parentType."/".$widget->parentId.(isset($widget->parentKey) ? "/".urlencode($widget->parentKey) : ''),
-			"options" => [
-				'data-editor' => $widget->editor,
-				'data-parent' => 'messages'.$widget->uniqid,
-				"role" => "replyForm",
-				'onsubmit' => '$nitm.module("replies").reply(event)',
-				'onreset' => '$nitm.module("replies").resetForm(event)'
-			],
-			"fieldConfig" => [
-				"inputOptions" => ["class" => "form-control"]
-			],
-			"validateOnSubmit" => true,
-			"enableAjaxValidation" => true
-		]); ?>
+    <?php $form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php")); ?>
 	<?php 
 		switch(isset($widget->inline) && ($widget->inline == true)) 
 		{

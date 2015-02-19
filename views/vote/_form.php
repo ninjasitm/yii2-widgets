@@ -8,13 +8,19 @@ use yii\widgets\ActiveForm;
  * @var nitm\module\models\Vote $model
  * @var yii\widgets\ActiveForm $form
  */
+$formOptions = array_replace_recursive($formOptions, [
+	"type" => ActiveForm::TYPE_HORIZONTAL,
+	'options' => [
+		"role" => "ajaxForm"
+	],
+]);
 ?>
 
-<div class="vote-form">
+<div id="<?= $model->isWhat()?>_form_container">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php")); ?>
 
-    <?= $form->field($model, 'unique') ?>
+    <?= $form->field($model, 'id') ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

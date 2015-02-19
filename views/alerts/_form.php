@@ -12,23 +12,22 @@ use kartik\widgets\DepDrop;
 $action = $model->getIsNewRecord() ? 'create' : 'update';
 $model->setScenario($action);
 $uniqid = uniqid();
+$formOptions = array_replace_recursive($formOptions, [
+	"type" => ActiveForm::TYPE_INLINE,
+	'fieldConfig' => [
+		'inputOptions' => ['class' => 'form-control'],
+		'template' => "{label}\n<div class=\"\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
+		'labelOptions' => ['class' => 'sr-only'],
+	],
+	'options' => [
+		"role" => "ajaxForm"
+	],
+]);
 ?>
 
-<div id="alerts-form-container<?=$model->getId();?>" class="row">
+<div id="<?= $model->isWhat()?>_form_container" class="row">
 	<div class="col-md-12 col-lg-12">
-	<?php
-		echo Html::tag('div', '', ['id' => 'alert']);
-		$form = ActiveForm::begin(array_merge([
-			'id' => 'create-'.$model->isWhat().'-form',
-			"type" => ActiveForm::TYPE_INLINE,
-			'fieldConfig' => [
-				'inputOptions' => ['class' => 'form-control'],
-				'template' => "{label}\n<div class=\"\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
-				'labelOptions' => ['class' => 'sr-only'],
-			],
-			'enableAjaxValidation' => true,
-		], $formOptions)); 
-	?>
+    <?php $form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php")); ?>
 	<?=
 		$form->field($model, 'action')->widget(Select2::className(), [
 			'data' => $model::setting('actions'),
@@ -105,7 +104,7 @@ $uniqid = uniqid();
 <?php if(\Yii::$app->request->isAjax): ?>
 <script type='text/javascript'>
 $nitm.onModuleLoad('alerts', function () {
-	$nitm.module('alerts').initForms('<?= $model->isWhat();?>-form-container<?=$model->getId();?>');
+	$nitm.module('alerts').initForms('<?= $formOptions['options']['id'];?>');
 });
 </script>
 <?php endif; ?>

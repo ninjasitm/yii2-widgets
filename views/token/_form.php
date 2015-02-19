@@ -8,11 +8,17 @@ use yii\widgets\ActiveForm;
  * @var app\models\Token $model
  * @var yii\widgets\ActiveForm $form
  */
+$formOptions = array_replace_recursive($formOptions, [
+	"type" => ActiveForm::TYPE_HORIZONTAL,
+	'options' => [
+		"role" => "ajaxForm"
+	],
+]);
 ?>
 
-<div class="token-form <?= $this->context->getStatusIndicator($model); ?>">
+<div id="<?= $model->isWhat()?>_form_container" class="token-form <?= $this->context->getStatusIndicator($model); ?>">
 
-	<?php $form = ActiveForm::begin(); ?>
+    <?php $form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php")); ?>
 		<?= Html::label('User', 'usersearch', []); ?>
 		<?php 
 			if(!$model->isNewRecord)
