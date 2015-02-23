@@ -39,7 +39,20 @@ $this->params['breadcrumbs'][] = $this->title;
 				'format' => 'html',
 				'attribute' => 'parent_ids',
 				'value' => function ($model) {
-					return $model->url('parent_ids', [$model->parent(), 'name']);
+					//return $model->url('parent_ids', [$model->parent(), 'name']);
+					
+					return \nitm\widgets\ajax\Dropdown::widget([
+						'name' => 'parent_id_autocomplete',
+						'options' => [
+							'multiple' => true,
+							'value' => '',
+							'class' => 'form-control',
+							'id' => 'categories_parent',
+							'role' => 'autocompleteSelect',
+							'data-real-input' => "#categories-parent_ids"
+						],
+						'url' => '/api/autocomplete/category/true'
+					]);
 				}
 			],
             'name',

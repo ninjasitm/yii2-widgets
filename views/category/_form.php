@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use kartik\widgets\ActiveForm;
 use kartik\widgets\Select2;
+use yii\web\JsExpression;
 
 /**
  * @var yii\web\View $this
@@ -24,30 +25,25 @@ $formOptions = array_replace_recursive($formOptions, [
     	<?php $form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php")); ?>
 	 
 		<?php
-			echo $form->field($model, 'parent_id')->widget(\yii\jui\AutoComplete::className(), [
-				'name' => 'parent_id_autocomplete',
-				'options' => [
-					'value' => '',
-					'class' => 'form-control',
-					'id' => 'categories_parent',
-					'role' => 'autocompleteSelect',
-					'data-real-input' => "#categories-parent_ids"
+			echo $form->field($model, 'parent_ids')->widget(\nitm\widgets\metadata\ParentListInput::className(), [
+				'url' => '/api/autocomplete/category/true',
+			]);
+		?>
+		<?=
+			\nitm\widgets\metadata\ParentList::widget([
+				'parents' => $model->parents(),
+				'model' => $model,
+				'labelOptions' => [
+					'class' => 'text-right',
 				],
-				'clientOptions' => [
-					'source' => '/api/autocomplete/category/true',
+				'labelContainerOptions' => [
+					'class' => 'col-md-2 col-lg-2',
+				],
+				'containerOptions' => [
+					'class' => 'col-md-10 col-lg-10',
 				]
 			]);
 		?>
-		<?php
-			$value = is_null($model->parent()) ? '' : $model->parent()->name;
-			if($value)
-			{
-				$currentParent = Html::label("Current Parent", '', ['class' => 'col-lg-2 control-label']);
-				$currentParent .= Html::tag('h5', $value, ['class' => 'col-lg-10']);
-				echo Html::tag('div', $currentParent, ['class' => 'form-group']); 
-			}
-		?>
-		<?= Html::activeHiddenInput($model, 'parent_ids'); ?>
 		<?= $form->field($model, 'name') ?>
 		<?= $form->field($model, 'slug') ?>
 		<?php

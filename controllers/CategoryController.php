@@ -18,13 +18,6 @@ class CategoryController extends \nitm\controllers\DefaultController
 		$this->model = new Category(['scenario' => 'default']);
 		parent::init();
 	}
-	
-    public function behaviors()
-    {
-		$behaviors = [
-		];
-		return array_replace_recursive(parent::behaviors(), $behaviors);
-    }
 
     /**
      * Lists all Category models.

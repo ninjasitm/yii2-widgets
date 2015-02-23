@@ -167,7 +167,7 @@ class Category extends BaseWidget
 	 * ParentMap are specieid in the parent_ids attribute
 	 * Parent object belong to the same table
 	 */
-	protected function addParentMap()
+	public function addParentMap()
 	{
 		$parents = [];
 		$ids = array_filter(is_array($this->parent_ids) ? $this->parent_ids : explode(',', $this->parent_ids));
@@ -176,16 +176,15 @@ class Category extends BaseWidget
 		{
 			if(is_array($parent))
 			{
-				$parentClass = Category::className();
 				$parents[] = [
 					'parent_id' => $parent['id'],
 					'parent_type' => $parent['slug'],
-					'parent_class' => class_exists($parentClass) ? $parentClass::className() : static::className(),
+					'parent_class' => static::className(),
 					'parent_table' => $this->tableName()
 				];
 			}
 		}
-		parent::addParentMap($parents);
+		return parent::addParentMap($parents);
 	}	
 	
 }
