@@ -4,6 +4,7 @@ namespace nitm\widgets\ajax;
 
 use yii\web\JsExpression;
 use kartik\widgets\Select2;
+use nitm\helpers\ArrayHelper;
 
 /**
  * This class makes it easier to instantiate an editor widget by providing options 
@@ -18,25 +19,44 @@ class Dropdown extends Select2
 	public $url;
 	public $minLength = 3;
 	
-	private $ajaxOptions = [
-		'ajax' => [
-			'dataType' => 'json',
-		]
-	];
-	
 	public function init()
 	{
-		if($this->url) $this->ajaxOptions['ajax']['url'] = $this->url;
-		$this->ajaxOptions['minimumInputLength'] = $this->minLength;
-		$this->ajaxOptions['initSelection'] = new JsExpression("function (element, callback) {var data = {id: element.val(), text: element.attr('title')};callback(data);}");
-		$this->ajaxOptions['ajax']['data'] = new JsExpression('function(term,page) { return {term:term}; }');
-		$this->ajaxOptions['ajax']['results'] = new JsExpression('function(data,page) { return {results:data}; }');
-		$this->pluginOptions = $this->ajaxOptions;
+		$this->pluginOptions = array_merge($this->defaultAjaxOptions(), (array)$this->pluginOptions);
+		if($this->url) $this->pluginOptions['ajax']['url'] = $this->url;
+		$this->pluginOptions['minimumInputLength'] = $this->minLength;
+		$this->pluginOptions['initSelection'] = $this->getInitSelectionJs();
+		$this->pluginOptions['ajax']['data'] = new JsExpression('function(term,page) { return {term:term}; }');
+		$this->pluginOptions['ajax']['results'] = new JsExpression('function(data,page) { return {results:data}; }');
 		parent::init();
 	}
 	
 	public function run() {
-		echo parent::run();
+		return parent::run();
+	}
+	
+	protected function defaultAjaxOptions()
+	{
+		return [
+			'allowClear' => true,
+			'ajax' => [
+				'dataType' => 'json',
+			]
+		];
+	}
+	
+	protected function getInitSelectionJs()
+	{
+		$customSelection = "";
+		if(isset($this->pluginEvents['afterSelect']))
+			$customSelection = ArrayHelper::remove($this->pluginEvents, 'afterSelect');
+			
+		$js = "function (element, callback) {
+				var data = {id: element.val(), text: element.attr('title')
+			};
+			callback(data);
+			".$customSelection."
+		}";
+		return new JsExpression($js); 
 	}
 }
 

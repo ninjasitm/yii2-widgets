@@ -15,7 +15,7 @@ use nitm\helpers\Icon;
 /**
  * ShortLink widget renders the address of a short link and a modal view button
  */
-class MetaForm extends \yii\base\Widget
+class MetadataInfo extends \yii\base\Widget
 {
 	public $header;
 	public $type;
@@ -46,6 +46,7 @@ class MetaForm extends \yii\base\Widget
 	{
 		$this->uniqid = uniqid();
 		$this->options['id'] = 'metadata'.$this->uniqid;
+		$this->items = is_array($this->items) ? $this->items : [$this->items];
 		assets\MetadataAsset::register($this->getView());
 	}
 	
