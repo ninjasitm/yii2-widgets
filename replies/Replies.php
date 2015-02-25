@@ -9,10 +9,10 @@ namespace nitm\widgets\replies;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\widgets\models\BaseWidget;
-use nitm\models\User;
-use nitm\models\Replies as RepliesModel;
-use nitm\models\search\Replies as RepliesSearch;
+use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\models\User;
+use nitm\widgets\models\Replies as RepliesModel;
+use nitm\widgets\models\search\Replies as RepliesSearch;
 use kartik\icons\Icon;
 
 class Replies extends BaseWidget
@@ -138,7 +138,7 @@ class Replies extends BaseWidget
 					$params['hidden'] = 0;
 					break;
 				}
-		
+				
 				$dataProvider = $searchModel->search($params);
 				$dataProvider->setSort([
 					'defaultOrder' => [
@@ -164,7 +164,7 @@ class Replies extends BaseWidget
 				'searchModel' => $searchModel,
 				'widget' => $this,
 			]);
-			$replies = $this->getView()->render('@nitm/views/replies/index', $viewOptions);
+			$replies = $this->getView()->render('@nitm/widgets/views/replies/index', $viewOptions);
 			break;
 			
 			default:

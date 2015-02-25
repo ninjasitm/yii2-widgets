@@ -9,7 +9,7 @@ namespace nitm\widgets\alerts;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\models\Alerts;
+use nitm\widgets\models\Alerts;
 use kartik\icons\Icon;
 
 class AlertsList extends \yii\base\Widget
@@ -37,7 +37,7 @@ class AlertsList extends \yii\base\Widget
 	{	
 		$action = $this->model->isNewRecord ? 'create' : 'update';
 		$this->model->setScenario($action);
-		return $this->render('@nitm/views/alerts/'.$action, [
+		return $this->render('@nitm/widgets/views/alerts/'.$action, [
 			'model' => $this->model,
 			'widget' => $this,
 			'inline' => $this->inline,

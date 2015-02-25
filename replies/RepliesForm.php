@@ -11,8 +11,8 @@ use Yii;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\redactor\widgets\Redactor;
-use nitm\widgets\models\BaseWidget;
-use nitm\models\Replies as RepliesModel;
+use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\models\Replies as RepliesModel;
 use kartik\icons\Icon;
 
 class RepliesForm extends BaseWidget
@@ -100,7 +100,7 @@ class RepliesForm extends BaseWidget
 			
 			default:		
 			$this->model->setScenario('validateNew');
-			return $this->getView()->render('@nitm/views/replies/form/_form', [
+			return $this->getView()->render('@nitm/widgets/views/replies/form/_form', [
 				'model' => $this->model,
 				'widget' => $this,
 			]);

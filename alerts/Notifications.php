@@ -9,8 +9,8 @@ namespace nitm\widgets\alerts;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\models\Notification;
-use nitm\models\search\Notification as NotificationSearch;
+use nitm\widgets\models\Notification;
+use nitm\widgets\models\search\Notification as NotificationSearch;
 use kartik\icons\Icon;
 
 class Notifications extends \yii\base\Widget
@@ -48,7 +48,7 @@ class Notifications extends \yii\base\Widget
 	
 			$dataProvider = $searchModel->search(array_merge($params));
 			$dataProvider->query->andWhere([
-				'read' => 0
+				'read' => false
 			]);
 			$dataProvider->setSort([
 				'defaultOrder' => [
@@ -58,7 +58,7 @@ class Notifications extends \yii\base\Widget
 			$dataProvider->query->andWhere([
 				'user_id' => \Yii::$app->user->getId()
 			]);
-			$alerts = $this->getView()->render('@nitm/views/alerts/notifications', [
+			$alerts = $this->getView()->render('@nitm/widgets/views/alerts/notifications', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
 				'widget' => $this,

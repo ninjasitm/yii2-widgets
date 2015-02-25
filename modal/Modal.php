@@ -15,6 +15,11 @@ use yii\base\Widget;
 class Modal extends \yii\bootstrap\Modal
 {	
 	/*
+	 * Keep model open until close button is clicked?
+	 */
+	public $isStatic = true;
+		
+	/*
 	 * The size of the widget [large, mediaum, small, normal]
 	 */
 	public $size = null;
@@ -108,6 +113,8 @@ class Modal extends \yii\bootstrap\Modal
 		unset($this->toggleButton['wrapper']);
 		$this->toggleButton['data-target'] = '#'.$this->options['id'];
 		$tag = isset($options['tag']) ? $options['tag'] : 'span';
+		if($this->isStatic)
+			$this->toggleButton['data-backdrop'] = 'static';
 		return Html::tag($tag, parent::renderToggleButton(), $options);
 	}
 }

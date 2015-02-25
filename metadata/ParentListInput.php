@@ -50,7 +50,11 @@ class ParentListInput extends \nitm\widgets\ajax\Dropdown
 			'change' => 'function () {
 				var $input = $(this);
 				var modelId = $input.data("model-id");
+<<<<<<< HEAD
 				if(modelId && $input.val())
+=======
+				if(modelId)
+>>>>>>> ec198e03b45eed4a18016c397e9fdac0bfc096d9
 					$.post("/'.$this->model->isWhat().'/add-parent/"+modelId+"/"+$input.val(), function (result) {
 						if(result !== false)
 							$(\'[role="parentList"]\').append(result)

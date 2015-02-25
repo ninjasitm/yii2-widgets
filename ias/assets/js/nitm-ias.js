@@ -7,6 +7,7 @@
 function NitmIas ()
 {
 	var self = this;
+	this.id = 'nitm-ias';
 	this.defaultInit = [
 		'initIas'
 	];
@@ -61,4 +62,4 @@ function NitmIas ()
 	}
 }
 
-$nitm.initModule('nitm-ias', new NitmIas());
+$nitm.initModule(new NitmIas());

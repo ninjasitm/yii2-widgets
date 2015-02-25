@@ -1,6 +1,7 @@
 function Follow(items)
 {	
 	var self = this;
+	this.id = 'follow';
 	this.polling = {
 		enabled: false
 	};
@@ -70,4 +71,4 @@ function Follow(items)
 	}
 }
 
-$nitm.initModule('follow', new Follow());
+$nitm.initModule(new Follow());

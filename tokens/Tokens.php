@@ -10,9 +10,9 @@ namespace nitm\widgets\tokens;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use nitm\models\User;
-use nitm\models\Revisions as RevisionsModel;
-use nitm\widgets\models\BaseWidget;
+use nitm\widgets\models\User;
+use nitm\widgets\models\Revisions as RevisionsModel;
+use nitm\widgets\helpers\BaseWidget;
 use kartik\icons\Icon;
 
 class Tokens extends BaseWidget

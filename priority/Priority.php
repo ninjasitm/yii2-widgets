@@ -9,7 +9,7 @@ namespace nitm\widgets\priority;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use nitm\widgets\models\BaseWidget;
+use nitm\widgets\helpers\BaseWidget;
 
 class Priority extends BaseWidget
 {

@@ -9,8 +9,8 @@ namespace nitm\widgets\alerts;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\models\Alerts as AlertsModel;
-use nitm\models\search\Alerts as AlertsSearch;
+use nitm\widgets\models\Alerts as AlertsModel;
+use nitm\widgets\models\search\Alerts as AlertsSearch;
 use kartik\icons\Icon;
 
 class Alerts extends \yii\base\Widget
@@ -64,14 +64,14 @@ class Alerts extends \yii\base\Widget
 			$dataProvider->query->andWhere([
 				'user_id' => \Yii::$app->user->getId()
 			]);
-			$alerts = $this->getView()->render('@nitm/views/alerts/index', [
+			$alerts = $this->getView()->render('@nitm/widgets/views/alerts/index', [
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
 				'widget' => $this,
 				'options' => $this->options,
 				'listOptions' => $this->listOptions,
 				'withForm' => $this->withForm,
-				'primaryModel' => $this->model
+				'primaryModel' => $this->model,
 			]);
 			break;
 		}

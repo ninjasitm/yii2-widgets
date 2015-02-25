@@ -1,5 +1,6 @@
 function Alerts () {
 	var self = this;
+	this.id = 'alerts';
 	this.defaultInit = [
 		'initForms',
 		'initAlerts'
@@ -182,5 +183,5 @@ function Alerts () {
 	}
 }
 $nitm.addOnLoadEvent(function () {
-	$nitm.initModule('alerts', new Alerts());
+	$nitm.initModule(new Alerts());
 });

@@ -1,8 +1,11 @@
 
 function Replies(items)
-{	
+{
+	NitmEntity.call(this);
+	
 	var self = this;
 	var editor;
+	this.id = 'replies';
 	this.polling = {
 		enabled: false
 	};
@@ -53,16 +56,8 @@ function Replies(items)
 	};
 	this.defaultInit = [
 		'initEditor',
+		'initCreating'
 	];
-
-	this.init = function (containerId) {
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-			{
-				self[method](containerId);
-			}
-		});
-	}
 	
 	this.initEditor = function (containerId) {
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
@@ -78,25 +73,27 @@ function Replies(items)
 		});
 	}
 	
+	this.resetForm = function (event) {
+		event.target.reset();
+		self.setEditorValue($(event.target).find("textarea").get(0), '', false, self.editor);
+		$(event.target).find(self.views.roles.replyToIndicator).html("");
+	}
+	
+	this.reply = function (event) {
+		event.preventDefault();
+		var $form = $(event.target);		
+		$form.find('textarea').val(self.getEditorValue($form.find('textarea').attr('id'), self.editor));
+		self.operation(event.target);
+		return false;
+	}
+	
 	this.initCreating = function (containerId) {
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
 		this.forms.allowCreate.map(function (v) {
 			container.find("form[role='"+v+"']").map(function() {
-				//$(this).find("[data-toggle='buttons'] .btn").map(function() {
-				//	$(this).button();
-				//});
 				$(this).off('submit');
-				$(this).on('submit', function (e) {
-					e.preventDefault();
-					$(this).find('textarea').val(self.getEditorValue($(this).find('textarea').attr('id'), self.editor));
-					self.operation(this);
-				});
-				$(this).on('reset', function (e) {
-					this.reset();
-					var msgField = $(this).find("textarea");
-					self.setEditorValue(msgField.get(0), '', false, self.editor);
-					$(this).find(self.views.roles.replyToIndicator).html("");
-				});
+				$(this).on('submit', self.reply);
+				$(this).on('reset', self.resetForm);
 			})
 		});
 	}
@@ -130,7 +127,7 @@ function Replies(items)
 			container.find("[role='"+v+"']").map(function() {
 				$(this).off('click');
 				$(this).on('click', function (e) {
-					self.reply(e);
+					self.replyTo(e);
 				});
 			});
 		});
@@ -139,15 +136,15 @@ function Replies(items)
 	this.replyTo = function (event)
 	{
 		event.preventDefault();
-		var elem = event.target;
-		self.startEditor($(elem).data('container'));
-		var form = $($(elem).data('parent'));
-		form.find("[role~='"+self.forms.inputs.reply_to+"']").val($(elem).data('reply-to'));
+		var $elem = $(event.target);
+		self.startEditor(!$elem.data('container') ? $elem.data('parent') : $elem.data('container'));
+		var form = $($elem.data('parent'));
+		form.find("[role~='"+self.forms.inputs.reply_to+"']").val($elem.data('reply-to'));
 		var msgField = form.find("textarea");
 		msgField.val('').focus();
 		self.setEditorValue(msgField.get(0), '', false, self.editor);
 		self.setEditorFocus(msgField.get(0), self.editor);
-		form.find(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
+		$(self.views.roles.replyToIndicator).html("Replying to "+$elem.data('author'));
 	}
 	
 	this.initQuoting = function (containerId) {
@@ -179,46 +176,7 @@ function Replies(items)
 		var msgField = form.find("textarea");
 		self.setEditorValue(msgField.get(0), quoteString, true, self.editor);
 		self.setEditorFocus(msgField.get(0), self.editor);
-		container.find(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
-	}
-	
-	this.initPolling = function (options) {
-		self.polling = options;
-		self.initActivity(options.container);
-	}
-	
-	this.initActivity = function(containerId) {
-		if(self.polling.enabled == true)
-		{
-			var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-			setInterval(function () {
-				$.post(self.polling.url, 
-					function (result) {
-						switch((result != false))
-						{
-							case true:
-							self.chatStatus(true, result, containerId);
-							break;
-						}
-					}, 'json');
-			}, self.polling.interval);
-		}
-	}
-	
-	this.initChatTabs = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-		$nitm.getObj(containerId).find('[data-toggle="tab"]').map(function() {
-			$(this).on('click', function (e) {
-				var tab = $(this);
-				self.chatStatus(false, null, container);
-				if(tab.parent('li').hasClass('active')){
-					window.setTimeout(function(){
-						$(".tab-pane").toggleClass('active', false, 500, 'linear');
-						tab.parent('li').toggleClass('active', false, 500, 'linear');
-					}, 1);
-				}
-			});
-		});
+		$(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
 	}
 	
 	this.chatStatus = function (update, result, container) {
@@ -251,44 +209,6 @@ function Replies(items)
 		});
 	}
 	
-	this.operation = function (form) {
-		data = $(form).serializeArray();
-		data.push({'name':'__format', 'value':'json'});
-		data.push({'name':'getHtml', 'value':true});
-		data.push({'name':'do', 'value':true});
-		data.push({'name':'ajax', 'value':true});
-		switch(!$(form).attr('action'))
-		{
-			case false:
-			$($nitm).trigger('nitm-animate-submit-start', [form]);
-			var request = $nitm.doRequest({
-				url: $(form).attr('action'), 
-				data: data,
-				success: function (result) {
-					switch(result.action)
-					{
-						case 'hide':
-						self.afterHide(result, form);
-						break;
-							
-						case 'create':
-						case 'quote':
-						self.afterCreate(result, form);
-						break;
-					}
-				},
-				error: function () {
-					$nitm.notify('Whoops something happened. If it keeps happening let someone know!', 'alert '+self.classes.error, form);
-					$($nitm).trigger('nitm-animate-submit-stop', [form]);
-				}
-			});
-			request.done(function () {
-				$($nitm).trigger('nitm-animate-submit-stop', [form]);
-			});
-			break;
-		}
-	}
-	
 	this.afterCreate = function(result, form, element) {
 		switch(result.success)
 		{
@@ -297,9 +217,9 @@ function Replies(items)
 			var _form = $(form);
 			_form.find(".empty").remove();
 			$nitm.place({append:true, index:-1}, result.data, _form.data('parent'));
-			self.initHiding('#'+result.unique_id);
-			self.initQuoting('#'+result.unique_id);
-			self.initReplying('#'+result.unique_id);
+			//self.initHiding('#'+result.unique_id);
+			//self.initQuoting('#'+result.unique_id);
+			//self.initReplying('#'+result.unique_id);
 			_form.find('[role~="'+self.forms.inputs.reply_to+'"]').val('');
 			self.setEditorValue(_form.find('textarea').attr('id'), '', false, self.editor);
 			_form.find(self.views.roles.replyToIndicator).html("");
@@ -333,65 +253,69 @@ function Replies(items)
 	
 	this.startEditor = function (containerId, value, button) {
 		var activator = $(button);
-		var containers = $("[id='"+containerId+"']");
+		var containers = $(containerId);
 		containers.each(function(index, element) {
 			var container = $(element);
-			var textarea = $("<textarea id='"+container.attr('id')+"editor' role='editor' class='form-control' name='Replies[message]' rows=10>");
-			var actions = container.find("[role='"+self.elements.replyActions+"']");
-			actions.removeClass('hidden');
-			switch(activator.data('use-modal'))
+			var textareaId = container.attr('id')+"editor";
+			var textarea = $('#'+textareaId);
+			if(!textarea.get(0))
 			{
-				case true:
-				if(container.find('.modal').get(0) == undefined)
+				textarea = $("<textarea id='"+textareaId+"' role='editor' class='form-control' name='Replies[message]' rows=10>");
+				var actions = container.find("[role='"+self.elements.replyActions+"']");
+				actions.removeClass('hidden');
+				switch(activator.data('use-modal'))
 				{
-					var content = $("<div class='modal fade in' role='dialog' aria-hidden='true'>");
-					var modalDialog = $("<div class='modal-dialog'>");
-					var modalContent = $("<div class='modal-content'>");
-					var modalBody = $("<div class='modal-body'>");
-					var modalTitle = $("<div class='modal-title'>").html("<h3>Your message:</h3>");
-					var modalHeader = $("<div class='modal-header'>");
-					var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
-					modalHeader.append(modalClose);
-					modalBody.append(modalHeader);
-					modalBody.append(modalTitle);
-					modalBody.append(textarea);
-					modalBody.append(actions);
-					$('body').append(content.append(modalDialog.append(modalContent.append(modalBody))));
+					case true:
+					if(container.find('.modal').get(0) == undefined)
+					{
+						var content = $("<div class='modal fade in' role='dialog' aria-hidden='true'>");
+						var modalDialog = $("<div class='modal-dialog'>");
+						var modalContent = $("<div class='modal-content'>");
+						var modalBody = $("<div class='modal-body'>");
+						var modalTitle = $("<div class='modal-title'>").html("<h3>Your message:</h3>");
+						var modalHeader = $("<div class='modal-header'>");
+						var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
+						modalHeader.append(modalClose);
+						modalBody.append(modalHeader);
+						modalBody.append(modalTitle);
+						modalBody.append(textarea);
+						modalBody.append(actions);
+						$('body').append(content.append(modalDialog.append(modalContent.append(modalBody))));
+					}
+					else
+					{
+						content = container;
+					}
+					content.modal({
+						keyboard: true
+					});
+					content.on('hidden.bs.modal', function () {
+						self.closeEditor(container.attr('id'));
+					});
+					break;
+					
+					default:
+					textarea.insertBefore(actions);
+					break;
 				}
-				else
-				{
-					content = container;
-				}
-				content.modal({
-					keyboard: true
-				});
-				content.on('hidden.bs.modal', function () {
-					self.closeEditor(container.attr('id'));
-				});
-				break;
-				
-				default:
-				textarea.insertBefore(actions);
-				break;
 			}
 			var type = textarea.parent('form').data('editor');
 			switch(type)
 			{
 				case 'redactor':
-				$nitm.getObj("[id='"+textarea.prop('id')+"']").each(function (index, element) {
+				$nitm.getObj("#"+textarea.prop('id')).each(function (index, element) {
 					var textarea = $(element);
 					try {
-						textarea.redactor('getObject');
+						textarea.redactor('get');
 					} catch (error) {
 						textarea.redactor({
-							air: true,
-							airButtons: ['bold', 'italic', 'deleted', 'link'],
+							air: false,
 							focus: true,
 							autoresize: true,
 							initCallback: function(){
 								if(value != undefined)
 								{
-									this.set(value);
+									this.insert.set(value);
 								}
 							},
 							setCode: function(html){
@@ -404,12 +328,13 @@ function Replies(items)
 				});
 				break;
 			}
+			textarea.parents('form').find("[role='startEditor']").remove();
 		});
 		self.initCreating(containerId);
 	}
 	
 	this.closeEditor = function (containerId) {
-		var containers = $("[id='"+containerId+"']");
+		var containers = $(containerId);
 		containers.each(function(index, element) {
 			var container = $(element);
 			var content = $(container.attr('id')).find('.modal-dialog');
@@ -423,7 +348,7 @@ function Replies(items)
 				switch(type)
 				{
 					case 'redactor':
-					$('#'+textarea.prop('id')).redactor('getObject').destroyEditor();
+					$('#'+textarea.prop('id')).redactor('core.destroy');
 					break;
 				}
 				//container.find('.redactor_box').remove();
@@ -461,19 +386,18 @@ function Replies(items)
 				break;
 			}
 			editor.resize("100%", editor.config.height, true);
-			editor.focus();
 			break;
 			
 			case 'redactor':
-			$nitm.getObj(field).redactor('getObject').set(value, false);
+			$nitm.getObj(field).redactor('code.set', value, false);
 			break;
 			
 			default:
 			var msgField = $nitm.getObj(field);
 			msgField.val(value);
-			msgField.get(0).focus();
 			break;
 		}
+		this.setEditorFocus(field);
 	}
 	
 	this.getEditorValue = function (field) {
@@ -487,7 +411,7 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			ret_val = $nitm.getObj(field).redactor('getObject').get();
+			ret_val = $nitm.getObj(field).redactor('get');
 			break;
 			
 			default:
@@ -507,7 +431,9 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			$nitm.getObj(field).redactor('focus');
+			$nitm.getObj(field).redactor({
+					focusEnd: true
+			});
 			break;
 			
 			default:
@@ -523,16 +449,16 @@ function Replies(items)
 		switch(field.value.length >= maxlimit+1)
 		{
 			case true:
-				field.value = field.value.substring(0, maxlimit);
-				cntfield.innerHTML = maxlimit - field.value.length;
-				alert("You've maxed out the "+maxlimit+" character limit\n\nPlease shorten your message. :-).");
-				break;
+			field.value = field.value.substring(0, maxlimit);
+			cntfield.innerHTML = maxlimit - field.value.length;
+			alert("You've maxed out the "+maxlimit+" character limit\n\nPlease shorten your message. :-).");
+			break;
 				
 			default:
-				cntfield.innerHTML = maxlimit - field.value.length;
-				break;
+			cntfield.innerHTML = maxlimit - field.value.length;
+			break;
 		}
 	}
 }
 
-$nitm.initModule('replies', new Replies());
+$nitm.initModule(new Replies());

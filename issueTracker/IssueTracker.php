@@ -10,10 +10,10 @@ namespace nitm\widgets\issueTracker;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\icons\Icon;
-use nitm\models\Replies;
-use nitm\models\Issues as IssuesModel;
-use nitm\models\search\Issues as IssuesSearch;
-use nitm\widgets\models\BaseWidget;
+use nitm\widgets\models\Replies;
+use nitm\widgets\models\Issues as IssuesModel;
+use nitm\widgets\models\search\Issues as IssuesSearch;
+use nitm\widgets\helpers\BaseWidget;
 
 /**the issues associated with a request with support for solving them
  */
@@ -54,7 +54,7 @@ class IssueTracker extends BaseWidget
 	{
 		$dataProvdier = null;
 		$searchModel = new IssuesSearch([
-			'withThese' => ['author', 'editor']
+			'withThese' => ['author', 'editor', 'closedBy', 'resolvedBy']
 		]);
 		$get = \Yii::$app->request->getQueryParams();
 		$params = array_merge($get, $this->model->getConstraints());
@@ -95,14 +95,14 @@ class IssueTracker extends BaseWidget
 					'id' => SORT_DESC,
 				]
 			]);
-			$dataProviderOpen = $searchModel->search(array_replace($params, ['closed' => 0]));
-			$dataProviderClosed = $searchModel->search(array_replace($params, ['closed' => 1]));
-			$dataProviderDuplicate = $searchModel->search(array_replace($params, ['duplicate' => 1]));
-			$dataProviderResolved = $searchModel->search(array_replace($params, ['resolved' => 1]));
-			$dataProviderUnresolved = $searchModel->search(array_replace($params, ['resolved' => 0]));
+			$dataProviderOpen = $searchModel->search(array_replace($params, ['closed' => false]));
+			$dataProviderClosed = $searchModel->search(array_replace($params, ['closed' => true]));
+			$dataProviderDuplicate = $searchModel->search(array_replace($params, ['duplicate' => true]));
+			$dataProviderResolved = $searchModel->search(array_replace($params, ['resolved' => true]));
+			$dataProviderUnresolved = $searchModel->search(array_replace($params, ['resolved' => false]));
 			$dataProviderOpen->query->orderBy(['id' => SORT_DESC]);
 			$dataProviderClosed->query->orderBy(['closed_at' => SORT_DESC]);
-			$issues = $this->render('@nitm/views/issue/index', [
+			$issues = $this->render('@nitm/widgets/views/issue/index', [
 				'dataProviderOpen' => $dataProviderOpen,
 				'dataProviderClosed' => $dataProviderClosed,
 				'dataProviderResolved' => $dataProviderResolved,
