@@ -1,7 +1,7 @@
 <?php
 namespace nitm\widgets\traits\relations;
 
-use nitm\models\Category;
+use nitm\widgets\models\Category;
 
 /**
  * Traits defined for expanding active relation scopes until yii2 resolves traits issue

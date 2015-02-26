@@ -29,6 +29,7 @@ $formOptions = array_replace_recursive($formOptions, [
 				'url' => '/api/autocomplete/category/true',
 			]);
 		?>
+		<div class="form-group">
 		<?=
 			\nitm\widgets\metadata\ParentList::widget([
 				'parents' => $model->parents(),
@@ -44,6 +45,7 @@ $formOptions = array_replace_recursive($formOptions, [
 				]
 			]);
 		?>
+		</div>
 		<?= $form->field($model, 'name') ?>
 		<?= $form->field($model, 'slug') ?>
 		<?php

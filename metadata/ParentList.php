@@ -76,6 +76,7 @@ class ParentList extends Widget
 			$this->labelContainerOptions);
 		$list = ListView::widget([
 			'summary' => false,
+			'emptyText' => Html::tag('ul', '', $this->options),
 			'options' => $this->options,
 			'itemOptions' => $this->itemOptions,
 			'dataProvider' => $this->dataProvider,

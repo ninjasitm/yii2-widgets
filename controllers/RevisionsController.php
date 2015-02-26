@@ -7,7 +7,6 @@ use yii\web\NotFoundHttpException;
 use nitm\widgets\models\Revisions;
 use nitm\widgets\models\search\Revisions as RevisionsSearch;
 use nitm\widgets\revisions\Revisions as RevisionsWidget;
-use nitm\controllers\WidgetController;
 use nitm\helpers\Response;
 
 /**

@@ -15,12 +15,12 @@ use nitm\widgets\editor\Editor;
 $widget->uniqid = !isset($widget->uniqid) ? uniqid() : $widget->uniqid;
 $action = ($model->getIsNewRecord()) ? "create" : "update";
 
-$formOptions = array_merge($formOptions, [
-	'id' => $widget->options['id'],
+$formOptions = array_merge((array)@$formOptions, [
 	'type' => ActiveForm::TYPE_HORIZONTAL,
 	'method' => 'post',
 	"action" => "/reply/new/".$widget->parentType."/".$widget->parentId.(isset($widget->parentKey) ? "/".urlencode($widget->parentKey) : ''),
 	"options" => [
+		'id' => $widget->options['id'],
 		'data-editor' => $widget->editor,
 		'data-parent' => 'messages'.$widget->uniqid,
 		"role" => "replyForm",
@@ -33,7 +33,7 @@ $formOptions = array_merge($formOptions, [
 	"validateOnSubmit" => true,
 	"enableAjaxValidation" => true
 ]);
-?>
+?>(array)$
 
 <div class="message-form" id='messages-form-container<?= $widget->uniqid ?>'>
 	<br>

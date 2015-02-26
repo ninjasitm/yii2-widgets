@@ -177,6 +177,7 @@ class Category extends BaseWidget
 			if(is_array($parent))
 			{
 				$parents[] = [
+					'remote_type' => $this->slug,
 					'parent_id' => $parent['id'],
 					'parent_type' => $parent['slug'],
 					'parent_class' => static::className(),

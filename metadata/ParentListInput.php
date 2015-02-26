@@ -43,14 +43,14 @@ class ParentListInput extends \nitm\widgets\ajax\Dropdown
 		$this->options = array_merge($this->options, [
 			'data-model-id' => $this->model->getId(),
 			'data-real-input' => "#".$this->model->isWhat()."-parent_ids",
-			'placeholder' => "Search for parents"
+			'placeholder' => "Search for ".$this->model->isWhat()." parents"
 		]);
 		
 		$this->pluginEvents = [
 			'change' => 'function () {
 				var $input = $(this);
 				var modelId = $input.data("model-id");
-				if(modelId)
+				if(modelId && $input.val())
 					$.post("/'.$this->model->isWhat().'/add-parent/"+modelId+"/"+$input.val(), function (result) {
 						if(result !== false)
 							$(\'[role="parentList"]\').append(result)

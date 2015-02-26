@@ -30,7 +30,7 @@ trait BaseWidget {
 	];
 	protected $_new; 
 	protected static $userLastActive;
-	protected static $currentUser;
+	protected static $currentUser = "null";
 	protected $_supportedConstraints =  [
 		'parent_id' => [0, 'id', 'parent_id'],
 		'parent_type' => [1, 'type', 'parent_type'],
@@ -45,7 +45,11 @@ trait BaseWidget {
 		$this->addWith(['author']);
 		if($this->initSearchClass)
 			//static::initCache($this->constrain, self::cacheKey($this->getId()));
-		static::$currentUser =  isset(\Yii::$app->user) ? \Yii::$app->user->identity : new \nitm\models\User(['id' => 1]);
+		if(\Yii::$app->user->getIdentity())
+			static::$currentUser = \Yii::$app->user->getIdentity();
+		else
+			static::$currentUser = \Yii::createObject(\Yii::$app->user->identityClass, ['id' => 1]);
+			
 		static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::$currentUser->lastActive() : static::$userLastActive));
 		$this->initEvents();
 	}

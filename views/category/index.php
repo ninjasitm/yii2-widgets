@@ -14,7 +14,7 @@ $this->title = Yii::t('app', 'Categories');
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<div class="categories-index">
+<div id="categories-index" class="categories-index content">
 
 	<?= yii\widgets\Breadcrumbs::widget([
 		'links' => $this->params['breadcrumbs']
@@ -36,23 +36,33 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             'id',
             [
-				'format' => 'html',
+				'format' => 'raw',
 				'attribute' => 'parent_ids',
 				'value' => function ($model) {
-					//return $model->url('parent_ids', [$model->parent(), 'name']);
-					
-					return \nitm\widgets\ajax\Dropdown::widget([
+					return $model->url('parent_ids', [$model->parent(), 'name']);
+					$select2 = \nitm\widgets\metadata\ParentListInput::widget([
+						'model' => $model,
 						'name' => 'parent_id_autocomplete',
+						'data' => [
+							[
+								'id' => $model->parent()->getId(),
+								'text' => $model->parent()->name
+							]
+						],
 						'options' => [
-							'multiple' => true,
-							'value' => '',
+							'multiple' => false,
 							'class' => 'form-control',
-							'id' => 'categories_parent',
+							'id' => 'categories_parent'.$model->getId(),
 							'role' => 'autocompleteSelect',
-							'data-real-input' => "#categories-parent_ids"
+							'data-real-input' => "#categories-parent_ids".$model->getId()
 						],
 						'url' => '/api/autocomplete/category/true'
 					]);
+					$input = Html::hiddenInput('parent_ids', $model->parent()->getId(), [
+						'title' => $model->parent()->name,
+						'id' => 'categories-parent_ids'.$model->getId(),
+					]);
+					return $select2;
 				}
 			],
             'name',
@@ -95,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
 					},
 					'disable' => function ($url, $model) {
 						return Html::a(Icon::forAction('disable', 'disabled', $model), $url, [
-							'title' => Yii::t('yii', 'Disable mood: '.$model->name),
+							'title' => Yii::t('yii', 'Disable category: '.$model->name),
 							'role' => 'metaAction disableAction',
 							'data-parent' => '#'.$model->isWhat().$model->getId(),
 							'data-pjax' => 0,

@@ -5,7 +5,7 @@
 	top: auto !important;
 	font-size: 1em;
 	background-color: transparent;
-	z-index: 1043;
+	z-index: inherit;
 	border-radius: 50%;
 }
 
