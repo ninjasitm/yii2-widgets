@@ -97,6 +97,7 @@ class MetaInfo extends \yii\base\Widget
 		{
 			$value = is_string($k) ? $v : null;
 			$attr = is_string($k) ? $k : $v;
+			
 			/**
 			 * Doing it this way to avoid including a href attribute in anchor
 			 */
@@ -149,12 +150,14 @@ class MetaInfo extends \yii\base\Widget
 			};
 			$attr = is_array($attr) ? $attr : explode(':', $attr);
 			$titleAttr = array_shift($attr);
-			$valueAttr = count($attr) ? array_pop($attr) : '';
+			$valueAttr = count($attr) ? array_pop($attr) : $titleAttr;
 			$title = $attrGetter($model, explode('.', $titleAttr), $value, (strpos(':', $titleAttr) === false));
+			
 			if(is_callable($valueAttr))
 				$value = $valueAttr($model);
 			else
 				$value = strlen($valueAttr) ? $attrGetter($model, explode('.', $valueAttr), $value, false) : null;
+				
 			switch(isset($this->index))
 			{
 				case true:

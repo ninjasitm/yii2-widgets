@@ -237,10 +237,10 @@ $this->params['breadcrumbs'][] = $this->title;
 		);
 		
 		$activityInfo = Html::tag('div',
-			Html::tag('div', $replies, ['class' => 'col-md-3 col-lg-3 text-center']).
-			Html::tag('div', $revisions, ['class' => 'col-md-3 col-lg-3 text-center']).
-			Html::tag('div', $issues, ['class' => 'col-md-3 col-lg-3 text-center']).
-			Html::tag('div', $follow, ['class' => 'col-md-3 col-lg-3 text-center']),
+			Html::tag('div', $replies, ['class' => 'col-md-3 col-lg-3 center-block']).
+			Html::tag('div', $revisions, ['class' => 'col-md-3 col-lg-3 center-block']).
+			Html::tag('div', $issues, ['class' => 'col-md-3 col-lg-3 center-block']).
+			Html::tag('div', $follow, ['class' => 'col-md-3 col-lg-3 center-block']),
 			[
 				'class' => 'row'
 			]

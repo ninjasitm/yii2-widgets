@@ -86,7 +86,7 @@ class Alerts extends \nitm\models\Data
 	
 	public function filterMethods($value)
 	{
-		return \nitm\helpers\alerts\Dispatcher::filterMethods($value);
+		return \nitm\helpers\alerts\DispatcherData::filterMethods($value);
 	}
 	
 	public function filterPriority($value)

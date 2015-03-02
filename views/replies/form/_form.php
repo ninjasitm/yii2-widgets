@@ -33,7 +33,7 @@ $formOptions = array_merge((array)@$formOptions, [
 	"validateOnSubmit" => true,
 	"enableAjaxValidation" => true
 ]);
-?>(array)$
+?>
 
 <div class="message-form" id='messages-form-container<?= $widget->uniqid ?>'>
 	<br>

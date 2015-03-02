@@ -27,27 +27,34 @@ function Follow(items)
 	
 	this.afterAction = function (xhr, elem) {
 		var result = xhr.responseJSON;
+		
 		if(result.success)
 		{
 			switch(result.action)
 			{
 				case 'create':
+				case 'follow':
 				var button = $(elem).closest('div').find("[role~='followButton']");
 				button.first().data('type', 'callback');
 				button.first().data('run-once', true);
 				button.first().data('url', '/alerts/un-follow/'+result.id);
 				button.first().data('callback', function (_result, _elem) {$nitm.module('follow').afterAction(_result, _elem)});
-				button.first().off('click');
+				button.first().data('run-times', 0);
+				button.first().one('click', function (event) {
+					$nitm.module('tools').dynamicValue(this);
+				});
 				button.last().addClass('disabled');
-				//$nitm.module('tools').dynamicValue(button.first());
 				var removeClass = 'btn-default';
 				break;
 				
 				case 'delete':
+				case 'un-follow':
 				var button = $(elem).parent().find("[role~='followButton']");
 				button.last().removeClass('disabled');
-				button.first().data('');
-				button.off('click');
+				button.first().removeClass('disabled');
+				button.first().removeData('type').removeData('url').removeData('callback');
+				button.first().off('change');
+				button.last().off('click');
 				var removeClass = 'btn-success';
 				break;
 			}

@@ -49,8 +49,7 @@ switch(1)
 			],
 			'validateOnSubmit' => true,
 			"enableAjaxValidation" => true
-		]); 
-    <?php $form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php")); ?>
+		]);
 	?>
 	<?php
 		switch(isset($inline) && ($inline == true)) 

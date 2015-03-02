@@ -115,7 +115,7 @@ class Follow extends \yii\base\Widget
 				$this->options['role'] .= ' dynamicValue';
 				$this->options['data-run-once'] = true;
 				$this->options['data-type'] = 'callback';
-				$this->options['data-callback'] = "function (result, elem) {\$nitm.module('follow').afterAction(result, elem);}";
+				$this->options['data-callback'] = 'function (result, elem) {$nitm.module("follow").afterAction(result, elem);}';
 				break;
 			}
 			break;
@@ -131,7 +131,7 @@ class Follow extends \yii\base\Widget
 		if(!isset($this->buttonOptions['type']))
 			$this->options['class'].= ' btn-default';
 		
-		$this->options['onchange'] = Html::script("\$nitm.module('tools').dynamicValue(this);");
+		$this->options['onchange'] = '$nitm.module("tools").dynamicValue(this);';
 		$ret_val = \yii\bootstrap\ButtonDropdown::widget([
 			'encodeLabel' => false,
 			'split' => true,
@@ -154,7 +154,7 @@ class Follow extends \yii\base\Widget
 	protected function initializeMethods()
 	{
 		$this->followMethods = array_merge($this->_defaultFollowMethods, $this->followMethods);
-		$supported = \nitm\helpers\alerts\Dispatcher::supportedMethods();
+		$supported = \nitm\helpers\alerts\DispatcherData::supportedMethods();
 		foreach($this->followMethods as $idx=>$method)
 		{
 			switch(isset($supported[$method['method']]))
