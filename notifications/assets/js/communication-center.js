@@ -1,6 +1,8 @@
 
 function CommunicationCenter(items)
 {	
+	NitmEntity.call(this, arguments);
+	
 	var self = this;
 	this.id = 'communication-center';
 	this.defaultInit = [
@@ -24,4 +26,6 @@ function CommunicationCenter(items)
 	}
 }
 
-$nitm.initModule(new CommunicationCenter());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new CommunicationCenter());
+});

@@ -194,7 +194,7 @@ class Replies extends BaseWidget
 	
 	public function afterSaveEvent($event)
 	{
-		$event->data['variables'] = array_merge($event->data['variables'], [
+		$event->data['variables'] = array_merge((array)$event->data['variables'], [
 			'%id%' => $event->sender->getId(),
 			"%viewLink%" => \yii\helpers\Html::a(\Yii::$app->urlManager->createAbsoluteUrl($event->sender->parent_type."/view/".$event->sender->parent_id), \Yii::$app->urlManager->createAbsoluteUrl($event->sender->parent_type."/view/".$event->sender->parent_id))
 		]);

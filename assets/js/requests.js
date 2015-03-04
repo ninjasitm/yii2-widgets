@@ -30,6 +30,6 @@ function Requests () {
 	}
 }
 
-$nitm.onModuleLoad('entity', function () {
-	$nitm.initModule('entity:requests', new Requests());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule('entity:requests', new Requests());
 });

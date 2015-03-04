@@ -1,6 +1,8 @@
 // JavaScript Document
 
 function SearchModal () {
+	NitmEntity.call(this, arguments);
+	
 	var self = this;
 	this.id = 'search-modal';
 	this.selfInit = true;
@@ -83,6 +85,6 @@ function SearchModal () {
 	}
 }
 
-$nitm.addOnLoadEvent(function () {
-	$nitm.initModule(new SearchModal());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new SearchModal());
 });

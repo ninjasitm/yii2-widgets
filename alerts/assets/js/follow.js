@@ -1,5 +1,7 @@
 function Follow(items)
 {	
+	NitmEntity.call(this, arguments);
+	
 	var self = this;
 	this.id = 'follow';
 	this.polling = {
@@ -15,15 +17,6 @@ function Follow(items)
 	};
 	this.defaultInit = [
 	];
-
-	this.init = function (containerId) {
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-			{
-				self[method](containerId);
-			}
-		});
-	}
 	
 	this.afterAction = function (xhr, elem) {
 		var result = xhr.responseJSON;
@@ -78,4 +71,6 @@ function Follow(items)
 	}
 }
 
-$nitm.initModule(new Follow());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new Follow());
+});

@@ -1,7 +1,7 @@
 
 function Replies(items)
 {
-	NitmEntity.call(this);
+	NitmEntity.call(this, arguments);
 	
 	var self = this;
 	var editor;
@@ -461,4 +461,6 @@ function Replies(items)
 	}
 }
 
-$nitm.initModule(new Replies());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new Replies());
+});

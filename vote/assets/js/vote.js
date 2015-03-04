@@ -1,6 +1,7 @@
 
 function Vote(items)
-{	
+{
+	NitmEntity.call(this, arguments);	
 	var self = this;
 	var editor;
 	this.id = 'votes';
@@ -137,6 +138,6 @@ function Vote(items)
 	}
 }
 
-$nitm.addOnLoadEvent(function () {
-	$nitm.initModule(new Vote());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new Vote());
 });

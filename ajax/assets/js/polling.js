@@ -1,5 +1,6 @@
 function Polling()
 {	
+	NitmEntity.call(this, arguments);
 	var self = this;
 	this.id = 'polling';
 	this.polling = {};
@@ -37,4 +38,6 @@ function Polling()
 	}
 }
 
-$nitm.initModule(new Polling());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new Polling());
+});

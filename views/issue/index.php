@@ -203,15 +203,3 @@ $baseModel = new Issues;
 		]);
 	?>
 </div>
-
-<script type="text/javascript">
-<?php if(\Yii::$app->request->isAjax): ?>
-$nitm.onModuleLoad('issue-tracker', function (module) {
-	module).init("issue-tracker<?=$uniqid?>");
-});
-$nitm.onModuleLoad('tools', function () {
-	$nitm.module('tools').initVisibility("issue-tracker<?=$uniqid?>");
-	$nitm.module('tools').initDynamicValue("issue-tracker<?=$uniqid?>");
-});
-<?php endif ?>
-</script>

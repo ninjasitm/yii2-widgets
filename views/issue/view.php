@@ -20,18 +20,14 @@ if($enableComments == true) $repliesModel = new \nitm\widgets\models\Replies([
 ]);
 $uniqid = uniqid();
 ?>
-<div id="issue<?=$model->getId()?> issue<?= $uniqid ?>" class="issues-view <?= \nitm\helpers\Statuses::getIndicator($model->getStatus())?> wrapper" style="color:auto;border-bottom: solid thin gray">
+<div id="issue<?=$model->getId()?> issue<?= $uniqid ?>" class="issues-view <?= \nitm\helpers\Statuses::getIndicator($model->getStatus())?> wrapper" style="color:auto;border-bottom: solid thin gray" role="statusIndicator<?=$model->getId()?>">
 	<div class="row">
 		<div class="col-md-12 col-lg-12">
-			<div class="row">
-				<div class="col-md-12 col-lg-12">
                 	<h4>
 						<?php if(isset($isNew) && ($isNew === true) || $model->isNew()) echo ActivityIndicator::widget();?>
                         <?= $model->title; ?>&nbsp;<span class="badge"><?= $model->status ?></span>
                     </h4>
                     <h6>by <b><?= $model->author()->fullName(true) ?></b> on <?= $model->created_at ?></h6>
-                </div>
-			</div>
 			<p class="text-left"><?= $model->notes; ?></p>
 		</div>
 		<div class="col-md-8 col-lg-8 text-left">
@@ -52,7 +48,7 @@ $uniqid = uniqid();
 				echo Html::a(Icon::forAction('close', 'closed', $model), \Yii::$app->urlManager->createUrl(['/issue/close/'.$model->id]), [
 					'title' => Yii::t('yii', ($model->closed ? 'Open' : 'Close').' '),
 					'class' => 'fa-2x',
-					'role' => 'closeIssue',
+					'role' => 'metaAction closeAction',
 					'data-parent' => 'tr',
 					'data-pjax' => '0',
 				]);
@@ -64,22 +60,22 @@ $uniqid = uniqid();
 				echo Html::a(Icon::forAction('resolve', 'resolved', $model), \Yii::$app->urlManager->createUrl(['/issue/resolve/'.$model->id]), [
 					'title' => Yii::t('yii', ($model->resolved ? 'Unresolve' : 'Resolve').' '),
 					'class' => 'fa-2x'.($model->closed ? ' hidden' : ''),
-					'role' => 'resolveIssue disabledOnClose',
+					'role' => 'metaAction resolveAction disabledOnClose',
 					'data-parent' => 'tr',
 					'data-pjax' => '0',
 				]);
 				echo Html::a(Icon::forAction('duplicate', 'duplicate', $model), \Yii::$app->urlManager->createUrl(['/issue/duplicate/'.$model->id]), [
 					'title' => Yii::t('yii', ($model->duplicate ? 'Flag as not duplicate' : 'flag as duplicate').' '),
 					'class' => 'fa-2x',
-					'role' => 'duplicateIssue',
+					'role' => 'metaAction duplicateAction',
 				]);
 				if($enableComments==true)
 				{
 					echo Html::a(Icon::forAction('comment', null, null, ['size' => '2x']).ActivityIndicator::widget(['position' => 'top right', 'size' => 'small', 'text' => $repliesModel->count(), 'type' => 'info']), \Yii::$app->urlManager->createUrl(['/reply/index/'.$model->isWhat().'/'.$model->getId(), '__format' => 'html']), [
+						'id' => 'issue-comment-link'.$uniqid,
 						'title' => 'See comments for this issue',
-						'role' => 'visibility',
-						'data-id' => 'issue-comments'.$uniqid,
-						'data-remove-event' => 1
+						'data-id' => '#issue-comments'.$uniqid,
+						'onclick' => '(function (event) {event.preventDefault(); $nitm.module("tools").visibility("#issue-comment-link'.$uniqid.'", true);})(event)'
 					]);
 				}
 			?>
@@ -93,11 +89,3 @@ $uniqid = uniqid();
 		<br>
 	</div>
 </div>
-
-<?php if(\Yii::$app->request->isAjax): ?>
-<script type="text/javascript">
-$nitm.onModuleLoad('issue-tracker', function (module) {
-	module.initVisibility("issue<?= $uniqid ?>");
-}, 'issueTrackerView');
-</script>
-<?php endif ?>

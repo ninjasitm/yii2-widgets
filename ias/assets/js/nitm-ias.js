@@ -62,4 +62,6 @@ function NitmIas ()
 	}
 }
 
-$nitm.initModule(new NitmIas());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new NitmIas());
+});

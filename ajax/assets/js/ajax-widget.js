@@ -1,6 +1,7 @@
 // JavaScript Document
 
 function AjaxWidget () {
+	NitmEntity.call(this, arguments);
 	var self = this;
 	
 	this.views = {
@@ -11,15 +12,6 @@ function AjaxWidget () {
 	this.defaultInit = [
 		'initWidgets',
 	];
-
-	this.init = function (container) {
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-			{
-				self[method](container);
-			}
-		});
-	}
 	
 	this.initWidgets = function (containerId) {
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
@@ -65,6 +57,6 @@ function AjaxWidget () {
 	}
 }
 
-$nitm.onModuleLoad('lab1', function () {
-	$nitm.initModule('lab1:ajax-widget', new AjaxWidget());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new AjaxWidget());
 });

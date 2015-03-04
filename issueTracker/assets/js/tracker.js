@@ -1,6 +1,8 @@
 
 function IssueTracker(items)
 {	
+	NitmEntity.call(this, arguments);
+	
 	var self = this;
 	var editor;
 	this.id = 'issue-tracker';
@@ -34,12 +36,10 @@ function IssueTracker(items)
 		issueUpdateForm: "[id^='issues-update-form']",
 		issueUpdateFormTab: "[id^='issues-update-form-tab']",
 		issuesAlerts: "[id^='alert']",
-		roles: {
-			issues: "[role='entityIssues']"
-		}
+		containerId: "[role='entityIssues']"
 	};
 	this.forms = {
-		allowCreateUpdate: ['createIssue', 'updateIssue'],
+		roles: ['createIssue', 'updateIssue'],
 		allowCreateUpdateTrigger: ['updateIssueTrigger'],
 		actions : {
 			create: '/issue/create',
@@ -54,11 +54,7 @@ function IssueTracker(items)
 			message: 'issueTracker-message'
 		},
 	};
-	this.actions = {
-		allowMeta: ['resolveIssue', 'closeIssue', 'duplicateIssue'],
-		disabledOnClose: "disabledOnClose",
-	};
-	this.roles = {
+	this.actionRoles = {
 		updateIssue: 'updateIssue',
 		resolveIssue: 'resolveIssue',
 		closeIssue: 'closeIssue',
@@ -66,34 +62,14 @@ function IssueTracker(items)
 	};
 	this.defaultInit = [
 		'initCreateUpdateTrigger',
-		'initCreateUpdate',
-		'initMeta',
+		'initForms',
+		'initMetaActions'
 	];
-
-	this.init = function (container) {
-		$.map(this.defaultInit, function (method, key) {
-			if(typeof self[method] == 'function')
-			{
-				self[method](container);
-			}
-		});
-	}
 	
-	this.initCreateUpdate = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-		this.forms.allowCreateUpdate.map(function (v) {
-			container.find("form[role~='"+v+"']").map(function() {
-				$(this).off('submit');
-				$(this).on('submit', function (e) {
-					e.preventDefault();
-					self.operation(this);
-				});
-			})
-		});
-	}
+	this.initCreateUpdate = function () {}
 	
 	this.initCreateUpdateTrigger = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId).parents(self.views.roles.issues);
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId).parents(self.views.containerId);
 		$.map(this.forms.allowCreateUpdateTrigger, function (v) {
 			container.find("[role~='"+v+"']").map(function() {
 				switch(v)
@@ -107,7 +83,7 @@ function IssueTracker(items)
 								var tab = container.find(self.views.issueUpdateFormTab);
 								var tabContent = $nitm.getObj(tab.find('a').attr('href'));
 								tabContent.html(responseText);
-								self.initCreateUpdate(tabContent.attr('id'));
+								self.initForms(tabContent.attr('id'));
 								tab.removeClass('hidden');
 								tab.find('a').tab('show');
 							}, 'html');
@@ -119,88 +95,9 @@ function IssueTracker(items)
 		});
 	}
 	
-	this.initMeta = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-		$.map(this.actions.allowMeta, function (v) {
-			container.find("[role~='"+v+"']").map(function() {
-				$(this).off('click');
-				$(this).on('click', function (e) {
-					e.preventDefault();
-					var elem = $(this);
-					$($nitm).trigger('nitm-animate-submit-start', [elem]);
-					$.post($(this).attr('href'), 
-						function (result) { 
-							switch(result.action)
-							{
-								case 'close':
-								self.afterClose(result, containerId);
-								break;
-								
-								case 'resolve':
-								self.afterResolve(result, containerId);
-								break;
-								
-								case 'duplicate':
-								self.afterDuplicate(result, containerId);
-								break;
-							}
-						}, 'json');
-						$($nitm).trigger('nitm-animate-submit-stop', [elem]);
-				});
-			});
-		});
-	}
-	
-	this.operation = function (form) {
-		/*
-		 * This is to support yii active form validation and prevent multiple submitssions
-		 */
-		try {
-			$data = $(form).data('yiiActiveForm');
-			if(!$data.validated)
-				return false;
-		} catch (error) {}
-		var _form = $(form);
-		var parent = _form.parents(self.views.roles.issues);
-		data = _form.serializeArray();
-		data.push({'name':'__format', 'value':'json'});
-		data.push({'name':'getHtml', 'value':true});
-		data.push({'name':'do', 'value':true});
-		data.push({'name':'ajax', 'value':true});
-		switch(!_form.attr('action'))
-		{
-			case false:
-			$($nitm).trigger('nitm-animate-submit-start', [form]);
-			var request = $nitm.doRequest({
-				url: _form.attr('action'), 
-				data: data,
-				success: function (result) {
-					switch(result.action)
-					{		
-						case 'create':
-						self.afterCreate(result, form);
-						break;
-							
-						case 'update':
-						self.afterUpdate(result, form);
-						break;
-					}
-				},
-				error: function () {
-					$nitm.notify('Whoops, something happened. If this keeps happening tell the admin!', form);
-					$($nitm).trigger('nitm-animate-submit-stop', [form]);
-				}
-			});
-			request.done(function () {
-				$($nitm).trigger('nitm-animate-submit-stop', [form]);
-			});
-			break;
-		}
-	}
-	
 	this.afterCreate = function(result, form) {
 		var _form = $(form);
-		var parent = _form.parents(self.views.roles.issues);
+		var parent = _form.parents(self.views.containerId);
 		if(result.success)
 		{
 			_form.get(0).reset();
@@ -220,7 +117,7 @@ function IssueTracker(items)
 	
 	this.afterUpdate = function (result, form) {
 		var _form = $(form);
-		var parent = _form.parents(self.views.roles.issues);
+		var parent = _form.parents(self.views.containerId);
 		if(result.success)
 		{
 			$nitm.notify("Updated issue sucessfully", self.classes.alerts.success, form);
@@ -232,47 +129,35 @@ function IssueTracker(items)
 		}
 	}
 	
-	this.afterClose = function (result, containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+	this.afterClose = function (result, currentIndex, elem) {
+		$nitm.module('entity').afterClose(result, currentIndex, elem);
 		if(result.success)
 		{
-			var element = $nitm.getObj("[id~='"+self.views.issue+result.id+"']");
-			var parent = element.parents(self.views.roles.issues);
-			element.find("[role~='"+self.roles.updateIssue+"']").toggleClass(self.classes.items.hidden, result.data);
-			var actionElem = element.find("[role~='"+self.roles.closeIssue+"']");
-			actionElem.attr('title', result.title);
-			actionElem.find(':first-child').replaceWith(result.actionHtml);
-			element.removeClass().addClass(result.class);
-			//Move elements between sections and update counters
+			var container = $nitm.getObj(self.views.containerId);
 			self.updateCounter(container, self.views.issuesOpenTab, result.data);
 			self.updateCounter(container, self.views.issuesClosedTab, !result.data);
 			element.remove();
 		}
 	}
 	
-	this.afterResolve = function (result, containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+	this.afterResolve = function (result, currentIndex, elem) {
+		$nitm.module('entity').afterResolve(result, currentIndex, elem);
 		if(result.success)
 		{
-			var element = container.find("[id~='"+self.views.issue+result.id+"']");
-			element.removeClass().addClass(result.class);
-			var actionElem = element.find("[role~='"+self.roles.resolveIssue+"']");
-			actionElem.attr('title', result.title);
-			actionElem.find(':first-child').replaceWith(result.actionHtml);
+			var container = $nitm.getObj(self.views.containerId);
 			self.updateCounter(container, self.views.issuesResolvedTab, result.data);
 			self.updateCounter(container, self.views.issuesUnresolvedTab, !result.data);
 		}
 	}
 	
-	this.afterDuplicate = function (result, containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+	this.afterDuplicate = function (result, currentIndex, actionElem) {
 		if(result.success)
 		{
-			var element = container.find("[id~='"+self.views.issue+result.id+"']");
+			var container = $nitm.getObj(self.views.containerId);
+			var element = $("[role~='"+self.views.statusIndicator+result.id+"']");
 			element.removeClass().addClass(result.class);
-			var actionElem = element.find("[role~='"+self.roles.duplicateIssue+"']");
-			actionElem.attr('title', result.title);
-			actionElem.find(':first-child').replaceWith(result.actionHtml);
+			$(actionElem).attr('title', result.title);
+			$(actionElem).find(':first-child').replaceWith(result.actionHtml);
 			self.updateCounter(container, self.views.issuesDuplicateTab, result.data);
 		}
 	}
@@ -284,4 +169,6 @@ function IssueTracker(items)
 	}
 }
 
-$nitm.initModule(new IssueTracker());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new IssueTracker());
+});

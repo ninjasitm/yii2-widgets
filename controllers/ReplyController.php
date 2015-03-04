@@ -182,7 +182,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 			}
 			break;
 		}
-		return $this->renderResponse($ret_val, Response::$viewOptions);	
+		return $this->renderResponse($ret_val, Response::viewOptions());	
 	}
 	
 	public function actionHide($id)
@@ -206,7 +206,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 			break;
 		}
 		$this->setResponseFormat('json');
-		return $this->renderResponse($ret_val, Response::$viewOptions);	
+		return $this->renderResponse($ret_val, Response::viewOptions());	
 	}
 
     /**

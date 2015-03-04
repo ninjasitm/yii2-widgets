@@ -1,4 +1,7 @@
 function Alerts () {
+	
+	NitmEntity.call(this, arguments);
+	
 	var self = this;
 	this.id = 'alerts';
 	this.defaultInit = [
@@ -24,28 +27,6 @@ function Alerts () {
 		itemId: "alert"
 	};
 	
-	this.init = function (containerId) {
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-				self[method](containerId);
-		});
-	}
-	
-	this.initForms = function (containerId) {
-		var containerId = (containerId == undefined) ? self.views.listFormContainer : containerId;
-		var container = $nitm.getObj(containerId);
-		$.map(self.forms.roles, function(role, key) {
-			container.find("form[role='"+role+"']").map(function() {
-				$(this).off('submit');
-				$(this).on('submit', function (e) {
-					e.preventDefault();
-					self.operation(this, undefined, 'alerts');
-					return false;
-				});
-			});
-		});
-	}
-	
 	this.initAlerts = function(containerId) {
 		var containerId = (containerId == undefined) ? self.views.listFormContainer : containerId;
 		var container = $nitm.getObj(containerId);
@@ -62,54 +43,6 @@ function Alerts () {
 				}
 			});
 		});
-	}
-	
-	this.operation = function (form) {
-		/*
-		 * This is to support yii active form validation and prevent multiple submitssions
-		 */
-		/*try {
-			$data = $(form).data('yiiActiveForm');
-			if(!$data.validated)
-				return false;
-		} catch (error) {}*/
-		var _form = $(form);
-		data = _form.serializeArray();
-		data.push({'name':'__format', 'value':'json'});
-		data.push({'name':'getHtml', 'value':true});
-		data.push({'name':'do', 'value':true});
-		data.push({'name':'ajax', 'value':true});
-		switch(!_form.attr('action'))
-		{
-			case false:
-			$($nitm).trigger('nitm-animate-submit-start', [form]);
-			var request = $nitm.doRequest(_form.attr('action'), 
-				data,
-				function (result) {
-					switch(result.action)
-					{		
-						case 'create':
-						self.afterCreate(result, form);
-						break;
-							
-						case 'update':
-						self.afterUpdate(result, form);
-						break;
-							
-						case 'delete':
-						self.afterDelete(result, form);
-						break;
-					}
-				},
-				function () {
-					$nitm.notify('Error Could not perform Alert action. Please try again', $nitm.classes.error, '#'+parent.attr('id')+' '+self.views.issuesAlerts);
-				}
-			);
-			request.done(function () {
-				$($nitm).trigger('nitm-animate-submit-stop', [form]);
-			});
-			break;
-		}
 	}
 	
 	this.afterCreate = function (result, form) {
@@ -182,6 +115,7 @@ function Alerts () {
 		}
 	}
 }
-$nitm.addOnLoadEvent(function () {
-	$nitm.initModule(new Alerts());
+
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new Alerts());
 });

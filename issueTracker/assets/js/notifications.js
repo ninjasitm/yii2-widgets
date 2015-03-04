@@ -1,5 +1,7 @@
 function Notification(items)
 {	
+	NitmEntity.call(this, arguments);
+	
 	var self = this;
 	this.id = 'notifications';
 	var options = {
@@ -72,4 +74,6 @@ function Notification(items)
 	}
 }
 
-$nitm.initModule(new Notification());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new Notification());
+});

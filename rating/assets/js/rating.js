@@ -1,6 +1,7 @@
 
 function Rating()
 {	
+	NitmEntity.call(this, arguments);
 	var self = this;
 	var editor;
 	this.id = 'rating';
@@ -103,6 +104,6 @@ function Rating()
 	}
 }
 
-$nitm.addOnLoadEvent(function () {
-	$nitm.initModule(new Rating());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new Rating());
 });

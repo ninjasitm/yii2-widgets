@@ -1,6 +1,7 @@
 
 function Revisions(items)
 {	
+	NitmEntity.call(this, arguments);
 	var self = this;
 	this.id = 'revisions';
 	var saveInterval = 10; //In seconds
@@ -156,6 +157,6 @@ function Revisions(items)
 	}
 }
 
-$nitm.addOnLoadEvent(function () {
-	$nitm.initModule(new Revisions());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new Revisions());
 });

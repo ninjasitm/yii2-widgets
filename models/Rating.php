@@ -88,6 +88,6 @@ class Rating extends BaseWidget
 		return $this->hasOne(static::className(), [
 			'parent_type' => 'parent_type',
 			'parent_id' => 'parent_id'
-		])->andWhere(['author_id' => static::$currentUser->getId()]);
+		])->andWhere(['author_id' => static::currentUser()->getId()]);
 	}
 }

@@ -1,6 +1,7 @@
 // JavaScript Document
 
 function Metadata () {
+	NitmEntity.call(this, arguments);
 	var self = this;
 	this.buttons = {
 		roles: {
@@ -66,6 +67,6 @@ function Metadata () {
 	}
 }
 
-$nitm.onModuleLoad('lab1', function () {
-	$nitm.initModule('lab1:metadata', new Metadata());
+$nitm.onModuleLoad('entity', function (module) {
+	module.initModule(new Metadata());
 });

@@ -29,64 +29,12 @@ trait BaseWidget {
 		'parent_id' => 'parent_id'
 	];
 	protected $_new; 
-	protected static $userLastActive;
-	protected static $currentUser = "null";
 	protected $_supportedConstraints =  [
 		'parent_id' => [0, 'id', 'parent_id'],
 		'parent_type' => [1, 'type', 'parent_type'],
 	];
 	
 	private static $_dateFormat = "D M d Y h:iA";
-	
-	public function init()
-	{
-		$this->setConstraints($this->constrain);
-		parent::init();
-		$this->addWith(['author']);
-		if($this->initSearchClass)
-			//static::initCache($this->constrain, self::cacheKey($this->getId()));
-		if(\Yii::$app->user->getIdentity())
-			static::$currentUser = \Yii::$app->user->getIdentity();
-		else
-			static::$currentUser = \Yii::createObject(\Yii::$app->user->identityClass, ['id' => 1]);
-			
-		static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::$currentUser->lastActive() : static::$userLastActive));
-		$this->initEvents();
-	}
-	
-	protected function initEvents()
-	{
-		Event::on(static::className(), ActiveRecord::EVENT_BEFORE_INSERT, [$this, 'beforeSaveEvent']);
-		Event::on(static::className(), ActiveRecord::EVENT_BEFORE_UPDATE, [$this, 'beforeSaveEvent']);
-		Event::on(static::className(), ActiveRecord::EVENT_AFTER_INSERT, [$this, 'afterSaveEvent']);
-		Event::on(static::className(), ActiveRecord::EVENT_AFTER_UPDATE, [$this, 'afterSaveEvent']);
-	}
-	
-	public function scenarios()
-	{
-		$scenarios = [
-			'count' => ['parent_id', 'parent_type'],
-		];
-		return array_merge(parent::scenarios(), $scenarios);
-	}
-	
-	public function behaviors()
-	{
-		$behaviors = [
-		];
-		return array_merge(parent::behaviors(), $behaviors);
-	}
-	
-	public static function has()
-	{
-		$has = [
-			'author' => null, 
-			'editor' => null,
-			'hidden' => null,
-			'deleted' => null,
-		];
-		return array_merge(parent::has(), $has);
-	}
 	
 	/**
 	 * Get the constraints for a widget model
@@ -246,13 +194,13 @@ trait BaseWidget {
 	{
 		$primaryKey = $this->primaryKey()[0];
 		$ret_val = $this->hasOne(static::className(), $this->link);
-		$andWhere = ['or', "created_at>='".static::$currentUser->lastActive()."'"];
+		$andWhere = ['or', "created_at>='".static::currentUser()->lastActive()."'"];
 		$ret_val->select([
 				'_new' => 'COUNT('.$primaryKey.')'
 			])
 			->andWhere($andWhere)
 			->andWhere($this->getConstraints());
-		static::$currentUser->updateActivity();
+		static::currentUser()->updateActivity();
 		return $ret_val;
 	}
 	
@@ -262,7 +210,7 @@ trait BaseWidget {
 	 */
 	public function isNew()
 	{
-		static::$userLastActive = is_null(static::$userLastActive) ? static::$currentUser->lastActive() : static::$userLastActive;
+		static::$userLastActive = is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive;
 		return strtotime($this->created_at) > strtotime(static::$userLastActive);
 	}
 	
@@ -295,11 +243,11 @@ trait BaseWidget {
 			case true:
 			$sql = static::find()->select([
 				"_count" => 'COUNT(id)',
-				"_hasNew" => 'SUM(IF(created_at>='.static::$currentUser->lastActive().", 1, 0))"
+				"_hasNew" => 'SUM(IF(created_at>='.static::currentUser()->lastActive().", 1, 0))"
 			])
 			->where($this->getConstraints());
 			$metadata = $sql->createCommand()->queryAll();
-			static::$currentUser->updateActivity();
+			static::currentUser()->updateActivity();
 			break;
 		}
 	}

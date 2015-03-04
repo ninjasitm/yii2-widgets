@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var app\models\search\Issues $searchModel
  */
- 
+
 $uniqid = uniqid();
 Pjax::begin([
 	'enablePushState' => false,
@@ -53,11 +53,6 @@ echo ListView::widget([
 
 ]);
 ?>
-<script type="text/javascript">
-$nitm.onModuleLoad('issue-tracker', function (module) {
-	module.init("issues-<?=$filterType.'-list'.$uniqid?>");
-	module.initVisibility("issues-<?=$filterType.'-list'.$uniqid?>");
-}, 'issueTrackerIssues');
-</script>
+
 <br>
 <?php Pjax::end(); ?>
