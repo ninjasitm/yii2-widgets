@@ -165,7 +165,7 @@ class Category extends BaseWidget
 		return is_array(array_filter($ids)) ? implode(',', $ids) : null;
 	}
 		
-	public function getList($className=null)
+	public function getListViaClass($className=null)
 	{
 		if(!is_null($className) && class_exists($class = ((strpos($className, 'Category') !== false) ? $className : $className.'Category')))
 			$type = (new $class)->isWhat();
