@@ -19,12 +19,31 @@ use nitm\helpers\Cache;
  *
  */
 
-class BaseWidget extends \nitm\models\Entity implements DataInterface
+class BaseWidget extends \nitm\models\Data implements DataInterface
 {
-	use \nitm\traits\Nitm, \nitm\widgets\traits\BaseWidget;
+	use \nitm\traits\Nitm, \nitm\widgets\traits\BaseWidget, \nitm\filemanager\traits\Relations;
 	
 	protected static $userLastActive;
-	protected static $currentUser;
+	
+	public function init()
+	{
+		$this->setConstraints($this->constrain);
+		parent::init();
+		$this->addWith(['author']);
+		if($this->initSearchClass)
+			//static::initCache($this->constrain, self::cacheKey($this->getId()));
+		
+		static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive));
+	}
+	
+	public function beforeSaveEvent($event)
+	{
+		static::prepareAlerts($event);
+	}
+	
+	public function afterSaveEvent($event)
+	{
+	}
 	
 	public function scenarios()
 	{
@@ -32,13 +51,6 @@ class BaseWidget extends \nitm\models\Entity implements DataInterface
 			'count' => ['parent_id', 'parent_type'],
 		];
 		return array_merge(parent::scenarios(), $scenarios);
-	}
-	
-	public function behaviors()
-	{
-		$behaviors = [
-		];
-		return array_merge(parent::behaviors(), $behaviors);
 	}
 	
 	public static function has()
@@ -66,26 +78,6 @@ class BaseWidget extends \nitm\models\Entity implements DataInterface
 		else {
 			return \Yii::$app->user->getIdentity();
 		}
-	}
-	
-	public function init()
-	{
-		$this->setConstraints($this->constrain);
-		parent::init();
-		$this->addWith(['author']);
-		if($this->initSearchClass)
-			//static::initCache($this->constrain, self::cacheKey($this->getId()));
-		
-		static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive));
-		$this->initEvents();
-	}
-	
-	protected function initEvents()
-	{
-		Event::on(static::className(), ActiveRecord::EVENT_BEFORE_INSERT, [$this, 'beforeSaveEvent']);
-		Event::on(static::className(), ActiveRecord::EVENT_BEFORE_UPDATE, [$this, 'beforeSaveEvent']);
-		Event::on(static::className(), ActiveRecord::EVENT_AFTER_INSERT, [$this, 'afterSaveEvent']);
-		Event::on(static::className(), ActiveRecord::EVENT_AFTER_UPDATE, [$this, 'afterSaveEvent']);
 	}
 }
 ?>

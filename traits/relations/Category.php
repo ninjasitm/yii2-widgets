@@ -20,4 +20,20 @@ trait Category
 	{
 		return \nitm\helpers\Relations::getRelatedRecord('categoriesMetadata', $this, []);
 	}*/
+	
+	/**
+	 * Get the type id of this entity
+	 */
+	public function getTypeId()
+	{
+		switch(!isset($this->typeId))
+		{
+			case true:
+			$type = Category::find()->select('id')->where(['slug' => static::isWhat()])->asArray()->one();
+			$this->typeId = isset($type['id']) ? $type['id'] : 0;
+			break;
+		}
+		return $this->typeId;
+	}
+	
 }

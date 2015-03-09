@@ -3,6 +3,7 @@
 namespace nitm\widgets\models;
 
 use Yii;
+use nitm\helpers\Cache;
 
 /**
  * This is the model class for table "categories".
@@ -17,7 +18,9 @@ use Yii;
  */
 class Category extends BaseWidget
 {
-	//use \nitm\traits\Nitm, \nitm\widgets\traits\relations\Category;
+	public $typeId;
+	
+	use \nitm\widgets\traits\relations\Category;
 	
     /**
      * @inheritdoc
@@ -101,7 +104,7 @@ class Category extends BaseWidget
 				{
 					case 1:
 					$uncategorized = [
-						'url' => \Yii::$app->controller->id.(is_null($action) ? '/' : "/$action/").$category['slug'],
+						'url' => (is_null($action) ? \Yii::$app->controller->id."/$action/" : ltrim($action, "/"))."/".$category['slug'],
 						'label' => $category['name'],
 						'icon' => 'plus',
 						'id' => $category['id']
@@ -110,7 +113,7 @@ class Category extends BaseWidget
 					
 					default:
 					$ret_val[$category['slug']] = [
-						'url' => \Yii::$app->controller->id.(is_null($action) ? '/' : "/$action/").$category['slug'],
+						'url' => (is_null($action) ? \Yii::$app->controller->id."/$action/" : ltrim($action, "/"))."/".$category['slug'],
 						'label' => $category['name'],
 						'icon' => 'plus',
 						'id' => $category['id']
@@ -126,7 +129,7 @@ class Category extends BaseWidget
 			default:
 			$ret_val = [
 				[
-					'url' => \Yii::$app->controller->id.(is_null($action) ? '/' : "/$action/")."category",
+					'url' => \Yii::$app->controller->id.(is_null($action) ? '/' : ltrim($action, "/"))."/category",
 					'label' => "Category",
 					'icon' => 'plus'
 				]
@@ -135,7 +138,7 @@ class Category extends BaseWidget
 		}
 		unset($ret_val[0]);
 		array_unshift($ret_val, [
-			'url' => \Yii::$app->controller->id.(is_null($action) ? '/' : "/$action/")."category",
+			'url' => (is_null($action) ? \Yii::$app->controller->id."/$action/" : ltrim($action, "/"))."/category",
 			'label' => "Category",
 			'icon' => 'plus'
 		]);
@@ -160,6 +163,32 @@ class Category extends BaseWidget
 	public function setParentIds($ids) {
 		$ids = is_array($ids) ? $ids : [$ids];
 		return is_array(array_filter($ids)) ? implode(',', $ids) : null;
+	}
+		
+	public function getList($className=null)
+	{
+		if(!is_null($className) && class_exists($class = ((strpos($className, 'Category') !== false) ? $className : $className.'Category')))
+			$type = (new $class)->isWhat();
+		else if(isset($this) && get_class($this) == __CLASS__) {
+			$class = __CLASS__;
+			$type = $this->isWhat();
+		} else {
+			$class = __CLASS__;
+			$type = $class::isWhat();
+		}
+		$key = 'list-'.md5($class);
+		if(Cache::cache()->exists($key))
+			return Cache::cache()->get($key);
+		else {
+			$ret_val = parent::getList(null, ' ', [
+				'orderBy' => ['name' => SORT_ASC],
+				'where' => [
+					'type_id' => new \yii\db\Expression("(SELECT id FROM ".$class::tableName()." WHERE slug='".$type."' LIMIT 1)")
+				]
+			]);
+			Cache::cache()->set($key, $ret_val);
+			return $ret_val;
+		}
 	}
 	
 	/**

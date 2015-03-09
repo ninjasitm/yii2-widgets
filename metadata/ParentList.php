@@ -8,6 +8,7 @@
 namespace nitm\widgets\metadata;
 
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use yii\widgets\ListView;
 use yii\base\Widget;
 use nitm\helpers\Icon;
@@ -26,6 +27,7 @@ use nitm\helpers\Icon;
 class ParentList extends Widget
 {
 	public $model;
+	public $viewOnly = false;
 	
 	public $options = [
 		'tag' => 'ul',
@@ -33,6 +35,7 @@ class ParentList extends Widget
 	];
 	
 	public $containerOptions = [];
+	public $listOptions = [];
 	
 	public $itemOptions = [
 		'tag' => 'li',
@@ -71,9 +74,9 @@ class ParentList extends Widget
 	
 	public function run()
 	{
-		$header = Html::tag('div', 
-			Html::tag('h4', 'Parents', $this->labelOptions),
-			$this->labelContainerOptions);
+		$header = Html::tag(ArrayHelper::remove($this->labelOptions, 'tag', 'h4'), 'Parents', $this->labelOptions);
+		if(count($this->labelContainerOptions))
+			$header = Html::tag(ArrayHelper::remove($this->labelContainerOptions, 'tag', 'div'), $header, $this->labelContainerOptions);
 		$list = ListView::widget([
 			'summary' => false,
 			'emptyText' => Html::tag('ul', '', $this->options),
@@ -81,7 +84,7 @@ class ParentList extends Widget
 			'itemOptions' => $this->itemOptions,
 			'dataProvider' => $this->dataProvider,
 			'itemView' => function ($model, $key, $index, $widget) {
-				return $model->name.
+				return $model->name.(!$this->viewOnly ? 
 					Html::tag('span',
 						Html::a("Remove ".Icon::show('remove'), 
 							'/'.$this->model->isWhat()."/remove-parent/".$this->model->getId().'/'.$model['id'], [
@@ -89,20 +92,25 @@ class ParentList extends Widget
 							'style' => 'color:white'
 						]), [
 						'class' => 'badge'
-					]);
+					]) : '');
 			}
 		]);
-		$script = Html::tag('script', new \yii\web\jsExpression('$(document).ready(function () {
-			$("#'.$this->options['id'].'").find(\'[role="parentListItem"]\').each(function () {
-				$(this).on("click", function (event) {
-					event.preventDefault();
-					var $element = $(this);
-					$.post(this.href, function (result) {
-						if(result) $element.parents("li").remove();
+		if(count($this->listOptions))
+			$list = Html::tag(ArrayHelper::remove($this->listOptions, 'tag', 'div'), $list, $this->listOptions);
+		if(!$this->viewOnly)
+			$script = Html::tag('script', new \yii\web\jsExpression('$(document).ready(function () {
+				$("#'.$this->options['id'].'").find(\'[role="parentListItem"]\').each(function () {
+					$(this).on("click", function (event) {
+						event.preventDefault();
+						var $element = $(this);
+						$.post(this.href, function (result) {
+							if(result) $element.parents("li").remove();
+						});
 					});
 				});
-			});
-		})'), ['type' => 'text/javascript']);
-		return $header.Html::tag('div', $list, $this->containerOptions).$script;
+			})'), ['type' => 'text/javascript']);
+		else
+			$script = '';
+		return Html::tag('div', $header.$list, $this->containerOptions).$script;
 	}
 }
