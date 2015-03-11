@@ -1,7 +1,7 @@
 <?php
 namespace nitm\widgets\traits\relations;
 
-use nitm\widgets\models\Category;
+use nitm\widgets\models\Category as CategoryModel;
 
 /**
  * Traits defined for expanding active relation scopes until yii2 resolves traits issue
@@ -26,12 +26,12 @@ trait Request {
      */
     public function getRequestFor()
     {
-        return $this->hasOne(Category::className(), ['id' => 'request_for_id']);
+        return $this->hasOne(CategoryModel::className(), ['id' => 'request_for_id']);
     }
 	
 	public function requestFor()
 	{
-		return \nitm\helpers\Relations::getRelatedRecord('requestFor', $this, Category::className());
+		return \nitm\helpers\Relations::getRelatedRecord('requestFor', $this, CategoryModel::className());
 	}
 }
 ?>

@@ -66,17 +66,20 @@ class BaseWidget extends \nitm\models\Data implements DataInterface
 	
 	public function currentUser()
 	{
-		if(\Yii::$app->user->getIsGuest()) {
+		if(\Yii::$app instanceof \yii\console\Application)
+			return new \nitm\models\User(['username' => 'console']);
+			
+		if(\Yii::$app->getUser()->getIsGuest()) {
 			return \nitm\helpers\Cahce::getCachedModel($this, 
 				'currentUser', 
-				\Yii::$app->user->identityClass, 
+				\Yii::$app->getUser()->identityClass, 
 				null, 
 				[
 					'id' => 1
 				]);
 		}
 		else {
-			return \Yii::$app->user->getIdentity();
+			return \Yii::$app->getUser()->getIdentity();
 		}
 	}
 }

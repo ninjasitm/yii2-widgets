@@ -45,7 +45,7 @@ function SearchModal () {
 						'F1', 'F2', 'F3', 'F4', 
 						'F5', 'F6', 'F7', 'F8', 
 						'F7', 'F10', 'F11', 'F12'
-					).indexOf(e.Key) != -1:
+					).indexOf(e.key) != -1:
 					return;
 					break;
 				}
@@ -72,7 +72,7 @@ function SearchModal () {
 						var $modal = $(this);
 						var $form = $(this).find('form');
 						var $input = $form.find(self.searchField);
-						$input.focus().val(e.key);
+						$input.focus().val(e.key).get(0).setSelectionRange($input.val().length*2, $input.val().length*2);
 					});
 					self.modal.modal(self.modalOptions);
 				}
