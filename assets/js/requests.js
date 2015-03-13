@@ -1,10 +1,14 @@
 // JavaScript Document
 
 function Requests () {
+	NitmEntity.call(this);
 	var self = this;
-	
+	this.id = 'entity:request';
 	this.forms = {
-		roles: ['createRequest', 'updateRequest']
+		roles: {
+			create: 'createRequest',
+			update: 'updateRequest'
+		}
 	};
 	
 	this.buttons = {
@@ -15,21 +19,11 @@ function Requests () {
 		containerId: 'requests',
 	}
 	this.defaultInit = [
-		'initmetaActions'
+		'initMetaActions',
+		'initForms'
 	];
-
-	this.init = function (container) {
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-			{
-				self[method](container);
-			}
-		});
-		var $entity = $nitm.module('entity', true);
-		$entity.initMetaActions(null, 'entity:requests');
-	}
 }
 
 $nitm.onModuleLoad('entity', function (module) {
-	module.initModule('entity:requests', new Requests());
+	module.initModule(new Requests());
 });

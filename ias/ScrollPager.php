@@ -38,6 +38,7 @@ use Yii;
  */
 class ScrollPager extends \kop\y2sp\ScrollPager
 {
+	public $force = false;
 	/**
 	 * This option was missing from kop's implementation
 	 */
@@ -133,7 +134,7 @@ class ScrollPager extends \kop\y2sp\ScrollPager
         ]);
 
         // Render pagination links
-        echo LinkPager::widget([
+        return LinkPager::widget([
             'pagination' => $this->pagination,
             'options' => [
                 'class' => 'pagination hidden',

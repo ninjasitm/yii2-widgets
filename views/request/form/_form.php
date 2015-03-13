@@ -85,7 +85,7 @@ $action = $model->getIsNewRecord() ? 'create' : 'update';
 	</div>
 </div>
 <script type='text/javascript'>
-$nitm.onModuleLoad('entity:requests', function () {
-	$nitm.module('entity').initForms('<?= $model->isWhat();?>_form_container', 'entity:requests');
+$nitm.onModuleLoad('entity:request', function (module) {
+	module.initForms('<?= $model->isWhat();?>_form_container');
 });
 </script>

@@ -24,8 +24,7 @@ class RequestController extends \nitm\controllers\DefaultController
 	
 	public function init()
 	{
-		$this->addJs('@nitm/assets/js/requests', true);
-		$this->addJs('@nitm/assets/js/entity', true);
+		$this->addJs('@nitm/widgets/assets/js/requests', true);
 		parent::init();
 		$this->model = new Request(['scenario' => 'default']);
 	}

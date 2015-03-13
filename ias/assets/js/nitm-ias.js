@@ -12,12 +12,6 @@ function NitmIas ()
 		'initIas'
 	];
 	
-	this.init = function (containerId) {
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-				self[method](containerId);
-		});
-	}
 	this.initIas = function (containerId) {
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		container.find("[role~='iasContainer']").each(function() {
@@ -35,13 +29,13 @@ function NitmIas ()
 			var ias = overFlowContainer.ias(options);
 			for(var extension in data.extensions)
 			{
-				switch(data.extensions.hasOwnProperty(extension))
+				if(data.extensions.hasOwnProperty(extension))
 				{
-					case true:
 					try {
-						ias.extension(new window[extension](data.extensions[extension]));
+						//There is a bug that reinitializes the extension after every additon and causes multiple page loads. Waiting for bug fix
+						//var extensionObject = new window[extension](data.extensions[extension]);
+						//ias.extension(extensionObject);
 					} catch (error) {};
-					break;
 				}
 			}
 			ias.on('rendered', function (items) {

@@ -35,17 +35,19 @@ function SearchModal () {
 			$(document).on(event, function (e) {
 				if(self.isActive)
 					return;
-				//If any special jeys were hit then ignore this
+				//If any special keys were hit then ignore this
+				var char = String.fromCharCode(e.which);
 				switch(true)
 				{
 					case $(e.target).is('input, textarea, .redactor-editor'):
 					case e.ctrlKey || e.shiftkey || e.altKey || e.metaKey:
 					case Array(
-						'Esc', 'Escape', 'Backspace',
+						'Esc', 'Escape', 'Backspace', 'Delete',
 						'F1', 'F2', 'F3', 'F4', 
 						'F5', 'F6', 'F7', 'F8', 
 						'F7', 'F10', 'F11', 'F12'
 					).indexOf(e.key) != -1:
+					case !/\w/.test(char):
 					return;
 					break;
 				}

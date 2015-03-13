@@ -82,8 +82,8 @@ use \yii\bootstrap\Tabs;
 	]);
 ?>
 <script type='text/javascript'>
-$nitm.onModuleLoad('entity:requests', function () {
-	$nitm.module('entity').initMetaActions('#<?= $model->isWhat();?>_form_container', 'entity:requests');
+$nitm.onModuleLoad('entity:request', function (module) {
+	module.initMetaActions('#<?= $model->isWhat();?>_form_container');
 	<?php if(\Yii::$app->request->isAjax): ?>
 	$nitm.module('tools').initVisibility('#<?= $model->isWhat();?>_form_container');
 	<?php endif; ?>
