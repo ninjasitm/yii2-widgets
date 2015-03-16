@@ -70,7 +70,7 @@ class BaseWidget extends \nitm\models\Data implements DataInterface
 			return new \nitm\models\User(['username' => 'console']);
 			
 		if(\Yii::$app->getUser()->getIsGuest()) {
-			return \nitm\helpers\Cahce::getCachedModel($this, 
+			return \nitm\helpers\Cache::getCachedModel($this, 
 				'currentUser', 
 				\Yii::$app->getUser()->identityClass, 
 				null, 
