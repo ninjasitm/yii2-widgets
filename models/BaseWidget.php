@@ -33,7 +33,8 @@ class BaseWidget extends \nitm\models\Data implements DataInterface
 		if($this->initSearchClass)
 			//static::initCache($this->constrain, self::cacheKey($this->getId()));
 		
-		static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive));
+		if(is_object(static::currentUser()))
+			static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive));
 	}
 	
 	public function beforeSaveEvent($event)

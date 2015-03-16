@@ -3,6 +3,7 @@
 function Metadata () {
 	NitmEntity.call(this, arguments);
 	var self = this;
+	this.id = 'entity:metadata';
 	this.buttons = {
 		roles: {
 			'create': 'createMetadata', 
@@ -29,16 +30,6 @@ function Metadata () {
 		'initCreating',
 		'initRemoving'
 	];
-
-	this.init = function (container) {
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-			{
-				self[method](container);
-			}
-		});
-		var $lab1 = $nitm.module('lab1');
-	}
 	
 	this.initCreating = function (containerId, currentIndex) {
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);

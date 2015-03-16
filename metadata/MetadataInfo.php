@@ -63,7 +63,10 @@ class MetadataInfo extends \yii\base\Widget
 			$metadata = $this->getAsGrid();
 			break;
 		}
-		return $title.$metadata;
+		$script = Html::script(new \yii\web\JsExpression('$nitm.onModuleLoad("entity:metadata", function (module) {
+			module.initDefaults("#'.$this->options['id'].'");
+		});'));
+		return $title.$metadata.$script;
 	}
 	
 	protected function getAsForm()
