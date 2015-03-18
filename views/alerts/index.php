@@ -18,7 +18,7 @@ $alertsModel = new Alerts();
     <h1><?= Html::encode($this->title) ?></h1>
     <?= $this->render("_form", [
 		"model" => $alertsModel, 
-		'formOptions' => []
+		'formOptions' => $formOptions
 	]);  ?>
 
     <?= ListView::widget([

@@ -122,7 +122,14 @@ class MetaInfo extends \yii\base\Widget
 					case sizeof($parts) >= 2:
 					foreach($parts as $prop)
 					{
-						if(is_object($_model->$prop))
+						if(method_exists($_model, $prop)) {
+							if(is_object($obj = call_user_func([$_model, $prop])))
+								$_model = $obj;
+							else
+								$ret_val = $obj;
+							echo $prop;
+						}
+						else if(property_exists($_model, $prop) && is_object($_model->$prop))
 							$_model = $_model->$prop;
 						else
 							$ret_val = $_model->$prop;	

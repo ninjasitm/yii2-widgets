@@ -72,6 +72,12 @@ class Alerts extends \yii\base\Widget
 				'listOptions' => $this->listOptions,
 				'withForm' => $this->withForm,
 				'primaryModel' => $this->model,
+				'formOptions' => [
+					'options' => [
+						'id' => 'alerts-form',
+						'role' => 'alertForm'
+					]
+				]
 			]);
 			break;
 		}

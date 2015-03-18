@@ -86,7 +86,7 @@ $formOptions = array_replace_recursive($formOptions, [
 		$form->field($model, 'methods')->widget(Select2::className(), [
 			'value' => explode(',', $model->methods),
 			'options' => ['id' => 'alert-methods'.$uniqid, 'placeholder' => ' alert me using'],
-			'data' => \nitm\helpers\alerts\Dispatcher::supportedMethods(),
+			'data' => \nitm\helpers\alerts\DispatcherData::supportedMethods(),
 			
 		])->label("Priority");
 	?>
