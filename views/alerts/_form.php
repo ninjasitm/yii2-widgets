@@ -19,7 +19,7 @@ $formOptions = array_replace_recursive($formOptions, [
 		'template' => "{label}\n<div class=\"\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
 		'labelOptions' => ['class' => 'sr-only'],
 	],
-	'action' => '/alerts/create',
+	'action' => '/alerts/'.$action.($action == 'create' ? '' : '/'.$model->getId()),
 	'options' => [
 		"role" => "ajaxForm"
 	],
