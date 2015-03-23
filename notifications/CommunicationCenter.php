@@ -74,17 +74,19 @@ class CommunicationCenter extends \yii\base\Widget
 						'id' => 'communication-center-messages-button'.$uniqid,
 						'title' => 'Click here again to refresh the info',
 						'role' => 'dynamicValue',
+						'data-run-once' => 1,
 						'data-animation-target' => '#chat'.$uniqid,
 						'data-animation-start-only' => 1,
 						'data-type' => 'html',
 						'data-id' => '#chat'.$uniqid,
-						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\widgets\models\Replies::FORM_PARAM => true])
+						//'data-on' => '#communication-center-messages'.$uniqid.':visible',
+						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\widgets\models\Replies::FORM_PARAM => true]),
 					],
 					'items' => [
 						[
-							'label' => Html::tag('div', Html::tag('h2', 'Loading Messages...', ['class' => 'text-center']).Html::script("\$('#communication-center-messages-button$uniqid').one('mouseover', function (event) {
-								$(this).trigger('click');
-							})", ['type' => 'text/javascript']), [
+							'label' => Html::tag('div', Html::tag('h2', 'Loading Messages...', ['class' => 'text-center']).Html::script('$("#communication-center-messages-button'.$uniqid.'").one("mouseover", function (event) {
+								$(this).trigger("click");
+							})', ['type' => 'text/javascript']), [
 								'role' => 'chatParent',
 								'id' => 'chat'.$uniqid,
 								'class' => '',
@@ -112,18 +114,19 @@ class CommunicationCenter extends \yii\base\Widget
 						'id' => 'communication-center-notifications-button'.$uniqid,
 						'title' => 'Click here again to refresh the info',
 						'role' => 'dynamicValue',
+						'data-run-once' => 1,
 						'data-animation-target' => '#communication-center-notifications'.$uniqid,
 						'data-animation-start-only' => 1,
 						'data-type' => 'html',
-						//'data-on' => '#communication-center-notifications-button'.$uniqid.':hidden',
+						//'data-on' => '#communication-center-notifications'.$uniqid.':visible',
 						'data-id' => '#communication-center-notifications'.$uniqid,
 						'data-url' => \Yii::$app->urlManager->createUrl(['/alerts/notifications', '__format' => 'html']),
 					],
 					'items' => [
 						[
-							'label' => Html::tag('div', Html::tag('h2', 'Loading Alerts...', ['class' => 'text-center']).Html::script("\$('#communication-center-notifications-button$uniqid').one('mouseover', function (event) {
-								$(this).trigger('click');
-							})", ['type' => 'text/javascript']), [
+							'label' => Html::tag('div', Html::tag('h2', 'Loading Alerts...', ['class' => 'text-center']).Html::script('$("#communication-center-notifications-button'.$uniqid.'").one("mouseover", function (event) {
+								$(this).trigger("click");
+							})', ['type' => 'text/javascript']), [
 								'id' => 'communication-center-notifications'.$uniqid,
 								'class' => '',
 							]),

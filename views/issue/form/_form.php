@@ -29,45 +29,41 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 			],
 			'fieldConfig' => [
 				'inputOptions' => ['class' => 'form-control'],
-				'template' => "{label}\n<div class=\"col-lg-12 col-md-12\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
 				'labelOptions' => ['class' => 'control-label'],
 			],
 			'enableAjaxValidation' => true
 		]); ?>
 	
 		<?= $form->field($model, 'title', [
-					'addon' => [
-						'prepend' => [
-							'content' => \nitm\widgets\priority\Priority::widget([
-								'type' => 'addon',
-								'inputsInline' => true,
-								'addonType' => 'radiolist',
-								'attribute' => 'status',
-								'model' => $model,
-								'form' => $form
-							]),
-							'asButton' => true
-						],
-						'groupOptions' => [
-						]
+				'addon' => [
+					'prepend' => [
+						'content' => \nitm\widgets\priority\Priority::widget([
+							'type' => 'addon',
+							'inputsInline' => false,
+							'addonType' => 'radiolist',
+							'attribute' => 'status',
+							'model' => $model,
+							'form' => $form
+						]),
+						'asButton' => true,
 					],
-					'options' => [
-						'class' => 'chat-message-title',
-						'id' => 'chat-message-title'.$uniqid,
+					'groupOptions' => [
 					]
-				])->textInput([
+				],
+				'options' => [
+					'id' => 'chat-message-title'.$uniqid,
+				]
+			])->textInput([
 				'placeholder' => "Title for this issue",
 				'tag' => 'span'
 			])->label("Title", ['class' => 'sr-only']); ?>
+		
 		<?= $form->field($model, 'notes')->textarea()->label("Issue", ['class' => 'sr-only']) ?>
-		<?php //$form->field($model, 'status')->radioList(Issues::getStatusLabels(), ['inline' => true])->label("Urgency"); ?>
 		<?php
-			switch($model->getIsNewRecord())
+			if($model->isNewRecord)
 			{
-				case true:
 				echo Html::activeHiddenInput($model, 'parent_id', ['value' => $parentId]);
 				echo Html::activeHiddenInput($model, 'parent_type', ['value' => $parentType]);
-				break;
 			}
 		?>
 			
@@ -80,7 +76,7 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 <br>
 
 <script type='text/javascript'>
-$nitm.onModuleLoad('issue-tracker', function (module) {
-	module.initCreateUpdate('#issues-form<?=$uniqid?>');
+$nitm.onModuleLoad('issueTracker', function (module) {
+	module.defaultInit('#<?=$form->options['id']?>');
 });
 </script>

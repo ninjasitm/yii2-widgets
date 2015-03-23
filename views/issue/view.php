@@ -20,7 +20,8 @@ if($enableComments == true) $repliesModel = new \nitm\widgets\models\Replies([
 ]);
 $uniqid = uniqid();
 ?>
-<div id="issue<?=$model->getId()?> issue<?= $uniqid ?>" class="issues-view <?= \nitm\helpers\Statuses::getIndicator($model->getStatus())?> wrapper" style="color:auto;border-bottom: solid thin gray" role="statusIndicator<?=$model->getId()?>">
+<div id="issue<?=$model->getId()?> issue<?= $uniqid ?>" class="issues-view <?= \nitm\helpers\Statuses::getIndicator($model->getStatus())?>" style="color:auto;border-bottom: solid thin gray" role="statusIndicator<?=$model->getId()?>">
+	<div class="wrapper">
 	<div class="row">
 		<div class="col-md-12 col-lg-12">
                 	<h4>
@@ -87,5 +88,6 @@ $uniqid = uniqid();
 		</div>
 		<?php endif; ?>
 		<br>
+	</div>
 	</div>
 </div>

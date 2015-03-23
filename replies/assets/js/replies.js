@@ -143,7 +143,6 @@ function Replies(items)
 		var msgField = form.find("textarea");
 		msgField.val('').focus();
 		self.setEditorValue(msgField.get(0), '', false, self.editor);
-		self.setEditorFocus(msgField.get(0), self.editor);
 		$(self.views.roles.replyToIndicator).html("Replying to "+$elem.data('author'));
 	}
 	
@@ -160,23 +159,22 @@ function Replies(items)
 	
 	this.quote = function (event){
 		event.preventDefault();
-		var elem = event.target;
-		self.startEditor($(elem).data('container'));
-		var form = $($(elem).data('parent'));
-		form.find("[role~="+self.forms.inputs.reply_to+"]").val($(elem).data('reply-to'));
+		var $elem = $(event.target);
+		self.startEditor(!$elem.data('container') ? $elem.data('parent') : $elem.data('container'));
+		var form = $($elem.data('parent'));
+		form.find("[role~="+self.forms.inputs.reply_to+"]").val($elem.data('reply-to'));
 		var quote = {
-			author: $(elem).data('author'),
-			parent: $(elem).data('parent'),
-			reply_to: $(elem).data('reply-to-id'),
-			message: $($(elem).data('reply-to-message')).html()
+			author: $elem.data('author'),
+			parent: $elem.data('parent'),
+			reply_to: $elem.data('reply-to-id'),
+			message: $($elem.data('reply-to-message')).html()
 		};
 		var quoteString = "<blockquote>";
 		quoteString += quote.author+" said:<br>"+quote.message;
 		quoteString += "</blockquote><br>";
 		var msgField = form.find("textarea");
 		self.setEditorValue(msgField.get(0), quoteString, true, self.editor);
-		self.setEditorFocus(msgField.get(0), self.editor);
-		$(self.views.roles.replyToIndicator).html("Replying to "+$(elem).data('author'));
+		$(self.views.roles.replyToIndicator).html("Replying to "+$elem.data('author'));
 	}
 	
 	this.chatStatus = function (update, result, container) {
@@ -253,10 +251,10 @@ function Replies(items)
 	
 	this.startEditor = function (containerId, value, button) {
 		var activator = $(button);
-		var containers = $(containerId);
+		var containers = $nitm.getObj(containerId);
 		containers.each(function(index, element) {
 			var container = $(element);
-			var textareaId = container.attr('id')+"editor";
+			var textareaId = container.find('textarea').attr('id');
 			var textarea = $('#'+textareaId);
 			if(!textarea.get(0))
 			{
@@ -299,22 +297,23 @@ function Replies(items)
 					break;
 				}
 			}
-			var type = textarea.parent('form').data('editor');
+			var type = textarea.parents('form').data('editor');
 			switch(type)
 			{
 				case 'redactor':
-				$nitm.getObj("#"+textarea.prop('id')).each(function (index, element) {
-					var textarea = $(element);
+				$nitm.getObj("#"+textarea.attr('id')).each(function () {
+					var textarea = $(this);
 					try {
-						textarea.redactor('get');
+						var instance = textarea.redactor('core.getObject');
+						instance.code.sync();
+						instance.focus.setEnd();
 					} catch (error) {
 						textarea.redactor({
 							air: false,
 							focus: true,
 							autoresize: true,
-							initCallback: function(){
-								if(value != undefined)
-								{
+							initCallback: function(value){
+								if(value != undefined) {
 									this.insert.set(value);
 								}
 							},
@@ -431,9 +430,7 @@ function Replies(items)
 			break;
 			
 			case 'redactor':
-			$nitm.getObj(field).redactor({
-					focusEnd: true
-			});
+			$nitm.getObj(field).redactor('focus.setEnd');
 			break;
 			
 			default:

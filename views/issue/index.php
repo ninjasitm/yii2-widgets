@@ -48,7 +48,7 @@ $baseModel = new Issues;
 		'enableComments' => $enableComments
 	]);
 ?>
-<div class="issues-index" id="issue-tracker<?=$uniqid?>">
+<div class="issues-index col-md-12 col-lg-12" id="issue-tracker<?=$uniqid?>">
 	<h3><?= Html::encode($title) ?></h3>
 	<?=
 		Tabs::widget([

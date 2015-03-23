@@ -14,10 +14,16 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php if(isset($contentOnly) && $contentOnly === false || !isset($contentOnly)): ?>
 <div id='notification-index' class="absolute full full-width full-height" role="notificationListForm">
-	<div class="col-md-12 col-lg-12">
+	<div class="col-md-6 col-lg-6">
 		<h1>
 			<?= 
-				Html::encode($this->title).'&nbsp'.
+				Html::encode($this->title);
+			?>
+		</h1>
+	</div>
+	<div class="col-md-6 col-lg-6">
+		<h1>
+			<?=
 				Html::a(
 					Icon::show('refresh'), 
 					\Yii::$app->urlManager->createUrl(['/alerts/notifications', '__format' => 'html', '__contentOnly' => true]),
@@ -29,6 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
 					]); 
 			?>
 		</h1>
+	</div>
+	<div class="col-md-12 col-lg-12">
 	<?php endif; ?>
 		<?= ListView::widget([
 			'dataProvider' => $dataProvider,

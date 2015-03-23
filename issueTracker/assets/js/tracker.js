@@ -95,7 +95,7 @@ function IssueTracker(items)
 		});
 	}
 	
-	this.afterCreate = function(result, form) {
+	this.afterCreate = function(result, currentIndex, form) {
 		var _form = $(form);
 		var parent = _form.parents(self.views.containerId);
 		if(result.success)
@@ -105,7 +105,7 @@ function IssueTracker(items)
 			if(result.data)
 			{
 				var open = parent.find(self.views.issuesOpenTab).find('.badge');
-				var openValue = (result.data == 1) ? Number(open.html())-1 : Number(open.html())+1;
+				var openValue = Number(open.html())+1;
 				open.html(openValue);
 			}
 		}
@@ -115,7 +115,7 @@ function IssueTracker(items)
 		}
 	}
 	
-	this.afterUpdate = function (result, form) {
+	this.afterUpdate = function (result, currentIndex, form) {
 		var _form = $(form);
 		var parent = _form.parents(self.views.containerId);
 		if(result.success)
@@ -134,8 +134,8 @@ function IssueTracker(items)
 		if(result.success)
 		{
 			var container = $nitm.getObj(self.views.containerId);
-			self.updateCounter(container, self.views.issuesOpenTab, result.data);
-			self.updateCounter(container, self.views.issuesClosedTab, !result.data);
+			self.updateCounter(container, self.views.issuesOpenTab, false);
+			self.updateCounter(container, self.views.issuesClosedTab, true);
 			element.remove();
 		}
 	}
@@ -145,8 +145,8 @@ function IssueTracker(items)
 		if(result.success)
 		{
 			var container = $nitm.getObj(self.views.containerId);
-			self.updateCounter(container, self.views.issuesResolvedTab, result.data);
-			self.updateCounter(container, self.views.issuesUnresolvedTab, !result.data);
+			self.updateCounter(container, self.views.issuesResolvedTab, true);
+			self.updateCounter(container, self.views.issuesUnresolvedTab, false);
 		}
 	}
 	
@@ -158,13 +158,14 @@ function IssueTracker(items)
 			element.removeClass().addClass(result.class);
 			$(actionElem).attr('title', result.title);
 			$(actionElem).find(':first-child').replaceWith(result.actionHtml);
-			self.updateCounter(container, self.views.issuesDuplicateTab, result.data);
+			self.updateCounter(container, self.views.issuesDuplicateTab, true);
 		}
 	}
 	
 	this.updateCounter = function (parent, tab, increase) {
 		var counter = $nitm.getObj(parent).find(tab).find('.badge');
-		var counterValue = (increase == 1) ? Number(counter.html())+1 : Number(counter.html())-1;
+		console.log(counter);
+		var counterValue = (increase == true) ? Number(counter.html())+1 : Number(counter.html())-1;
 		counter.html(counterValue);
 	}
 }
