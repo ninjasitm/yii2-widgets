@@ -58,7 +58,7 @@ class RequestController extends \nitm\controllers\DefaultController
 					$this->getHasNewQuery()
 				],
 				'orderBy' => $this->getOrderByQuery(),
-				'andWhere' => ['closed' => 0]
+				'andWhere' => ['closed' => false]
 			];
 			break;
 		}
@@ -73,7 +73,7 @@ class RequestController extends \nitm\controllers\DefaultController
 			'construct' => [
 				'queryOptions' => $queryOptions
 			],
-			'defaultParams' => [$this->model->formName() => ['closed' => 0]]
+			'defaultParams' => [$this->model->formName() => ['closed' => false]]
 		]);
     }
 	

@@ -14,6 +14,7 @@ $this->title = 'Requests';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?= GridView::widget([
+	'export' => false,
 	'pjax' => false,
 	'striped' => false,
 	'responsive' => true, 
