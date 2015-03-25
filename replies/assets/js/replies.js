@@ -207,20 +207,20 @@ function Replies(items)
 		});
 	}
 	
-	this.afterCreate = function(result, form, element) {
+	this.afterCreate = function(result, index, form, element) {
 		switch(result.success)
 		{
 			case true:
 			var ret_val = false;
-			var _form = $(form);
-			_form.find(".empty").remove();
-			$nitm.place({append:true, index:-1}, result.data, _form.data('parent'));
+			var $form = $(form);
+			$form.find(".empty").remove();
+			$nitm.place({append:true, index:-1}, result.data, $form.data('parent'));
 			//self.initHiding('#'+result.unique_id);
 			//self.initQuoting('#'+result.unique_id);
 			//self.initReplying('#'+result.unique_id);
-			_form.find('[role~="'+self.forms.inputs.reply_to+'"]').val('');
-			self.setEditorValue(_form.find('textarea').attr('id'), '', false, self.editor);
-			_form.find(self.views.roles.replyToIndicator).html("");
+			$form.find('[role~="'+self.forms.inputs.reply_to+'"]').val('');
+			self.setEditorValue($form.find('textarea').get(0), '', false, self.editor);
+			$form.find(self.views.roles.replyToIndicator).html("");
 			break;
 			
 			default:

@@ -75,7 +75,7 @@ class Replies extends BaseWidget
 	public function rules()
 	{
 		return [
-			[['parent_id', 'parent_type', 'author_id', 'message', 'ip_addr', 'cookie_hash'], 'required', 'on' => ['create']],
+			[['parent_id', 'parent_type', 'author_id', 'message'], 'required', 'on' => ['create']],
 			[['message','parent_type'],'required','on' => ['validateNew']],
 			['message', 'isTooLong', 'message' => 'This message is too long'],
 		];

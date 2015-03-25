@@ -137,7 +137,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 		$constrain = [$id, $type, urldecode($key)];
 		$this->model->setConstraints($constrain);
 		
-		switch($this->model->load($this->model->constraints, false))
+		switch($this->model->validate())
 		{
 			case true:
 			switch(\Yii::$app->request->isAjax && (@Helper::boolval($_REQUEST['do']) !== true))
