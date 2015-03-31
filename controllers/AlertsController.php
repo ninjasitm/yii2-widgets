@@ -115,6 +115,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		];
 		try {
 			$ret_val = parent::actionCreate();
+			$result['message'] = 'Successfully followed '.$type;
 			if(ArrayHelper::getValue((array)$ret_val, 'success', false) === true)
 			{
 				$ret_val['data'] = '';
@@ -135,11 +136,12 @@ class AlertsController extends \nitm\controllers\DefaultController
 				$ret_val['actionHtml'] = 'Unfollow '.\nitm\helpers\Icon::show($methods);
 				$ret_val['class'] = 'btn-success';
 			}
+			
 		} catch(\Exception $e) {
 			if(YII_DEBUG)
 				throw $e;
 		}
-		if($ret_val['success'])
+		if(ArrayHelper::getValue((array)$ret_val, 'success', false))
 			\nitm\traits\Relations::setCachedRelationModel($this->model, ['remote_id', 'remote_type'], 'followModel');
 		return $ret_val;
 	}
@@ -156,8 +158,10 @@ class AlertsController extends \nitm\controllers\DefaultController
 			if(YII_DEBUG)
 				throw $e;
 		}
-		if($ret_val['success'])
+		if($ret_val['success']) {
 			\nitm\traits\Relations::deleteCachedRelationModel($this->model, ['remote_id', 'remote_type'], 'followModel');
+			$ret_val['message'] = 'Successfully un-followed '.$this->model->isWhat();
+		}
 		$ret_val['actionHtml'] = 'Follow';
 		$ret_val['class'] = 'btn-default';
 		return $ret_val;
