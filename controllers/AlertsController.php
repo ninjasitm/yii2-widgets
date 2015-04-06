@@ -213,7 +213,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 			$ret_val['message'] = $ret_val['count']." new notifications";
 			$searchModel = new \nitm\widgets\models\search\Notification([
 				'queryOptions' => [
-					'andWhere' => new \yii\db\Expression('UNIX_TIMESTAMP(created_at)>='.\Yii::$app->userMeta->lastActive())
+					'andWhere' => new \yii\db\Expression('UNIX_TIMESTAMP(created_at)>='.\Yii::$app->user->getIdentity()->lastActive())
 				]
 			]);
 			$dataProvider = $searchModel->search($this->model->constraints);
