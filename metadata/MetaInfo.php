@@ -82,7 +82,7 @@ class MetaInfo extends \yii\base\Widget
 					'class' => 'table'
 				]
 			], $this->widgetOptions);
-			$ret_val .= \yii\widgets\DetailView::widget();
+			$ret_val .= \yii\widgets\DetailView::widget($this->widgetOptions);
 			break;
 		}
 		return $ret_val;
