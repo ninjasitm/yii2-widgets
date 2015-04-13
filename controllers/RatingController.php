@@ -4,7 +4,7 @@ namespace nitm\widgets\controllers;
 
 use nitm\widgets\models\Rating;
 
-class RatingController extends \nitm\controllers\\nitm\controllers\DefaultController
+class RatingController extends \nitm\controllers\DefaultController
 {
 	
 	public function behaviors()
