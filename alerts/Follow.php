@@ -167,7 +167,7 @@ class Follow extends \yii\base\Widget
 					'data-pjax' => 0,
 					'data-run-once' => true,
 					'data-type' => 'callback',
-					'data-parent' => '#'.$this->options['id'],
+					'data-id' => '#'.$this->options['id'],
 					'data-callback' => "function (result, elem) { \$nitm.module('follow').afterAction(result, elem);}"
 				];
 				$this->followMethods[$idx] = $method;

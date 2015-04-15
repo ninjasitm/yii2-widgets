@@ -29,10 +29,8 @@ function Follow(items)
 				case 'follow':
 				var button = $(elem).closest('div').find("[role~='followButton']");
 				button.first().data('type', 'callback');
-				button.first().data('run-once', true);
 				button.first().data('url', '/alerts/un-follow/'+result.id);
 				button.first().data('callback', function (_result, _elem) {$nitm.module('follow').afterAction(_result, _elem)});
-				button.first().data('run-times', 0);
 				button.first().one('click', function (event) {
 					$nitm.module('tools').dynamicValue(this);
 				});
@@ -58,7 +56,7 @@ function Follow(items)
 		}
 		else
 		{
-			var button = $($(elem).data('parent'));
+			var button = $($(elem).data('id'));
 			try {
 				button.tooltip('destroy');
 			} catch (error) {}

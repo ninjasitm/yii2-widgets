@@ -22,7 +22,7 @@ use nitm\models\User;
  *
  * @property User $user
  */
-class Alerts extends \nitm\models\Data
+class Alerts extends BaseWidget
 {
 	public static $usersWhere = [];
 	public $requiredFor;

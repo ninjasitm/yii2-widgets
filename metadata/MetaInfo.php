@@ -127,7 +127,6 @@ class MetaInfo extends \yii\base\Widget
 								$_model = $obj;
 							else
 								$ret_val = $obj;
-							echo $prop;
 						}
 						else if(property_exists($_model, $prop) && is_object($_model->$prop))
 							$_model = $_model->$prop;
