@@ -10,15 +10,16 @@
             "email": "admin@ninjasitm.com"
         }
     ],	
-	"require": {
-		"yiisoft/yii2": "*",
-		"nitm/yii2-module": "*",
-                "kartik-v/yii2-widgets": "*",
-                "kartik-v/yii2-helpers": "*",
-                "kartik-v/yii2-icons": "*",
-                "asofter/yii2-imperavi-redactor":"*",
-		"kop/yii2-scroll-pager": "dev-master"
-	},
+    "require": {
+	"yiisoft/yii2": "*",
+	"nitm/yii2-module": "*",
+        "kartik-v/yii2-widgets": "*",
+        "kartik-v/yii2-helpers": "*",
+        "kartik-v/yii2-icons": "*",
+        "asofter/yii2-imperavi-redactor": "*",
+        "webcreate/jquery-ias": "*",
+	"kop/yii2-scroll-pager": "dev-master"
+    },
     "autoload": {
         "psr-4": {
             "nitm\\widgets\\": ""
