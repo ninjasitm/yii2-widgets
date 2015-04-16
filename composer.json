@@ -12,7 +12,7 @@
     ],	
     "require": {
 	"yiisoft/yii2": "*",
-	"nitm/yii2-module": "*",
+	"mhdevnet/yii2-module": "*",
         "kartik-v/yii2-widgets": "*",
         "kartik-v/yii2-helpers": "*",
         "kartik-v/yii2-icons": "*",
