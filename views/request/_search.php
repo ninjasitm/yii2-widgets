@@ -3,6 +3,7 @@ use yii\helpers\Html;
 use kartik\widgets\ActiveForm;
 use kartik\widgets\Select2;
 use yii\widgets\ActiveField;
+
 ?>
 <br>
 <?= $filterButton.$this->context->alertWidget().$this->context->legendWidget();?>

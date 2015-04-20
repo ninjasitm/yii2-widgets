@@ -18,7 +18,7 @@ trait Request {
 	
 	public function getUrgency()
 	{
-		return ucfirst(static::$urgency[$this->status]);
+		return @ucfirst(static::$urgency[$this->status]);
 	}
 
     /**
