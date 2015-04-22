@@ -17,6 +17,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 {	
 	public function init()
 	{
+		$this->logCollection = 'nitm-log';
 		$this->model = new Alerts(['scenario' => 'default']);
 		parent::init();
 	}
@@ -48,6 +49,12 @@ class AlertsController extends \nitm\controllers\DefaultController
 						'allow' => true,
 						'roles' => ['@'],
 					],
+				],
+			],
+			'verbs' => [
+				'actions' => [
+					'follow' => ['post'],
+					'un-follow' => ['post'],
 				],
 			],
 		];

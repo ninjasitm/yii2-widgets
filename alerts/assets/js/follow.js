@@ -18,8 +18,10 @@ function Follow(items)
 	this.defaultInit = [
 	];
 	
-	this.afterAction = function (xhr, elem) {
-		var result = xhr.responseJSON;
+	this.afterAction = function (result, elem) {
+		
+		if(typeof result != 'object')
+			return $nitm.indicate(result, elem, 'btn-danger');
 		
 		if(result.success)
 		{
@@ -56,15 +58,7 @@ function Follow(items)
 		}
 		else
 		{
-			var button = $($(elem).data('id'));
-			try {
-				button.tooltip('destroy');
-			} catch (error) {}
-			button.tooltip({
-				title: result.message
-			});
-			button.tooltip('show');
-			button.addClass('btn-danger');
+			$nitm.indicate(result.message, elem);
 		}
 	}
 }

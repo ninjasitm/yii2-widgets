@@ -56,9 +56,9 @@ class Follow extends \yii\base\Widget
 	 * ]
 	 */
 	protected $_defaultFollowMethods = [
-		['label' => 'Email', 'url' => '#', 'icon' => 'envelope', 'method' => 'email'],
-		['label' => 'Mobile', 'url' => '#', 'icon' => 'mobile', 'method' => 'mobile'],
-		['label' => 'Send', 'url' => '#', 'icon' => 'send', 'method' => 'any'],
+		['label' => 'Email', 'url' => '#', 'icon' => 'envelope', 'method' => 'email', 'data-ajax-method' => 'post'],
+		['label' => 'Mobile', 'url' => '#', 'icon' => 'mobile', 'method' => 'mobile', 'data-ajax-method' => 'post'],
+		['label' => 'Send', 'url' => '#', 'icon' => 'send', 'method' => 'any', 'data-ajax-method' => 'post'],
 	];
 	
 	
@@ -82,6 +82,7 @@ class Follow extends \yii\base\Widget
 		}
 		$this->uniqid = uniqid();
 		$this->options['id'] .= $this->uniqid;
+		$this->options['data-ajax-method'] = 'post';
 		$this->initializeMethods();
 		FollowAsset::register($this->getView());
 	}
@@ -115,6 +116,7 @@ class Follow extends \yii\base\Widget
 				$this->options['role'] .= ' dynamicValue';
 				$this->options['data-run-once'] = true;
 				$this->options['data-type'] = 'callback';
+				$this->options['data-ajax-method'] = 'post';
 				$this->options['data-callback'] = 'function (result, elem) {$nitm.module("follow").afterAction(result, elem);}';
 				break;
 			}
@@ -140,7 +142,8 @@ class Follow extends \yii\base\Widget
 				'encodeLabels' => false,
 				'options' => [
 					'class' => $this->model->getIsNewRecord() ? '' : 'disabled',
-					'role' => 'followDropdown'
+					'role' => 'followDropdown',
+					'data-ajax-method' => 'post'
 				],
 				'items' => $this->followMethods
 			],
@@ -167,6 +170,7 @@ class Follow extends \yii\base\Widget
 					'data-pjax' => 0,
 					'data-run-once' => true,
 					'data-type' => 'callback',
+					'data-ajax-method' => 'post',
 					'data-id' => '#'.$this->options['id'],
 					'data-callback' => "function (result, elem) { \$nitm.module('follow').afterAction(result, elem);}"
 				];
