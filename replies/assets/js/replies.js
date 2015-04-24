@@ -266,19 +266,10 @@ function Replies(items)
 					case true:
 					if(container.find('.modal').get(0) == undefined)
 					{
-						var content = $("<div class='modal fade in' role='dialog' aria-hidden='true'>");
-						var modalDialog = $("<div class='modal-dialog'>");
-						var modalContent = $("<div class='modal-content'>");
-						var modalBody = $("<div class='modal-body'>");
-						var modalTitle = $("<div class='modal-title'>").html("<h3>Your message:</h3>");
-						var modalHeader = $("<div class='modal-header'>");
-						var modalClose = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
-						modalHeader.append(modalClose);
-						modalBody.append(modalHeader);
-						modalBody.append(modalTitle);
-						modalBody.append(textarea);
-						modalBody.append(actions);
-						$('body').append(content.append(modalDialog.append(modalContent.append(modalBody))));
+						$nitm.dialog(textarea, {
+							title: "<h3>Your message:</h3>",
+							actions: actions
+						});
 					}
 					else
 					{

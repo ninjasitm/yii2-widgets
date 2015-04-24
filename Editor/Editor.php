@@ -18,42 +18,47 @@ class Editor extends \yii\imperavi\Widget
 	public $size;
 	public $toolbarSize;
 	
-	public $options =  [
-		'air'=> true,
+	public $options = [];
+	public $htmlOptions = [];
+	
+	public $_options =  [
 		'height' => 'auto',
 		'buttonOptions' => [
 			'class' => 'btn btn-sm chat-form-btn'
 		]
 	];
 	
-	public $htmlOptions = [
+	public $_htmlOptions = [
 		'style' => 'z-index: 99999',
 		'rows' => 3,
 	];
 	
 	public function run()
 	{
+		$this->options = array_merge($this->_options, $this->options);
+		$this->htmlOptions = array_merge($this->_htmlOptions, $this->htmlOptions);
+		$buttonParam = isset($this->options['airButtons']) && ($this->options['airButtons'] == true) ? 'airButtons' : 'buttons';
 		switch($this->toolbarSize)
 		{
 			case 'full':
-			$this->options['airButtons'] = [
-				'html', 'formatting',  'bold', 'italic', 'deleted', 
+			$this->options[$buttonParam] = [
+				'html', 'formatting',  'bold', 'italic', 'underline', 'deleted', 
 				'unorderedlist', 'orderedlist', 'outdent', 'indent', 
 				'image', 'video', 'file', 'table', 'link', 'alignment', 'horizontalrule'
 			];
 			break;
 			
 			case 'medium':
-			$this->options['airButtons'] = [
-				'bold', 'italic', 'deleted', 
+			$this->options[$buttonParam] = [
+				'bold', 'italic', 'underline', 'deleted', 
 				'unorderedlist', 'orderedlist', 
 				'image', 'video', 'file', 'table', 'link'
 			];
 			break;
 			
 			default:
-			$this->options['airButtons'] = [
-				'bold', 'italic', 'deleted', 'link'
+			$this->options[$buttonParam] = [
+				'bold', 'italic', 'underline', 'deleted', 'link'
 			];
 			break;
 		}
@@ -61,6 +66,10 @@ class Editor extends \yii\imperavi\Widget
 		{
 			case 'full':
 			$this->htmlOptions['style'] = "height: 100%";
+			break;
+			
+			case 'large':
+			$this->htmlOptions['rows'] = 12;
 			break;
 			
 			case 'medium':
@@ -72,7 +81,7 @@ class Editor extends \yii\imperavi\Widget
 			break;
 		}
 		$this->htmlOptions['role'] = $this->role;
-		return parent::run();
+		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
 	}
 }
 
