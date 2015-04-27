@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
 				'primaryModel' => $model,
-				'isWhat' => $isWhat.'s'
+				'isWhat' => $isWhat
 			]
 		); 
 	?>
@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php
 		echo $this->render('_search', [
 			"data" => [],
-			'isWhat' => $isWhat.'s', 
+			'isWhat' => $isWhat, 
 			'model' => $searchModel,
 			'createButton' => $createButton,
 			'filterButton' => $filterCloseButton

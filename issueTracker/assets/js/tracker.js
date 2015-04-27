@@ -23,7 +23,7 @@ function IssueTracker(items)
 		},
 	};
 	this.views = {
-		issue: 'issue',
+		itemId: 'issue',
 		issues: 'issues',
 		issuesOpenTab: "[id^='open-issues-tab']",
 		issuesClosedTab: "[id^='closed-issues-tab']",
@@ -69,7 +69,7 @@ function IssueTracker(items)
 	this.initCreateUpdate = function () {}
 	
 	this.initCreateUpdateTrigger = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId).parents(self.views.containerId);
+		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId).parents(self.views.containerId);		
 		$.map(this.forms.allowCreateUpdateTrigger, function (v) {
 			container.find("[role~='"+v+"']").map(function() {
 				switch(v)
@@ -102,15 +102,10 @@ function IssueTracker(items)
 		{
 			_form.get(0).reset();
 			$nitm.notify("Added new issue. You can add another or view the newly added one", form);
-			if(result.data)
-			{
-				var open = parent.find(self.views.issuesOpenTab).find('.badge');
-				var openValue = Number(open.html())+1;
-				open.html(openValue);
-			}
-		}
-		else
-		{
+			var open = parent.find(self.views.issuesOpenTab).find('.badge');
+			var openValue = Number(open.html())+1;
+			open.html(openValue);
+		} else {
 			$nitm.notify("Couldn't create new issue", self.classes.alerts.error, form);
 		}
 	}
@@ -134,9 +129,9 @@ function IssueTracker(items)
 		if(result.success)
 		{
 			var container = $nitm.getObj(self.views.containerId);
-			self.updateCounter(container, self.views.issuesOpenTab, false);
-			self.updateCounter(container, self.views.issuesClosedTab, true);
-			element.remove();
+			self.updateCounter(container, self.views.issuesOpenTab, result.data == 0);
+			self.updateCounter(container, self.views.issuesClosedTab, result.data == 1);
+			$nitm.getObj('[id~="'+self.views.itemId+result.id+'"]').remove();
 		}
 	}
 	
@@ -145,8 +140,8 @@ function IssueTracker(items)
 		if(result.success)
 		{
 			var container = $nitm.getObj(self.views.containerId);
-			self.updateCounter(container, self.views.issuesResolvedTab, true);
-			self.updateCounter(container, self.views.issuesUnresolvedTab, false);
+			self.updateCounter(container, self.views.issuesResolvedTab, result.data == 1);
+			self.updateCounter(container, self.views.issuesUnresolvedTab, result.data == 0);
 		}
 	}
 	
@@ -158,13 +153,11 @@ function IssueTracker(items)
 			element.removeClass().addClass(result.class);
 			$(actionElem).attr('title', result.title);
 			$(actionElem).find(':first-child').replaceWith(result.actionHtml);
-			self.updateCounter(container, self.views.issuesDuplicateTab, true);
+			self.updateCounter(container, self.views.issuesDuplicateTab, result.data == 1);
 		}
 	}
-	
 	this.updateCounter = function (parent, tab, increase) {
 		var counter = $nitm.getObj(parent).find(tab).find('.badge');
-		console.log(counter);
 		var counterValue = (increase == true) ? Number(counter.html())+1 : Number(counter.html())-1;
 		counter.html(counterValue);
 	}

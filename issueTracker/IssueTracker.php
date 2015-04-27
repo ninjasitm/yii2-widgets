@@ -58,6 +58,7 @@ class IssueTracker extends BaseWidget
 		]);
 		$get = \Yii::$app->request->getQueryParams();
 		$params = array_merge($get, $this->model->getConstraints());
+		$params['closed'] = false;
 		switch(is_array($this->items) && !empty($this->items))
 		{
 			case true:

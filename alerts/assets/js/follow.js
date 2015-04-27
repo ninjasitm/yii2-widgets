@@ -15,8 +15,6 @@ function Follow(items)
 			followTab: "[role='followTab']",
 		}
 	};
-	this.defaultInit = [
-	];
 	
 	this.afterAction = function (result, elem) {
 		

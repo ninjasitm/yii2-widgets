@@ -39,15 +39,14 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 					'prepend' => [
 						'content' => \nitm\widgets\priority\Priority::widget([
 							'type' => 'addon',
-							'inputsInline' => false,
+							'size' => 'small',
+							'inputsInline' => true,
 							'addonType' => 'radiolist',
 							'attribute' => 'status',
 							'model' => $model,
 							'form' => $form
 						]),
 						'asButton' => true,
-					],
-					'groupOptions' => [
 					]
 				],
 				'options' => [
@@ -76,7 +75,7 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 <br>
 
 <script type='text/javascript'>
-$nitm.onModuleLoad('issueTracker', function (module) {
-	module.defaultInit('#<?=$form->options['id']?>');
+$nitm.onModuleLoad('issue-tracker', function (module) {
+	//module.initModule('#<?=$form->options['id']?>');
 });
 </script>

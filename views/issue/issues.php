@@ -31,7 +31,7 @@ echo $this->render('_search', [
 echo Html::tag('div', '', ['id' => 'issues-alerts-message']);
 echo ListView::widget([
 	'options' => [
-		'id' => 'issues-'.$filterType.'-list'.$uniqid,
+		'id' => 'issues-'.$filterType.'-list'.$parentId,
 		'style' => 'color:black;'
 	],
 	'dataProvider' => $dataProvider,
@@ -53,6 +53,5 @@ echo ListView::widget([
 
 ]);
 ?>
-
 <br>
 <?php Pjax::end(); ?>

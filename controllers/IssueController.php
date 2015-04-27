@@ -77,7 +77,10 @@ class IssueController extends \nitm\controllers\DefaultController
 			],
 			'modalOptions' => [
 				'contentOnly' => true
-			]
+			],
+			'js' => (\Yii::$app->request->isAjax ? new \yii\web\JsExpression('$nitm.onModuleLoad("tools", function (module) {
+				module.initDefaults("[role=\"entityIssues\"]");
+			});') : '')
 		], true);
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);
     }
@@ -155,7 +158,10 @@ class IssueController extends \nitm\controllers\DefaultController
 			],
 			'modalOptions' => [
 				'contentOnly' => true
-			]
+			], 
+			'js' => (\Yii::$app->request->isAjax ? new \yii\web\JsExpression('$nitm.onModuleLoad("issue-tracker", function (module) {
+				module.initDefaults("#issues-'.$key.'-list'.$id.'", "issue-tracker");
+			});') : '')
 		], true);
 		//$this->setResponseFormat(\Yii::$app->request->isAjax ? 'modal' : 'html');
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);
