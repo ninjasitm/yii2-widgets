@@ -18,7 +18,6 @@ use kartik\icons\Icon;
 class IssueCount extends BaseWidget
 {
 	public $enableComments;
-	public $fullDetails = true;
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -55,39 +54,8 @@ class IssueCount extends BaseWidget
 		$this->options['label'] = (int)$this->model->count().' Issues '.Icon::show('eye');
 		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/issue/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal', IssuesModel::COMMENT_PARAM => $this->enableComments]);
 		$this->options['title'] = \Yii::t('yii', 'View Issues');
-		$info = \nitm\widgets\modal\Modal::widget([
-			'options' => [
-				'id' => $this->options['id'].'-modal',
-				'style' => 'overflow: hidden'
-			],
-			'size' => 'large',
-			'header' => 'Issues',
-			'toggleButton' => $this->options,
-			'dialogOptions' => [
-				'class' => 'modal-full'
-			],
-		]);
-		$new = $this->model->hasNew();
-		switch($new >= 1)
-		{
-			case true:
-			$new = \nitm\widgets\activityIndicator\ActivityIndicator::widget([
-				'type' => 'new',
-				'position' => 'top right',
-				'text' => Html::tag('span', $new." new")
-			]);
-			break;
-			
-			default:
-			$new = '';
-			break;
-		}
-		if($this->fullDetails)
-		{
-			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-			$info .= Html::tag('span', "Last by ".$this->model->last->authorUser->fullName(true), $this->options);
-		}
-		return Html::tag('div', $info, $this->widgetOptions).$new;
+		$info = $this->getInfoLink();
+		return Html::tag('div', $info, $this->widgetOptions).$this->getNewIndicator();
 	}
 }
 ?>

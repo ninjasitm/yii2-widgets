@@ -138,9 +138,6 @@ trait BaseWidget {
 			$ret_val->andWhere($andWhere);
 			break;
 		}
-		$filters = $this->queryFilters;
-		unset($filters['parent_id'], $filters['parent_type']);
-		//$ret_val->andWhere($filters);
 		return $ret_val;
 	 }
 

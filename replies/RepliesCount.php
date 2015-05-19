@@ -51,42 +51,11 @@ class RepliesCount extends BaseWidget
 		$this->options['id'] .= $this->parentId;
 		$this->options['class'] .= ' '.($this->model->count() >= 1 ? 'btn-primary' : 'btn-transparent');
 		$this->options['label'] = (int)$this->model->count().' Replies '.Icon::show('eye');
-		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/reply/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal']);
+		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/reply/index/'.$this->parentType."/".$this->parentId]);
 		$this->options['title'] = \Yii::t('yii', 'View Replies');
-		$info = \nitm\widgets\modal\Modal::widget([
-			'options' => [
-				'id' => $this->options['id'].'-modal'
-			],
-			'size' => 'large',
-			'header' => 'Comments',
-			'toggleButton' => $this->options,
-			'dialogOptions' => [
-				'class' => 'modal-full'
-			],
-		]);
-		$new = $this->model->hasNew();
-		switch($new >= 1)
-		{
-			case true:
-			$new = \nitm\widgets\activityIndicator\ActivityIndicator::widget([
-				'type' => 'new',
-				'position' => 'top right',
-				'text' => Html::tag('span', $new." new")
-			]);
-			break;
-			
-			default:
-			$new = '';
-			break;
-		}
-		switch(((int)$this->model->count() >= 1) && ($this->model->last instanceof RepliesModel) && $this->fullDetails)
-		{
-			case true:
-			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-			$info .= Html::tag('span', " Last by ".$this->model->last->author()->fullName(true), $this->options);
-			break;
-		}
-		echo Html::tag('div', $info, $this->widgetOptions).$new;
+		
+		$info = $this->getInfoLink($this->model->isWhat());
+		return Html::tag('div', $info, $this->widgetOptions).$this->getNewIndicator();
 	}
 }
 ?>

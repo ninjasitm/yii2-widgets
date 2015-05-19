@@ -17,7 +17,6 @@ use kartik\icons\Icon;
 
 class RevisionsCount extends BaseWidget
 {
-	public $fullDetails = true;	
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -54,33 +53,8 @@ class RevisionsCount extends BaseWidget
 		$this->options['label'] = (int)$this->model->count().' Revisions '.Icon::show('eye');
 		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/revisions/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal']);
 		$this->options['title'] = \Yii::t('yii', 'View Revisions');
-		$info = \nitm\widgets\modal\Modal::widget([
-			'options' => [
-				'id' => $this->options['id'].'-modal'
-			],
-			'toggleButton' => $this->options,
-		]);
-		$new = $this->model->hasNew();
-		switch($new >= 1)
-		{
-			case true:
-			$new = \nitm\widgets\activityIndicator\ActivityIndicator::widget([
-				'type' => 'new',
-				'position' => 'top right',
-				'text' => Html::tag('span', $new." new")
-			]);
-			break;
-			
-			default:
-			$new = '';
-			break;
-		}
-		if($this->fullDetails)
-		{
-			$info .= Html::tag('span', " on ".$this->model->last->created_at, $this->options);
-			$info .= Html::tag('span', "Last by ".$this->model->last->author()->fullName(true), $this->options);
-		}
-		echo $info = Html::tag('div', $info, $this->widgetOptions).$new;
+		$info = $this->getInfoLink();
+		return $info = Html::tag('div', $info, $this->widgetOptions).$this->getNewIndicator();
 	}
 }
 ?>

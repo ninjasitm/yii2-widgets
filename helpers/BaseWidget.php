@@ -10,6 +10,7 @@ namespace nitm\widgets\helpers;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Widget;
+use yii\helpers\Html;
 use kartik\icons\Icon;
 
 class BaseWidget extends Widget
@@ -21,6 +22,7 @@ class BaseWidget extends Widget
 	 * Show the count even if the number is 0
 	 */
 	public $showEmptyCount = false;	
+	public $fullDetails = true;	
 	
 	/*
 	 * The options used to constrain the Revisions
@@ -94,5 +96,72 @@ class BaseWidget extends Widget
 			}
 			break;
 		}
+	}
+	
+	protected function getInfoLink($type=null)
+	{
+		$typeHr = ucfirst($type == null ? $this->model->isWhat() : $type);
+		if($this->useModal) {
+			$this->options['href'] .= '__format=modal';
+			$info = \nitm\widgets\modal\Modal::widget([
+				'options' => [
+					'id' => $this->options['id'].'-modal'
+				],
+				'size' => 'large',
+				'header' => $type,
+				'toggleButton' => $this->options,
+				'dialogOptions' => [
+					'class' => 'modal-full'
+				],
+			]);
+		} else {
+			$this->widgetOptions['class'] = 'list-group';
+			$header = $this->model->count().' '.$typeHr;
+			$last = '';
+			if(($this->model->count() >= 1) && (is_a($this->model->last, $this->model->className())) && $this->fullDetails)
+			{
+				$last = Html::tag('span', 'Last By '.$this->model->last->author()->url());
+				$last .= Html::tag('span', " on ".$this->model->last->created_at, []);
+			}
+			$info = Html::tag('ul',
+				Html::tag('li', 
+					Html::tag('strong', $header, ['class' => 'list-group-item-heading'])
+					.Html::tag('span', $last, ['class' => 'list-group-item-text', 'style' => 'margin-left: 15px'])
+					.Html::tag('div', Html::a('View '.$typeHr.' '.Icon::show('eye'), $this->options['href'], [
+						'role' => 'visibility',
+						'data-id' => '#'.$type.'-for-'.$this->parentType.'-'.$this->parentId,
+						'data-remote-once' => 1
+					]), ['class' => 'pull-right']), [
+						'class' => 'list-group-item '.($this->model->count() ? 'list-group-item-success' : ''),
+						'style' => (!$this->model->count() ? 'background-color: transparent' : '')
+					]),
+			$this->widgetOptions)
+			.Html::tag('div', '', [
+				'id' => $type.'-for-'.$this->parentType.'-'.$this->parentId,
+				'class' => 'hidden center-block',
+				'style' => 'padding-bottom: 10px'
+			]);
+		}
+		return $info;
+	}
+	
+	protected function getNewIndicator()
+	{
+		$new = $this->model->hasNew();
+		switch($new >= 1)
+		{
+			case true:
+			$new = \nitm\widgets\activityIndicator\ActivityIndicator::widget([
+				'type' => 'new',
+				'position' => 'top right',
+				'text' => Html::tag('span', $new." new")
+			]);
+			break;
+			
+			default:
+			$new = '';
+			break;
+		}
+		return $new;
 	}
 }
