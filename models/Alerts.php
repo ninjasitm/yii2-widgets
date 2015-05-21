@@ -27,6 +27,11 @@ class Alerts extends BaseWidget
 	public static $usersWhere = [];
 	public $requiredFor;
 	
+	protected $link = [
+		'remote_type' => 'remote_type',
+		'remote_id' => 'remote_id'
+	];
+	
 	public function init()
 	{
 		parent::init();

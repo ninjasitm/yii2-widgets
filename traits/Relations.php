@@ -2,6 +2,7 @@
 namespace nitm\widgets\traits;
 
 use nitm\helpers\Cache;
+use nitm\helpers\ArrayHelper;
 use nitm\traits\Relations as NitmRelations;
 
 /**
@@ -18,7 +19,7 @@ trait Relations {
 		$link = !is_array($link) ? ['parent_id' => 'id'] : $link;
 		$options = is_array($options) ? $options : (array)$options;
 		$options['select'] = isset($options['select']) ? $options['select'] : ['id', 'parent_id', 'parent_type'];
-		$options['with'] = isset($options['with']) ? $options['with'] : [];
+		$options['with'] = array_merge(ArrayHelper::getValue($options, 'with', []), ['author', 'last', 'count', 'newCount']);
 		$options['andWhere'] = isset($options['andWhere']) ? $options['andWhere'] : ['parent_type' => $this->isWhat()];
 		return $this->getRelationQuery($className, $link, $options, $many);
 	}
@@ -30,7 +31,8 @@ trait Relations {
 	{
 		$link = !is_array($link) ? ['parent_id' => 'id'] : $link;
 		$options['select'] = isset($options['select']) ? $options['select'] : ['id', 'parent_id', 'parent_type'];
-		$options['with'] = isset($options['with']) ? $options['with'] : [];
+		$options['with'] = array_merge(ArrayHelper::getValue($options, 'with', []), ['count', 'newCount']);
+		$options['andWhere'] = isset($options['andWhere']) ? $options['andWhere'] : ['parent_type' => $this->isWhat()];
 		return $this->getRelationQuery($className, $link, $options);
 	}
 	
@@ -68,18 +70,17 @@ trait Relations {
 		$params = [
 			"parent_type" => $this->isWhat()
 		];
-		switch(\Yii::$app->user->identity->isAdmin())
-		{
-			case false:
-			$params['hidden'] = 0;
-			break;
-		}
+		
+		if(!\Yii::$app->user->identity->isAdmin())
+			$params['hidden'] = false;
+			
 		$options = array_merge([
+			"select" => "*",
 			'orderBy' => ['id' => SORT_DESC],
 			'with' => ['replyTo'],
 			'andWhere' => $params
 		], $options);
-       	return $this->getWidgetRelationQuery(\nitm\widgets\models\Replies::className(), null, $options);
+       	return $this->getWidgetRelationQuery(\nitm\widgets\models\Replies::className(), null, $options, true);
     }
 	
 	public function replies()
@@ -231,7 +232,7 @@ trait Relations {
 			//Disabled due to Yii framework inability to return statistical relations
 			//'with' => ['currentUserVoted', 'fetchedValue']
 			'select' => ['id', 'user_id', 'remote_id', 'remote_type'],
-			'where' => [
+			'andWhere' => [
 				'remote_type' => $this->isWhat(),
 				'user_id' => \Yii::$app->user->getId()
 			]

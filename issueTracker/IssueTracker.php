@@ -47,6 +47,8 @@ class IssueTracker extends BaseWidget
 			$this->model = ($this->model instanceof IssuesModel) ? $this->model : (new IssuesModel(['initSearchClass' => false]))->findModel([$this->parentId, $this->parentType]);
 			break;
 		}
+		$this->options = array_merge($this->defaultOptions(), $this->options);
+		$this->options['id'] .= $this->uniqid;
 		Asset::register($this->getView());
 	}
 	
@@ -69,20 +71,8 @@ class IssueTracker extends BaseWidget
 			switch(($this->model instanceof IssuesModel))
 			{
 				case true:
-				switch(empty($this->parentId))
-				{
-					/**
-					 * This issue model was initialed through a model
-					 * We need to set the parentId and parentType from the constraints values
-					 */
-					case true:
-					//$this->parentId = $this->model->constraints['parent_id'];
-					//$this->parentType = $this->model->constrain['parent_type'];
-					break;
-				}
 				unset($params['type']);
 				unset($params['id']);
-		
 				$dataProvider = $searchModel->search(array_merge($params));
 				break;
 			}

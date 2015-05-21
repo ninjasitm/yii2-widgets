@@ -35,43 +35,6 @@ class RepliesForm extends BaseWidget
 	public $editorOptions = [
 	];
 	
-	/**
-	 * The actions that are supported
-	 */
-	private $_actions = [
-		'reset' => [
-			'tag' => 'span',
-			'text' => '',
-			'options' => [
-				'class' => 'btn btn-default',
-				'role' => 'resetForm',
-				'id' => 'reset-form',
-				'title' => 'Reset this form',
-				'type' => 'reset'
-			],
-			'tagOptions' => [
-				'class' => 'glyphicon glyphicon-refresh',
-				'style' => 'font-size: 16px'
-			]
-		],
-		'submit' => [
-			'tag' => 'span',
-			'action' => '/replies/reply',
-			'text' => '',
-			'options' => [
-				'class' => 'btn btn-success',
-				'role' => 'replyToFormMessage',
-				'id' => 'reply-to-form-message',
-				'title' => 'Reply',
-				'type' => 'submit'
-			],
-			'tagOptions' => [
-				'class' => 'glyphicon glyphicon-envelope',
-				'style' => 'font-size: 16px'
-			]
-		],
-	];
-	
 	public function init()
 	{
 		switch(1)
@@ -114,7 +77,8 @@ class RepliesForm extends BaseWidget
 	public function getActions($hidden=false)
 	{
 		$ret_val = '';
-		foreach($this->_actions as $type=>$action)
+		$actions = array_merge($this->defaultActions(), $this->actions);
+		foreach($actions as $type=>$action)
 		{
 			switch($type)
 			{
@@ -144,6 +108,43 @@ class RepliesForm extends BaseWidget
 				"style" => "padding-right: 15px"
 			]
 		);
+	}
+	
+	private function defaultActions()
+	{
+		return [
+			'reset' => [
+				'tag' => 'span',
+				'text' => '',
+				'options' => [
+					'class' => 'btn btn-default',
+					'role' => 'resetForm',
+					'id' => 'reset-form',
+					'title' => 'Reset this form',
+					'type' => 'reset'
+				],
+				'tagOptions' => [
+					'class' => 'glyphicon glyphicon-refresh',
+					'style' => 'font-size: 16px'
+				]
+			],
+			'submit' => [
+				'tag' => 'span',
+				'action' => '/replies/reply',
+				'text' => '',
+				'options' => [
+					'class' => 'btn btn-success',
+					'role' => 'replyToFormMessage',
+					'id' => 'reply-to-form-message',
+					'title' => 'Reply',
+					'type' => 'submit'
+				],
+				'tagOptions' => [
+					'class' => 'glyphicon glyphicon-envelope',
+					'style' => 'font-size: 16px'
+				]
+			],
+		];
 	}
 }
 ?>

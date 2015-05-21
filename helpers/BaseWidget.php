@@ -40,7 +40,7 @@ class BaseWidget extends Widget
 	/**
 	 * The actions to enable
 	 */
-	public $actions;
+	public $actions = [];
 	
 	/*
 	 * The number of replies to get on each select query
@@ -78,7 +78,6 @@ class BaseWidget extends Widget
 	
 	public function init()
 	{
-		$this->uniqid = isset($this->uniqid) ? $this->uniqid : uniqid();
 		switch(empty($this->parentType) && !is_null($this->model))
 		{
 			/**
@@ -96,6 +95,11 @@ class BaseWidget extends Widget
 			}
 			break;
 		}
+		if(!isset($this->uniqid))
+			if(isset($this->parentType) && isset($this->parentId))
+				$this->uniqid = '-'.$this->parentType.$this->parentId;
+			else
+				$this->uniqid = uniqid();
 	}
 	
 	protected function getInfoLink($type=null)

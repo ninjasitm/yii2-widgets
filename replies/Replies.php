@@ -29,58 +29,6 @@ class Replies extends BaseWidget
 		'data-parent' => 'replyFormParent'
 	];
 	
-	/**
-	 * \commond\models\Reply $reply
-	 */
-	public $reply;
-	
-	/**
-	 * The actions that are supported
-	 */
-	private $_actions = [
-		'reply' => [
-			'tag' => 'span',
-			'action' => '/reply/to',
-			'text' => 'reply',
-			'options' => [
-				'class' => '',
-				'role' => 'replyTo',
-				'id' => 'reply_to_message',
-				'title' => 'Reply to this message'
-			]
-		],
-		'quote' => [
-			'tag' => 'span',
-			'action' => '/reply/quote',
-			'text' => 'quote',
-			'options' => [
-				'class' => '',
-				'role' => 'quoteReply',
-				'id' => 'quote_message',
-				'title' => 'Quote this message'
-			]
-		],
-		'hide' => [
-			'tag' => 'span',
-			'action' => '/reply/hide',
-			'text' => '',
-			'options' => [
-				'class' => '',
-				'role' => 'hideReply',
-				'id' => 'hide_message',
-				'title' => 'Hide this message'
-			],
-			'adminOnly' => true
-		],
-	];
-	
-	private $_options = [
-		'role' => 'entityMessages',
-		'id' => 'messages',
-		'data-parent' => 'replyFormParent',
-		'class' => 'messages'
-	];
-	
 	public function init()
 	{
 		switch(1)
@@ -94,17 +42,13 @@ class Replies extends BaseWidget
 			break;
 		}
 		parent::init();
-		$this->options = array_merge($this->_options, $this->options);
-		$this->uniqid = '-'.$this->parentType.$this->parentId;
+		$this->options = array_merge($this->defaultOptions(), $this->options);
 		$this->options['id'] .= $this->uniqid;
 		Asset::register($this->getView());
 	}
 	
 	public function run()
 	{
-		$searchModel = new RepliesSearch([
-			'withThese' => ['author', 'replyTo']
-		]);
 		$dataProvider = null;
 		switch(isset($this->items) && is_array($this->items))
 		{
@@ -116,28 +60,17 @@ class Replies extends BaseWidget
 			switch(($this->model instanceof RepliesModel))
 			{
 				case true:
-				switch(empty($this->parentId))
-				{
-					/**
-					 * This issue model was initialed through a model
-					 * We need to set the parentId and parentType from the constraints values
-					 */
-					case true:
-					//$this->parentId = $this->model->constraints['parent_id'];
-					//$this->parentType = $this->model->constrain['parent_type'];
-					break;
-				}
 				$get = \Yii::$app->request->getQueryParams();
 				$params = array_merge($get, $this->model->getConstraints());
 				unset($params['type']);
 				unset($params['id']);
 			
-				switch(\Yii::$app->user->identity->isAdmin())
-				{
-					case false:
-					$params['hidden'] = 0;
-					break;
-				}
+				if(!\Yii::$app->user->identity->isAdmin())
+					$params['hidden'] = false;
+				
+				$searchModel = new RepliesSearch([
+					'withThese' => ['author', 'replyTo', 'count', 'last']
+				]);
 				
 				$dataProvider = $searchModel->search($params);
 				$dataProvider->setSort([
@@ -161,7 +94,7 @@ class Replies extends BaseWidget
 			$this->formOptions = array_merge($defaultOptions, $this->formOptions);
 			$viewOptions = array_merge($defaultOptions, [
 				'dataProvider' => $dataProvider,
-				'searchModel' => $searchModel,
+				//'searchModel' => $searchModel,
 				'widget' => $this,
 			]);
 			$replies = $this->getView()->render('@nitm/widgets/views/replies/index', $viewOptions);
@@ -173,6 +106,56 @@ class Replies extends BaseWidget
 			break;
 		}
 		return $replies;
+	}
+	
+	private function defaultOptions()
+	{
+		return  [
+			'role' => 'entityMessages',
+			'id' => 'messages',
+			'data-parent' => 'replyFormParent',
+			'class' => 'messages'
+		];
+	}
+	
+	private function defaultActions()
+	{
+		return [
+			'reply' => [
+				'tag' => 'span',
+				'action' => '/reply/to',
+				'text' => 'reply',
+				'options' => [
+					'class' => '',
+					'role' => 'replyTo',
+					'id' => 'reply_to_message',
+					'title' => 'Reply to this message'
+				]
+			],
+			'quote' => [
+				'tag' => 'span',
+				'action' => '/reply/quote',
+				'text' => 'quote',
+				'options' => [
+					'class' => '',
+					'role' => 'quoteReply',
+					'id' => 'quote_message',
+					'title' => 'Quote this message'
+				]
+			],
+			'hide' => [
+				'tag' => 'span',
+				'action' => '/reply/hide',
+				'text' => '',
+				'options' => [
+					'class' => '',
+					'role' => 'hideReply',
+					'id' => 'hide_message',
+					'title' => 'Hide this message'
+				],
+				'adminOnly' => true
+			],
+		];
 	}
 }
 ?>

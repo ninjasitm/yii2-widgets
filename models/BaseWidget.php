@@ -23,8 +23,6 @@ class BaseWidget extends \nitm\models\Data implements DataInterface
 {
 	use \nitm\traits\Nitm, \nitm\widgets\traits\BaseWidget, \nitm\filemanager\traits\Relations;
 	
-	protected static $userLastActive;
-	
 	public function init()
 	{
 		$this->setConstraints($this->constrain);
@@ -63,25 +61,6 @@ class BaseWidget extends \nitm\models\Data implements DataInterface
 			'deleted' => null,
 		];
 		return array_merge(parent::has(), $has);
-	}
-	
-	public function currentUser()
-	{
-		if(\Yii::$app instanceof \yii\console\Application)
-			return new \nitm\models\User(['username' => 'console']);
-			
-		if(\Yii::$app->getUser()->getIsGuest()) {
-			return \nitm\helpers\Cache::getCachedModel($this, 
-				'currentUser', 
-				\Yii::$app->getUser()->identityClass, 
-				null, 
-				[
-					'id' => 1
-				]);
-		}
-		else {
-			return \Yii::$app->getUser()->getIdentity();
-		}
 	}
 }
 ?>

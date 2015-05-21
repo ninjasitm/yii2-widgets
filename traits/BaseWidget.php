@@ -34,6 +34,8 @@ trait BaseWidget {
 		'parent_type' => [1, 'type', 'parent_type'],
 	];
 	
+	protected static $userLastActive;
+	
 	private static $_dateFormat = "D M d Y h:iA";
 	
 	/**
@@ -51,7 +53,7 @@ trait BaseWidget {
 					$this->constraints[$attribute] = $this->$attribute;
 				}
 			}
-			$this->queryFilters = array_merge($this->queryFilters, $this->constraints);
+			$this->queryFilters = $this->constraints;
 			break;
 		}
 		return $this->constraints;
@@ -178,16 +180,14 @@ trait BaseWidget {
 		return $this->hasProperty('fetchedValue') && isset($this->fetchedValue) ? $this->fetchedValue->_value : 0;
 	}
 	
-	/*
-	 * Check for new data by last activity of logged in user
-	 * @return mixed user array
-	 */
 	public function hasNew()
 	{
-		return $this->newCount instanceof static ? $this->newCount->_new : 0;
+		return \nitm\helpers\Relations::getRelatedRecord('newCount', $this, static::className(), [
+			'_new' => 0
+		])->_new;
 	}
 	
-	protected function getNewCount()
+	public function getNewCount()
 	{
 		$primaryKey = $this->primaryKey()[0];
 		$ret_val = $this->hasOne(static::className(), $this->link);
@@ -195,8 +195,7 @@ trait BaseWidget {
 		$ret_val->select([
 				'_new' => 'COUNT('.$primaryKey.')'
 			])
-			->andWhere($andWhere)
-			->andWhere($this->getConstraints());
+			->andWhere($andWhere);
 		static::currentUser()->updateActivity();
 		return $ret_val;
 	}
@@ -231,6 +230,25 @@ trait BaseWidget {
 			->orderBy([array_shift($this->primaryKey()) => SORT_DESC])
 			->with('author');
 		return $ret_val;
+	}
+	
+	public function currentUser()
+	{
+		if(\Yii::$app instanceof \yii\console\Application)
+			return new \nitm\models\User(['username' => 'console']);
+			
+		if(\Yii::$app->getUser()->getIsGuest()) {
+			return \nitm\helpers\Cache::getCachedModel($this, 
+				'currentUser', 
+				\Yii::$app->getUser()->identityClass, 
+				null, 
+				[
+					'id' => 1
+				]);
+		}
+		else {
+			return \Yii::$app->getUser()->getIdentity();
+		}
 	}
 	 
 	protected function populateMetadata()
