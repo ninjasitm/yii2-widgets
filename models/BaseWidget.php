@@ -19,9 +19,14 @@ use nitm\helpers\Cache;
  *
  */
 
-class BaseWidget extends \nitm\models\Data implements DataInterface
+class BaseWidget extends \nitm\models\Entity
 {
-	use \nitm\traits\Nitm, \nitm\widgets\traits\BaseWidget, \nitm\filemanager\traits\Relations;
+	use \nitm\widgets\traits\BaseWidget, \nitm\filemanager\traits\Relations;
+	
+	protected $link = [
+		'parent_type' => 'parent_type',
+		'parent_id' => 'parent_id'
+	];
 	
 	public function init()
 	{
@@ -33,23 +38,6 @@ class BaseWidget extends \nitm\models\Data implements DataInterface
 		
 		if(is_object(static::currentUser()))
 			static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive));
-	}
-	
-	public function beforeSaveEvent($event)
-	{
-		static::prepareAlerts($event);
-	}
-	
-	public function afterSaveEvent($event)
-	{
-	}
-	
-	public function scenarios()
-	{
-		$scenarios = [
-			'count' => ['parent_id', 'parent_type'],
-		];
-		return array_merge(parent::scenarios(), $scenarios);
 	}
 	
 	public static function has()

@@ -24,10 +24,6 @@ trait BaseWidget {
 		'critical' => 'error'
 	];
 	
-	protected $link = [
-		'parent_type' => 'parent_type',
-		'parent_id' => 'parent_id'
-	];
 	protected $_new; 
 	protected $_supportedConstraints =  [
 		'parent_id' => [0, 'id', 'parent_id'],
@@ -37,6 +33,14 @@ trait BaseWidget {
 	protected static $userLastActive;
 	
 	private static $_dateFormat = "D M d Y h:iA";
+	
+	public function scenarios()
+	{
+		$scenarios = [
+			'count' => ['parent_id', 'parent_type'],
+		];
+		return array_merge(parent::scenarios(), $scenarios);
+	}
 	
 	/**
 	 * Get the constraints for a widget model

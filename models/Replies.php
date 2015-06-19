@@ -192,17 +192,9 @@ class Replies extends BaseWidget
 		return $ret_val;
 	}
 	
-	public function afterSaveEvent($event)
-	{
-		$event->data['variables'] = array_merge((array)$event->data['variables'], [
-			'%id%' => $event->sender->getId(),
-			"%viewLink%" => \yii\helpers\Html::a(\Yii::$app->urlManager->createAbsoluteUrl($event->sender->parent_type."/view/".$event->sender->parent_id), \Yii::$app->urlManager->createAbsoluteUrl($event->sender->parent_type."/view/".$event->sender->parent_id))
-		]);
-	}
-	
 	public function getAlertOptions($event)
 	{
-		$message = [];
+		$message = parent::getAlertOptions($event);
 		$type = $event->sender->isWhat();;
 		switch($event->sender->getScenario())
 		{
@@ -210,64 +202,47 @@ class Replies extends BaseWidget
 			switch($event->sender->parent_type)
 			{
 				case 'chat':
-				switch(empty($event->sender->reply_to))
-				{
-					case false:
+				if(!empty($event->sender->reply_to))
 					$text = " %who% to @".$event->sender->getReplyTo()->one()->author()->username.": ".$event->sender->message;
-					break;
-					
-					default:
+				else
 					$text = $event->sender->message;
-					break;
-				}
-				$message = [
+					
+				$message = array_merge($message, [
 					'subject' => "%who% posted a %priority% chat message",
 					'message' => [
 						'email' => $text,
 						'mobile' => "(%priority%)".$text,
 					]
-				];
+				]);
 				break;
 				
 				default:
-				$message = [
+				$message = array_merge($message, [
 					'subject' => "%who% replied to %subjectDt% %priority% %remoteFor%, with id: %id%, on %when%",
 					'message' => [
 						'email' => "%who% replied to %subjectDt% %priority% %remoteFor%, with id: %id%, was %action% to by %who%. %who% said:\n\t".$event->sender->message,
 						'mobile' => "%who% %action% to %subjectDt% %remoteFor% with id %id%: ".$event->sender->message,
 					]
-				];
+				]);
 				break;
 			}
 			break;
 		}
 		if(!empty($message) && $event->sender->getId())
 		{
-			$$event->data['criteria'] = [
-				[
-					'remote_type',
-					'remote_for',
-					'remote_id',
-					'action',
-					'priority'
-				], [
-					$type,
-					$event->sender->parent_type,
-					$event->sender->parent_id,
-					($event->sender->reply_to != null ? 'reply' : 'create'),
-					$event->sender->priority
-				]
-			];
-			switch($event->sender->reply_to != null)
-			{
-				case true:
+			$event->data['criteria'] = array_merge($message['criteria'], [
+				'remote_type' => $type,
+				'remote_for' => $event->sender->parent_type,
+				'remote_id' => $event->sender->parent_id,
+				'action' => ($event->sender->reply_to != null ? 'reply' : 'create'),
+				'priority' => $event->sender->priority
+			]);
+			
+			if($event->sender->reply_to != null)
 				$event->data['reportedAction'] = 'replied';
-				break;
-				
-				default:
+			else
 				$event->data['reportedAction'] = 'create';
-				break;
-			}
+				
 			$message['owner_id'] = $event->sender->hasAttribute('author_id') ? $event->sender->author_id : null;
 		}
 		return $message;

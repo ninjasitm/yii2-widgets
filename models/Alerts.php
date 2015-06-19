@@ -22,171 +22,19 @@ use nitm\models\User;
  *
  * @property User $user
  */
-class Alerts extends BaseWidget
+class Alerts extends \nitm\models\Alerts
 {
-	public static $usersWhere = [];
-	public $requiredFor;
-	
-	protected $link = [
-		'remote_type' => 'remote_type',
-		'remote_id' => 'remote_id'
-	];
+	use \nitm\widgets\traits\BaseWidget, \nitm\filemanager\traits\Relations;
 	
 	public function init()
 	{
+		$this->setConstraints($this->constrain);
 		parent::init();
-		$this->initEvents();
-	}
-	
-	protected function initEvents()
-	{
-		Event::on(ActiveRecord::className(), ActiveRecord::EVENT_BEFORE_VALIDATE, [$this, 'beforeValidateEvent']);
-	}
-	
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return 'alerts';
-    }
-	
-    public function behaviors()
-    {
-		$behaviors = [
-			'blamable' => [
-				'class' => \yii\behaviors\BlameableBehavior::className(),
-					'attributes' => [
-						ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
-					],
-			]
-		];
-		return array_merge(parent::behaviors(), $behaviors);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['action', 'remote_type'], 'required', 'on' => ['create', 'update']],
-            [['remote_id', 'user_id', 'global', 'disabled'], 'integer'],
-            [['created_at', 'remote_for'], 'safe'],
-            [['action'], 'unique', 'targetAttribute' => ['remote_id', 'remote_type', 'user_id', 'action', 'priority', 'methods'], 'message' => 'This exact alert is already configured for you.', 'on' => ['create']],
-			[['remote_for'], 'validateRemoteFor'],
-			[['methods'], 'filter', 'filter' => [$this, 'filterMethods']],
-			[['priority'], 'filter', 'filter' => [$this, 'filterPriority']]
-        ];
-    }
-	
-	public function scenarios()
-	{
-		$scenarios = [
-			'create' => ['remote_id', 'remote_type', 'remote_for', 'action', 'priority', 'methods'],
-			'update' => ['remote_type', 'remote_for', 'action', 'priority', 'methods']
-		];
-		return array_merge(parent::scenarios(), $scenarios);
-	}
-	
-	public function filterMethods($value)
-	{
-		return \nitm\helpers\alerts\DispatcherData::filterMethods($value);
-	}
-	
-	public function filterPriority($value)
-	{
-		switch($value)
-		{
-			case 'important':
-			case 'critical':
-			case 'normal':
-			$ret_val = $value;
-			break;
-			
-			default:
-			$ret_val = 'any';
-			break;
-		}
-		return $ret_val;
-	}
-	
-	/**
-	* This method is invoked before validation starts.
-	*/
-	public function beforeValidateEvent($event)
-	{
-		if($event->sender instanceof static)
-		{
-			$event->sender->user_id = \Yii::$app->user->getId();
-			$event->sender->priority = $this->filterPriority($event->sender->priority);
-		}
-		return $event->isValid;
-	}
-	
-	public function validateRemoteFor($attribute, $params)
-	{
-		$ret_val = '';
-		switch(1)
-		{
-			case isset($this->requiredFor[$this->remote_type]):
-			switch(1)
-			{
-				case in_array($this->$attribute, $this->requiredFor[$this->remote_type]):
-				break;
-				
-				default:
-				$ret_val = [];
-				$ret_val['message'] = "Option requred for ".$this->remote_type;
-				$ret_val['attribute'] = $this->getAttributeLabel($attribute);
-				$ret_val = 'yii.validation.required(value, messages, '.json_encode($ret_val).');';
-				break;
-			}
-			break;
-		}
-		return $ret_val;
-	}
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => Yii::t('app', 'ID'),
-            'remote_id' => Yii::t('app', 'Remote ID'),
-            'remote_type' => Yii::t('app', 'Remote Type'),
-            'user_id' => Yii::t('app', 'User ID'),
-            'action' => Yii::t('app', 'Action'),
-            'global' => Yii::t('app', 'Global'),
-            'disabled' => Yii::t('app', 'Disabled'),
-            'created_at' => Yii::t('app', 'Created At'),
-        ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUser()
-    {
-        return $this->hasOne(User::className(), ['id' => 'user_id'])->where(static::$usersWhere)->with('profile');
-    }
-	public function getPriority()
-	{
-		switch($this->priority)
-		{
-			case 'critical':
-			$ret_val = 'error';
-			break;
-			
-			case 'important':
-			$ret_val = 'info';
-			break;
-			
-			default:
-			$ret_val = 'default';
-			break;
-		}
-		return $ret_val;
+		$this->addWith(['author']);
+		if($this->initSearchClass)
+			//static::initCache($this->constrain, self::cacheKey($this->getId()));
+		
+		if(is_object(static::currentUser()))
+			static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive));
 	}
 }
