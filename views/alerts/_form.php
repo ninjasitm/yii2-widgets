@@ -24,6 +24,7 @@ $formOptions = array_replace_recursive($formOptions, [
 		"role" => "ajaxForm"
 	],
 ]);
+
 ?>
 
 <div id="<?= $model->isWhat()?>_form_container" class="row">
@@ -31,7 +32,7 @@ $formOptions = array_replace_recursive($formOptions, [
     <?php $form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php")); ?>
 	<?=
 		$form->field($model, 'action')->widget(Select2::className(), [
-			'data' => $model::setting('actions'),
+			'data' => $model->setting('actions'),
 			'options' => ['id' => 'alert-action'.$uniqid, 'placeholder' => 'Alert me when someone...', "allowClear" => true]
 		])->label("Action");
 	?>    
@@ -86,7 +87,7 @@ $formOptions = array_replace_recursive($formOptions, [
 	<?=
 		$form->field($model, 'methods')->widget(Select2::className(), [
 			'value' => explode(',', $model->methods),
-			'options' => ['id' => 'alert-methods'.$uniqid, 'placeholder' => ' alert me using'],
+			'options' => ['id' => 'alert-methods'.$uniqid, 'placeholder' => ' then alert me using'],
 			'data' => \nitm\helpers\alerts\DispatcherData::supportedMethods(),
 			
 		])->label("Priority");

@@ -297,7 +297,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 			{
 				case 'issue':
 				case 'replies':
-				$types = (array)Alerts::setting('for');
+				$types = (array)$this->model->setting('for');
 				$ret_val = [
 					"output" => array_map(function ($key, $value) {
 						return [
@@ -307,11 +307,11 @@ class AlertsController extends \nitm\controllers\DefaultController
 					}, array_keys($types), array_values($types)), 
 					"selected" => 0
 				];
-				//array_unshift($ret_val['output'], ['id' => 0, 'name' => "choose one..."]);
+				array_unshift($ret_val['output'], ['id' => 0, 'name' => " for one of the following "]);
 				break;
 				
 				default:
-				$ret_val = ["output" => [['id' => 'any', 'name' => "ignore this"]], "selected" => 'any'];
+				$ret_val = ["output" => [['id' => 'any', 'name' => "then ignore what its for"]], "selected" => 'any'];
 				break;
 			}
 			break;	
@@ -319,9 +319,9 @@ class AlertsController extends \nitm\controllers\DefaultController
 			case 'priority':
 			switch(1)
 			{
-				case in_array($dependsOn, (array)Alerts::setting('priority_allowed')):
+				case in_array($dependsOn, (array)array_keys($this->model->setting('priority_allowed'))):
 				case $dependsOn == 'chat':
-				$types = Alerts::setting('priorities');
+				$types = $this->model->setting('priorities');
 				$ret_val = [
 					"output" => array_map(function ($key, $value) {
 						return [
@@ -331,10 +331,11 @@ class AlertsController extends \nitm\controllers\DefaultController
 					}, array_keys($types), array_values($types)), 
 					"selected" => ''
 				];
+				array_unshift($ret_val['output'], ['id' => 0, 'name' => " but if the priority is "]);
 				break;
 				
 				default:
-				$ret_val = ["output" => [['id' => 'any', 'name' => "Ignore priority"]], "selected" => "any"];
+				$ret_val = ["output" => [['id' => 'any', 'name' => "and ignore the priority"]], "selected" => "any"];
 				break;
 			}
 			break;
@@ -342,15 +343,22 @@ class AlertsController extends \nitm\controllers\DefaultController
 			case 'types':
 			switch($dependsOn)
 			{
+				case 'any':
 				case 'create':
 				case 'update':
+				case 'i_create':
+				case 'i_update':
+				case 'complete':
+				case 'resolve':
 				case 'update_my':
-				$types = (array)Alerts::setting('allowed');
+				case 'resolve_my':
+				case 'complete_my':
+				$types = (array)$this->model->setting('allowed');
 				break;
 				
 				case 'reply_my':
 				case 'reply':
-				$types =(array) Alerts::setting('reply_allowed');
+				$types =(array) $this->model->setting('reply_allowed');
 				$types['chat'] = 'Chat';
 				break;
 			
