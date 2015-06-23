@@ -28,7 +28,7 @@ use nitm\helpers\Icon;
 	<div class="col-md-2 col-lg-2">
 		alert me using <b><?= $model->methods; ?></b>
 	</div>
-	<div class="col-md-1 col-lg-1">
+	<div class="col-md-2 col-lg-2">
 		<?= \nitm\widgets\modal\Modal::widget([
 				'size' => 'large',
 				'toggleButton' => [

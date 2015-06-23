@@ -33,7 +33,12 @@ $formOptions = array_replace_recursive($formOptions, [
 	<?=
 		$form->field($model, 'action')->widget(Select2::className(), [
 			'data' => $model->setting('actions'),
-			'options' => ['id' => 'alert-action'.$uniqid, 'placeholder' => 'Alert me when someone...', "allowClear" => true]
+			'theme' => Select2::THEME_KRAJEE,
+			'options' => [
+				'id' => 'alert-action'.$uniqid, 
+				'placeholder' => 'Alert me...', 
+				"allowClear" => true,
+			]
 		])->label("Action");
 	?>    
 	<?=
@@ -45,11 +50,15 @@ $formOptions = array_replace_recursive($formOptions, [
 				'id' => 'alert-type'.$uniqid
 			],
 			'type' => DepDrop::TYPE_SELECT2,
-			'select2Options'=>['id' => 'alert-remote-type'.$uniqid, 'pluginOptions'=>['allowClear'=>true]],
+			'select2Options'=>[
+				'id' => 'alert-remote-type'.$uniqid, 
+				'pluginOptions'=>['allowClear'=>true]
+			],
 			'pluginOptions'=>[
 				'depends'=>['alert-action'.$uniqid],
 				'url' => Url::to(['/alerts/list/types']),
 				'loadingText' => '...',
+				'placeholder' => ' type of '
 			]
 		])->label("Remote Type");
 	?>    
@@ -67,6 +76,7 @@ $formOptions = array_replace_recursive($formOptions, [
 				'depends'=>['alert-type'.$uniqid],
 				'url' => Url::to(['/alerts/list/for']),
 				'loadingText' => '...',
+				'placeholder' => ' and it\'s for a/an '
 			]
 		])->label("Remote For");
 	?>
@@ -74,13 +84,14 @@ $formOptions = array_replace_recursive($formOptions, [
 		$form->field($model, 'priority')->widget(DepDrop::className(), [
 			'value' => $model->priority,
 			'data' => [$model->priority => $model->properName($model->priority)],
-			'options' => ['placeholder' => 'that has a priority of ', 'id' => 'priority'.$uniqid],
+			'options' => ['placeholder' => ' and it if has a priority of ', 'id' => 'priority'.$uniqid],
 			'type' => DepDrop::TYPE_SELECT2,
 			'select2Options'=>['id' => 'alert-priority'.$uniqid, 'pluginOptions'=>['allowClear'=>true]],
 			'pluginOptions'=>[
 				'depends'=>['alert-type'.$uniqid],
 				'url' => Url::to(['/alerts/list/priority']),
 				'loadingText' => '...',
+				'placeholder' => ' and has a proiority of '
 			]
 		])->label("Priority");
 	?>
