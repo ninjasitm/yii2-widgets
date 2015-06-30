@@ -83,7 +83,7 @@ class RequestController extends \nitm\controllers\DefaultController
 	public function actionSearch()
 	{
 		return parent::actionSearch([
-			'withThese' => [
+			'queryOptions['with']' => [
 				'author', 'type', 'requestFor', 
 				'completedBy', 'closedBy', 'replyModel', 
 				'issueModel', 'revisionModel', 'voteModel'
@@ -123,7 +123,7 @@ class RequestController extends \nitm\controllers\DefaultController
 	{
 		$options = [
 			'modelOptions' => [
-				'withThese' => ['type', 'requestFor']
+				'queryOptions['with']' => ['type', 'requestFor']
 			]
 		];
 		return parent::actionForm($type, $id, $options);

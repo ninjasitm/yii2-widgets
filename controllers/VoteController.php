@@ -49,10 +49,10 @@ class VoteController extends \nitm\controllers\DefaultController
     {
 		$ret_val = ['success' => false, 'value' => null, 'id' => $id];
 		$existing = new Vote();
-		$existing->queryFilters['author_id'] = \Yii::$app->user->getId();
-		$existing->queryFilters['parent_type'] = $type;
-		$existing->queryFilters['parent_id'] = $id;
-		$vote = $existing->find()->where($existing->queryFilters)->one();
+		$existing->queryOptions['author_id'] = \Yii::$app->user->getId();
+		$existing->queryOptions['parent_type'] = $type;
+		$existing->queryOptions['parent_id'] = $id;
+		$vote = $existing->find()->where($existing->queryOptions)->one();
 		switch($vote instanceof Vote)
 		{
 			case false:
@@ -71,7 +71,7 @@ class VoteController extends \nitm\controllers\DefaultController
 		}
 		$vote->value = Vote::$allowMultiple ? $vote->value-1 : -1;
 		$ret_val['success'] = $vote->save();
-		unset($existing->queryFilters['author_id']);
+		unset($existing->queryOptions['author_id']);
 		$ret_val['value'] = $vote->rating();
 		$ret_val['atMax'] = Vote::$allowMultiple ? false : ($vote->value == 1);
 		$ret_val['atMin'] = Vote::$allowMultiple ? false : ($vote->value == -1);
@@ -89,10 +89,10 @@ class VoteController extends \nitm\controllers\DefaultController
     {
 		$ret_val = ['success' => false, 'value' => null, 'id' => $id];
 		$existing = new Vote();
-		$existing->queryFilters['author_id'] = \Yii::$app->user->getId();
-		$existing->queryFilters['parent_type'] = $type;
-		$existing->queryFilters['parent_id'] = $id;
-		$vote = $existing->find()->where($existing->queryFilters)->one();
+		$existing->queryOptions['author_id'] = \Yii::$app->user->getId();
+		$existing->queryOptions['parent_type'] = $type;
+		$existing->queryOptions['parent_id'] = $id;
+		$vote = $existing->find()->where($existing->queryOptions)->one();
 		switch($vote instanceof Vote)
 		{
 			case false:
@@ -113,7 +113,7 @@ class VoteController extends \nitm\controllers\DefaultController
 			break;
 		}
 		$ret_val['success'] = $vote->save();
-		unset($existing->queryFilters['author_id']);
+		unset($existing->queryOptions['author_id']);
 		$ret_val['value'] = $vote->rating();
 		$ret_val['atMax'] = Vote::$allowMultiple ? false : ($vote->value == 1);
 		$ret_val['atMin'] = Vote::$allowMultiple ? false : ($vote->value == -1);

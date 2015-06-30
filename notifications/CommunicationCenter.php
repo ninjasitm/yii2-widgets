@@ -52,7 +52,7 @@ class CommunicationCenter extends \yii\base\Widget
 			'constrain' => [
 				'user_id' => \Yii::$app->user->getId()
 			],
-			'queryFilters' => [
+			'queryOptions' => [
 				'read' => 0
 			]
 		]);

@@ -74,8 +74,8 @@ class ChatMessages extends Replies
 				break;
 			}
 			$searchModel = new RepliesSearch;
-			$this->model->withThese[] = 'replyTo';
-			$searchModel->addWith($this->model->withThese);
+			$this->model->queryOptions['with'][] = 'replyTo';
+			$searchModel->addWith($this->model->queryOptions['with']);
 			$get = \Yii::$app->request->getQueryParams();
 			$params = array_merge($get, $this->model->constraints);
 			unset($params['type']);

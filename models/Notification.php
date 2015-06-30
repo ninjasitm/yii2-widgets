@@ -25,7 +25,7 @@ class Notification extends BaseWidget
 		$this->_supportedConstraints['read'] = ['read'];
 		$this->_supportedConstraints['user_id'] = [2, 'user_id'];
 		parent::init();
-		$this->withThese = ['user'];
+		$this->queryOptions['with'] = ['user'];
 	}
 	
     /**

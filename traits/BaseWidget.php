@@ -57,7 +57,7 @@ trait BaseWidget {
 					$this->constraints[$attribute] = $this->$attribute;
 				}
 			}
-			$this->queryFilters = $this->constraints;
+			$this->queryOptions = $this->constraints;
 			break;
 		}
 		return $this->constraints;
@@ -88,7 +88,7 @@ trait BaseWidget {
 				}
 			}
 		}
-		$this->queryFilters = array_replace($this->queryFilters, $this->constraints);
+		$this->queryOptions = array_replace($this->queryOptions, $this->constraints);
 	}
 	
 	/**
@@ -100,14 +100,14 @@ trait BaseWidget {
 		$model->setConstraints($constrain);
 		$model->addWith([
 			'last' => function ($query) {
-				$query->andWhere($model->queryFilters);
+				$query->andWhere($model->queryOptions);
 			}
 		]);
 		$ret_val = $model->find()->one();
 		switch(is_a($ret_val, static::className()))
 		{
 			case true:
-			$ret_val->queryFilters = $model->queryFilters;
+			$ret_val->queryOptions = $model->queryOptions;
 			$ret_val->constraints = $model->constraints;
 			//$ret_val->populateMetadata();
 			break;
@@ -127,10 +127,10 @@ trait BaseWidget {
 	 {
 		$primaryKey = $this->primaryKey()[0];
 		$ret_val = parent::getCount($this->link);
-		switch(isset($this->queryFilters['value']))
+		switch(isset($this->queryOptions['value']))
 		{
 			case true:
-			switch($this->queryFilters['value'])
+			switch($this->queryOptions['value'])
 			{
 				case -1:
 				$andWhere = ['<=', 'value',  0];
@@ -140,7 +140,7 @@ trait BaseWidget {
 				$andWhere = ['>=', 'value', 1];
 				break;
 			}
-			unset($this->queryFilters['value']);
+			unset($this->queryOptions['value']);
 			$ret_val->andWhere($andWhere);
 			break;
 		}
@@ -155,8 +155,8 @@ trait BaseWidget {
     {
 		$primaryKey = $this->primaryKey()[0];
 		$ret_val = $this->hasOne(static::className(), $this->link);
-		$valueFilter = @$this->queryFilters['value'];
-		unset($this->queryFilters['value']);
+		$valueFilter = @$this->queryOptions['value'];
+		unset($this->queryOptions['value']);
 		switch(static::$allowMultiple)
 		{
 			case true:
@@ -173,7 +173,7 @@ trait BaseWidget {
 			];
 			break;
 		}
-		$filters = $this->queryFilters;
+		$filters = $this->queryOptions;
 		unset($filters['parent_id'], $filters['parent_type']);
 		return $ret_val->select($select)
 			->andWhere($filters);

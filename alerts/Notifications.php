@@ -41,7 +41,7 @@ class Notifications extends \yii\base\Widget
 		{
 			case true:
 			$searchModel = new NotificationSearch;
-			$searchModel->withThese = ['user'];
+			$searchModel->queryOptions['with'] = ['user'];
 			$get = \Yii::$app->request->getQueryParams();
 			$params = $get;
 			unset($params['type'], $params['id']);

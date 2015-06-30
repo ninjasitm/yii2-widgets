@@ -37,10 +37,10 @@ class RatingController extends \nitm\controllers\DefaultController
     {
 		$ret_val = false;
 		$existing = new Rating();
-		$existing->queryFilters['user_id'] = \Yii::$app->user->getId();
-		$existing->queryFilters['remote_type'] = $type;
-		$existing->queryFilters['remote_id'] = $id;
-		switch($existing->find()->where($existing->queryFilters)->exists())
+		$existing->queryOptions['user_id'] = \Yii::$app->user->getId();
+		$existing->queryOptions['remote_type'] = $type;
+		$existing->queryOptions['remote_id'] = $id;
+		switch($existing->find()->where($existing->queryOptions)->exists())
 		{
 			case false:
 			$model = new Rating(['remote_type' => $type, 'remote_id' => $id]);
@@ -50,8 +50,8 @@ class RatingController extends \nitm\controllers\DefaultController
 			
 			default:
 			$existing = new Rating();
-			$existing->queryFilters['remote_type'] = $type;
-			$existing->queryFilters['remote_id'] = $id;
+			$existing->queryOptions['remote_type'] = $type;
+			$existing->queryOptions['remote_id'] = $id;
 			$count = $existing->getCount();
 			switch(1)
 			{
@@ -68,9 +68,9 @@ class RatingController extends \nitm\controllers\DefaultController
     {
 		$ret_val = false;
 		$existing = new Rating();
-		$existing->queryFilters['user_id'] = \Yii::$app->user->getId();
-		$existing->queryFilters['remote_type'] = $type;
-		$existing->queryFilters['remote_id'] = $id;
+		$existing->queryOptions['user_id'] = \Yii::$app->user->getId();
+		$existing->queryOptions['remote_type'] = $type;
+		$existing->queryOptions['remote_id'] = $id;
 		switch($existing->exists())
 		{
 			case false:
@@ -80,8 +80,8 @@ class RatingController extends \nitm\controllers\DefaultController
 			
 			default:
 			$existing = new Rating();
-			$existing->queryFilters['remote_type'] = $type;
-			$existing->queryFilters['remote_id'] = $id;
+			$existing->queryOptions['remote_type'] = $type;
+			$existing->queryOptions['remote_id'] = $id;
 			$count = $existing->getCount();
 			switch(1)
 			{

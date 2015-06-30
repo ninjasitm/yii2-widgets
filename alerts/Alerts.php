@@ -50,7 +50,7 @@ class Alerts extends \yii\base\Widget
 		{
 			case true:
 			$searchModel = new AlertsSearch;
-			$searchModel->withThese = ['user'];
+			$searchModel->queryOptions['with'] = ['user'];
 			$get = \Yii::$app->request->getQueryParams();
 			$params = $get;
 			unset($params['type'], $params['id']);

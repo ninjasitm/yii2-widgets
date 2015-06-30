@@ -69,7 +69,7 @@ class Replies extends BaseWidget
 					$params['hidden'] = false;
 				
 				$searchModel = new RepliesSearch([
-					'withThese' => ['author', 'replyTo', 'count', 'last']
+					'queryOptions['with']' => ['author', 'replyTo', 'count', 'last']
 				]);
 				
 				$dataProvider = $searchModel->search($params);

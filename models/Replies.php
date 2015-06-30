@@ -41,7 +41,7 @@ class Replies extends BaseWidget
 		switch(isset(\Yii::$app->user) && \Yii::$app->user->identity->isAdmin())
 		{
 			case false:
-			$this->queryFilters['hidden'] = 0;
+			$this->queryOptions['hidden'] = 0;
 			break;
 		}
 	}
