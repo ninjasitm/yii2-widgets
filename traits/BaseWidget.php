@@ -88,7 +88,7 @@ trait BaseWidget {
 				}
 			}
 		}
-		$this->queryOptions = array_replace($this->queryOptions, $this->constraints);
+		$this->queryOptions['andWhere'] = array_replace((array)@$this->queryOptions['andWhere'], $this->constraints);
 	}
 	
 	/**
@@ -100,7 +100,7 @@ trait BaseWidget {
 		$model->setConstraints($constrain);
 		$model->addWith([
 			'last' => function ($query) {
-				$query->andWhere($model->queryOptions);
+				$query->andWhere($model->queryOptions['andWhere']);
 			}
 		]);
 		$ret_val = $model->find()->one();
@@ -127,10 +127,10 @@ trait BaseWidget {
 	 {
 		$primaryKey = $this->primaryKey()[0];
 		$ret_val = parent::getCount($this->link);
-		switch(isset($this->queryOptions['value']))
+		switch(isset($this->queryOptions['ahdWhere']['value']))
 		{
 			case true:
-			switch($this->queryOptions['value'])
+			switch($this->queryOptions['andWhere']['value'])
 			{
 				case -1:
 				$andWhere = ['<=', 'value',  0];
@@ -140,7 +140,7 @@ trait BaseWidget {
 				$andWhere = ['>=', 'value', 1];
 				break;
 			}
-			unset($this->queryOptions['value']);
+			unset($this->queryOptions['andWhere']['value']);
 			$ret_val->andWhere($andWhere);
 			break;
 		}
@@ -156,7 +156,7 @@ trait BaseWidget {
 		$primaryKey = $this->primaryKey()[0];
 		$ret_val = $this->hasOne(static::className(), $this->link);
 		$valueFilter = @$this->queryOptions['value'];
-		unset($this->queryOptions['value']);
+		unset($this->queryOptions['andWhere']['value']);
 		switch(static::$allowMultiple)
 		{
 			case true:
@@ -173,7 +173,7 @@ trait BaseWidget {
 			];
 			break;
 		}
-		$filters = $this->queryOptions;
+		$filters = $this->queryOptions['andWhere'];
 		unset($filters['parent_id'], $filters['parent_type']);
 		return $ret_val->select($select)
 			->andWhere($filters);

@@ -168,4 +168,14 @@ class BaseWidget extends Widget
 		}
 		return $new;
 	}
+	
+	protected function defaultOptions()
+	{
+		return  [
+			'role' => 'entity'.$this->model->properName(),
+			'id' => $this->model->isWhat(),
+			'data-parent' => $this->model->isWhat().'FormParent',
+			'class' => $this->model->isWhat()
+		];
+	}
 }

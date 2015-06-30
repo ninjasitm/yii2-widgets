@@ -102,8 +102,11 @@ class IssueController extends \nitm\controllers\DefaultController
 			$this->model = Issues::findModel([$id, $type]);
 			break;
 		}
-		$searchModel = new IssuesSearch;
-		$searchModel->addWith(['closedBy', 'resolvedBy']);
+		$searchModel = new IssuesSearch([
+			'queryOptions' => [
+				'with' => ['closedBy', 'resolvedBy']
+			]
+		]);
 		$get = \Yii::$app->request->getQueryParams();
 		$params = array_merge($get, $this->model->constraints);
 		unset($params['type'], $params['id'], $params['key']);

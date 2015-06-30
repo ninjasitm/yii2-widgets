@@ -26,8 +26,10 @@ class CategoryController extends \nitm\controllers\DefaultController
     public function actionIndex()
     {
 		return parent::actionIndex(CategorySearch::className(), [
-			'with' => [
-				'parent'
+			'queryOptions' => [
+				'with' => [
+					'parent'
+				]
 			],
 		]);
     }

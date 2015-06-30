@@ -69,7 +69,9 @@ class Replies extends BaseWidget
 					$params['hidden'] = false;
 				
 				$searchModel = new RepliesSearch([
-					'queryOptions['with']' => ['author', 'replyTo', 'count', 'last']
+					'queryOptions' => [
+						'with' => ['author', 'replyTo', 'count', 'last']
+					]
 				]);
 				
 				$dataProvider = $searchModel->search($params);
@@ -108,7 +110,7 @@ class Replies extends BaseWidget
 		return $replies;
 	}
 	
-	private function defaultOptions()
+	protected function defaultOptions()
 	{
 		return  [
 			'role' => 'entityMessages',
@@ -118,7 +120,7 @@ class Replies extends BaseWidget
 		];
 	}
 	
-	private function defaultActions()
+	protected function defaultActions()
 	{
 		return [
 			'reply' => [

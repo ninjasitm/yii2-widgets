@@ -48,7 +48,14 @@ class RequestController extends \nitm\controllers\DefaultController
      */
     public function actionIndex()
     {
-		$queryOptions = [];
+		$queryOptions = [
+			'with' => [
+				'author', 'editor', 'type', 'requestFor', 
+				'completedBy', 'closedBy', 'replyModel', 
+				'issueModel', 'revisionModel', 'voteModel',
+				'followModel'
+			]
+		];
 		switch((sizeof(\Yii::$app->request->get()) == 0))
 		{	
 			case true:
@@ -64,12 +71,6 @@ class RequestController extends \nitm\controllers\DefaultController
 		}
 		
 		return parent::actionIndex(RequestSearch::className(), [
-			'with' => [
-				'author', 'type', 'requestFor', 
-				'completedBy', 'closedBy', 'replyModel', 
-				'issueModel', 'revisionModel', 'voteModel',
-				'followModel'
-			],
 			'construct' => [
 				'queryOptions' => $queryOptions
 			],
@@ -83,10 +84,12 @@ class RequestController extends \nitm\controllers\DefaultController
 	public function actionSearch()
 	{
 		return parent::actionSearch([
-			'queryOptions['with']' => [
-				'author', 'type', 'requestFor', 
-				'completedBy', 'closedBy', 'replyModel', 
-				'issueModel', 'revisionModel', 'voteModel'
+			'queryOptions' => [
+				'with' => [
+					'author', 'type', 'requestFor', 
+					'completedBy', 'closedBy', 'replyModel', 
+					'issueModel', 'revisionModel', 'voteModel'
+				]
 			]
 		]);
 	}
@@ -123,7 +126,9 @@ class RequestController extends \nitm\controllers\DefaultController
 	{
 		$options = [
 			'modelOptions' => [
-				'queryOptions['with']' => ['type', 'requestFor']
+				'queryOptions' => [
+					'with' => ['type', 'requestFor']
+				]
 			]
 		];
 		return parent::actionForm($type, $id, $options);
