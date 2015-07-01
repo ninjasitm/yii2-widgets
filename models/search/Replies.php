@@ -13,4 +13,9 @@ use nitm\widgets\models\Replies as RepliesModel;
 class Replies extends BaseSearch
 {
 	use \nitm\widgets\traits\relations\Replies, \nitm\widgets\traits\BaseWidget;
+	
+	protected $link = [
+		'parent_type' => 'parent_type',
+		'parent_id' => 'parent_id'
+	];
 }

@@ -14,6 +14,6 @@ class BaseSearch extends \nitm\search\BaseSearch
 	use \nitm\traits\Nitm, \nitm\traits\Relations,\nitm\traits\Cache,
 		\nitm\widgets\traits\Relations;
 	
-	public $engine = 'elasticsearch';
+	public $engine = 'db';
 	public static $namespace = '\nitm\widgets\models\\';
 }
