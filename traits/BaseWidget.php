@@ -31,6 +31,7 @@ trait BaseWidget {
 	];
 	
 	protected static $userLastActive;
+	protected static $currentUser;
 	
 	private static $_dateFormat = "D M d Y h:iA";
 	
@@ -238,21 +239,24 @@ trait BaseWidget {
 	
 	public function currentUser()
 	{
+		if(isset(static::$currentUser))
+			return static::$currentUser;
+			
 		if(\Yii::$app instanceof \yii\console\Application)
-			return new \nitm\models\User(['username' => 'console']);
+			static::$currentUser = new \nitm\models\User(['username' => 'console']);
 			
 		if(\Yii::$app->getUser()->getIsGuest()) {
-			return \nitm\helpers\Cache::getCachedModel($this, 
+			static::$currentUser = \nitm\helpers\Cache::getCachedModel($this, 
 				'currentUser', 
 				\Yii::$app->getUser()->identityClass, 
-				null, 
-				[
+				null, [
 					'id' => 1
 				]);
 		}
 		else {
-			return \Yii::$app->getUser()->getIdentity();
+			static::$currentUser = \Yii::$app->getUser()->getIdentity();
 		}
+		return static::$currentUser;
 	}
 	 
 	protected function populateMetadata()
