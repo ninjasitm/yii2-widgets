@@ -246,8 +246,9 @@ trait BaseWidget {
 			static::$currentUser = new \nitm\models\User(['username' => 'console']);
 			
 		if(\Yii::$app->getUser()->getIsGuest()) {
-			static::$currentUser = \nitm\helpers\Cache::getCachedModel($this, 
-				'currentUser', 
+			static::$currentUser = \nitm\helpers\Cache::getModel($this, 
+				'currentUser',
+				false,
 				\Yii::$app->getUser()->identityClass, 
 				null, [
 					'id' => 1
