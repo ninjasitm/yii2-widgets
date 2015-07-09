@@ -39,7 +39,8 @@ class MetaInfo extends \yii\base\Widget
 	public function run()
 	{
 		$ret_val = '';
-		if(isset($this->header) && is_string($this->header) && !is_bool($this->header)) $ret_val = Html::tag('h2', $this->header);
+		if(isset($this->header) && is_string($this->header) && !is_bool($this->header)) 
+			$ret_val = Html::tag('h2', $this->header);
 		switch($this->displayAs)
 		{
 			case 'grid':
@@ -208,11 +209,8 @@ class MetaInfo extends \yii\base\Widget
 								break;
 							}
 						}
-						else if(is_array($model)) {
-							$ret_val = ArrayHelper::getValue($model, $prop, $model);
-						}
 						else
-							$ret_val = $model;
+							$ret_val = ArrayHelper::getValue($model, $prop, $model);
 					}
 				break;
 				
@@ -232,6 +230,10 @@ class MetaInfo extends \yii\base\Widget
 					break;
 				}
 				break;
+			}
+			if(is_object($ret_val)){
+			print_r($ret_val);
+			exit;
 			}
 			return $ret_val;
 		};
