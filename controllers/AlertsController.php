@@ -44,7 +44,8 @@ class AlertsController extends \nitm\controllers\DefaultController
 							'mark-notification-read', 
 							'get-new-notifications',
 							'un-follow',
-							'follow'
+							'follow',
+							'send-one-for'
 						],
 						'allow' => true,
 						'roles' => ['@'],
@@ -55,6 +56,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 				'actions' => [
 					'follow' => ['post'],
 					'un-follow' => ['post'],
+					'send-one-for' => ['post']
 				],
 			],
 		];
@@ -190,6 +192,31 @@ class AlertsController extends \nitm\controllers\DefaultController
 				]
 			]
 		]);
+	}
+	
+	public function actionSendOneFor($type, $id)
+	{
+		$module = \Yii::$app->getModule('nitm');
+		$ret_val = [
+			'success' => true,
+			'message' => "We're nto setup to send single alerts for $type"
+		];
+		if(isset($module->classMap[$type])) {
+			$options = $module->classMap[$type];
+			$class = $options['class'];
+			$this->model = $this->findModel($class::className(), $id, ArrayHelper::getValue($options, 'with', []));
+			if($this->model instanceof $class) {
+				$this->model->setScenario('requestsAttentionFor');
+				$this->model->updated_at = null;
+				$this->model->save();
+				$this->setResponseFormat('json');
+				$ret_val = [
+					'success' => true,
+					'message' => "Requested attention for this ".$this->model->isWhat()
+				];
+			}
+		}
+		return $ret_val;
 	}
 	
 	/**
@@ -353,6 +380,8 @@ class AlertsController extends \nitm\controllers\DefaultController
 				case 'update_my':
 				case 'resolve_my':
 				case 'complete_my':
+				case 'requestAttentionFor':
+				case 'requestAttentionFor_my':
 				$types = (array)$this->model->setting('allowed');
 				break;
 				
