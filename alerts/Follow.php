@@ -157,7 +157,7 @@ class Follow extends \yii\base\Widget
 	protected function initializeMethods()
 	{
 		$this->followMethods = array_merge($this->_defaultFollowMethods, $this->followMethods);
-		$supported = \nitm\helpers\alerts\DispatcherData::supportedMethods();
+		$supported = \nitm\components\alerts\DispatcherData::supportedMethods();
 		foreach($this->followMethods as $idx=>$method)
 		{
 			switch(isset($supported[$method['method']]))
