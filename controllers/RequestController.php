@@ -51,22 +51,24 @@ class RequestController extends \nitm\controllers\DefaultController
 		$queryOptions = [
 			'with' => [
 				'author', 'editor', 'type', 'requestFor', 
-				'completedBy', 'closedBy', 'replyModel', 
-				'issueModel', 'revisionModel', 'voteModel',
+				'completedBy', 'closedBy', 
+				'replyModel.count', 
+				'issueModel.count', 'revisionModel.count', 
+				'voteModel.currentUserVoted','voteModel.fetchedValue', 'voteModel.count',
 				'followModel'
 			]
 		];
 		switch((sizeof(\Yii::$app->request->get()) == 0))
 		{	
 			case true:
-			$queryOptions = [
+			$queryOptions = array_merge([
 				'select' => [
 					'*',
 					$this->getHasNewQuery()
 				],
 				'orderBy' => $this->getOrderByQuery(),
 				'andWhere' => ['closed' => false]
-			];
+			], $queryOptions);
 			break;
 		}
 		

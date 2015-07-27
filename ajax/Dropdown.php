@@ -18,15 +18,12 @@ class Dropdown extends Select2
 {
 	public $url;
 	public $minLength = 3;
+	public $dataType = 'json';
 	
 	public function init()
 	{
 		$this->pluginOptions = array_merge($this->defaultAjaxOptions(), (array)$this->pluginOptions);
 		if($this->url) $this->pluginOptions['ajax']['url'] = $this->url;
-		$this->pluginOptions['minimumInputLength'] = $this->minLength;
-		$this->pluginOptions['initSelection'] = $this->getInitSelectionJs();
-		$this->pluginOptions['ajax']['data'] = new JsExpression('function(term,page) { return {term:term}; }');
-		$this->pluginOptions['ajax']['results'] = new JsExpression('function(data,page) { return {results:data}; }');
 		parent::init();
 	}
 	
@@ -37,9 +34,21 @@ class Dropdown extends Select2
 	protected function defaultAjaxOptions()
 	{
 		return [
+			'minimumInputLength' => $this->minLength,
+			'initSelection' => $this->getInitSelectionJs(),
 			'allowClear' => true,
 			'ajax' => [
-				'dataType' => 'json',
+				'dataType' => $this->dataType,
+				'data' => new JsExpression('function(params) { return {q:params.term}; }'),
+				'results' => new JsExpression('function(data,page) {return {results:data};}'),
+				'processResults' => new JsExpression('function (data, params) {
+					if(data.hasOwnProperty("results"))
+						return data;
+					else
+						return {
+							results: data
+						};
+				}')
 			]
 		];
 	}

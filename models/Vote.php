@@ -81,7 +81,7 @@ class Vote extends BaseWidget
 		$ret_val = ['positive' => 0, 'negative' => 0, 'ratio' => 0];
 		switch(1)
 		{
-			case is_object($this->fetchedValue):
+			case $this->isRelationPopulated('fetchedValue'):
 			switch(static::$allowMultiple)
 			{
 				case true:
@@ -149,7 +149,7 @@ class Vote extends BaseWidget
 		switch(static::$allowMultiple)
 		{
 			case false:
-			switch($this->currentUserVoted instanceof Vote)
+			switch($this->isRelationPopulated('currentUserVoted'))
 			{
 				case true:
 				switch(1)

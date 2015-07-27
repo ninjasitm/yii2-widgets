@@ -151,7 +151,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 				throw $e;
 		}
 		if(ArrayHelper::getValue((array)$ret_val, 'success', false))
-			\nitm\traits\Relations::setCachedRelationModel($this->model, ['remote_id', 'remote_type'], 'followModel');
+			$this->model->setCachedRelation(['remote_id', 'remote_type'], $this->model->className());
 		return $ret_val;
 	}
 	
@@ -168,7 +168,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 				throw $e;
 		}
 		if($ret_val['success']) {
-			\nitm\traits\Relations::deleteCachedRelationModel($this->model, ['remote_id', 'remote_type'], 'followModel');
+			$this->model->deleteCachedRelation(['remote_id', 'remote_type'], 'followModel');
 			$ret_val['message'] = 'Successfully un-followed '.$this->model->isWhat();
 		}
 		$ret_val['actionHtml'] = 'Follow';

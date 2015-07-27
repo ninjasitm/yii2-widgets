@@ -3,6 +3,7 @@ namespace nitm\widgets\traits;
 
 use nitm\helpers\Cache;
 use nitm\helpers\ArrayHelper;
+use nitm\helpers\Relations as RelationsHelper;
 use nitm\traits\Relations as NitmRelations;
 
 /**
@@ -47,9 +48,20 @@ trait Relations {
 		return $this->getCachedRelation($idKey, $className, $options, $many, $relation);
 	}
 	
+	protected function getWidgetModel($className, $idKey=null, $many=false, $options=[])
+	{
+		$relation = \nitm\helpers\Helper::getCallerName();
+		$options['construct'] = isset($options['construct']) ? $options['construct'] : [
+			'parent_id' => $this->getId(), 
+			'parent_type' => $this->isWhat()
+		];
+		$idKey = is_null($idKey) ? ['getId', 'isWhat'] : $idKey;
+		return RelationsHelper::getRelatedRecord($relation, $this, $className, $options, $many);
+	}
+	
 	public function replyModel()
 	{
-		return $this->getCachedWidgetModel(\nitm\widgets\models\Replies::className());
+		return $this->getWidgetModel(\nitm\widgets\models\Replies::className());
 	}
 
     /**
@@ -90,7 +102,7 @@ trait Relations {
 	
 	public function issueModel()
 	{
-		return $this->getCachedWidgetModel(\nitm\widgets\models\Issues::className());
+		return $this->getWidgetModel(\nitm\widgets\models\Issues::className(), 'issueModel');
 	}
 
     /**
@@ -139,7 +151,7 @@ trait Relations {
 	
 	public function revisionModel()
 	{
-		return $this->getCachedWidgetModel(\nitm\widgets\models\Revisions::className());
+		return $this->getWidgetModel(\nitm\widgets\models\Revisions::className(), 'revisionModel');
 	}
 
     /**
@@ -167,7 +179,7 @@ trait Relations {
 	
 	public function voteModel()
 	{
-		return $this->getCachedWidgetModel(\nitm\widgets\models\Vote::className());
+		return $this->getWidgetModel(\nitm\widgets\models\Vote::className(), 'voteModel');
 	}
 
     /**
@@ -201,7 +213,7 @@ trait Relations {
 	
 	public function ratingModel()
 	{
-		return $this->getCachedWidgetModel(\nitm\widgets\models\Rating::className());
+		return $this->getWidgetModel(\nitm\widgets\models\Rating::className(), 'ratingModel');
 	}
 
     /**
@@ -214,7 +226,7 @@ trait Relations {
 	
 	public function followModel()
 	{
-		return $this->getCachedWidgetModel(\nitm\widgets\models\Alerts::className(), null, false, [
+		return $this->getWidgetModel(\nitm\widgets\models\Alerts::className(), 'followModel', false, [
 			'select' => ['id', 'remote_id', 'remote_type'],
 			'construct' => [
 				'remote_id' => $this->getId(), 

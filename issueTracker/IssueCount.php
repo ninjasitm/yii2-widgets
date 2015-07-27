@@ -49,6 +49,9 @@ class IssueCount extends BaseWidget
 	
 	public function run()
 	{
+		//print_r($this->model);
+		//print_r($this->model->find()->where(['id' => $this->model->id])->with(['count', 'newCount'])->one());
+		//exit;
 		$this->options['id'] .= $this->parentId;
 		$this->options['class'] .= ' '.($this->model->count() >= 1 ? 'btn-primary' : 'btn-transparent');
 		$this->options['label'] = (int)$this->model->count().' Issues '.Icon::show('eye');

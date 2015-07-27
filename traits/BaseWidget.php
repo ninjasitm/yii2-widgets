@@ -145,6 +145,7 @@ trait BaseWidget {
 			$ret_val->andWhere($andWhere);
 			break;
 		}
+		$ret_val->select(array_merge($this->link, $ret_val->select));
 		return $ret_val;
 	 }
 
@@ -176,20 +177,21 @@ trait BaseWidget {
 		}
 		$filters = $this->queryOptions['andWhere'];
 		unset($filters['parent_id'], $filters['parent_type']);
-		return $ret_val->select($select)
+		return $ret_val->select(array_merge($this->link, $select))
+			->asArray()
 			->andWhere($filters);
     }
 	
 	public function fetchedValue()
 	{
-		return $this->hasProperty('fetchedValue') && isset($this->fetchedValue) ? $this->fetchedValue->_value : 0;
+		return $this->hasRelation('fetchedValue') ? $this->fetchedValue['_value'] : 0;
 	}
 	
 	public function hasNew()
 	{
 		return \nitm\helpers\Relations::getRelatedRecord('newCount', $this, static::className(), [
 			'_new' => 0
-		])->_new;
+		])['_new'];
 	}
 	
 	public function getNewCount()
@@ -197,10 +199,11 @@ trait BaseWidget {
 		$primaryKey = $this->primaryKey()[0];
 		$ret_val = $this->hasOne(static::className(), $this->link);
 		$andWhere = ['or', "created_at>='".static::currentUser()->lastActive()."'"];
-		$ret_val->select([
+		$ret_val->select(array_merge($this->link, [
 				'_new' => 'COUNT('.$primaryKey.')'
-			])
-			->andWhere($andWhere);
+			]))
+			->andWhere($andWhere)
+			->asArray();
 		static::currentUser()->updateActivity();
 		return $ret_val;
 	}
