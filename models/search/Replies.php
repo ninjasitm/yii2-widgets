@@ -12,7 +12,7 @@ use nitm\widgets\models\Replies as RepliesModel;
  */
 class Replies extends BaseSearch
 {
-	use \nitm\widgets\traits\relations\Replies, \nitm\widgets\traits\BaseWidget;
+	use \nitm\widgets\traits\relations\Replies;
 	
 	protected $link = [
 		'parent_type' => 'parent_type',

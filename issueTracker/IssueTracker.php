@@ -73,9 +73,8 @@ class IssueTracker extends BaseWidget
 			switch(($this->model instanceof IssuesModel))
 			{
 				case true:
-				unset($params['type']);
-				unset($params['id']);
-				$dataProvider = $searchModel->search(array_merge($params));
+				unset($params['type'], $params['id']);
+				$dataProvider = $searchModel->search([$this->model->formName() => $params]);
 				break;
 			}
 			break;

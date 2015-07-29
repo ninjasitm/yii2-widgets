@@ -104,13 +104,12 @@ trait BaseWidget {
 				$query->andWhere($model->queryOptions['andWhere']);
 			}
 		]);
-		$ret_val = $model->find()->one();
+		$ret_val = $model->find()->where($model->constraints)->one();
 		switch(is_a($ret_val, static::className()))
 		{
 			case true:
 			$ret_val->queryOptions = $model->queryOptions;
 			$ret_val->constraints = $model->constraints;
-			//$ret_val->populateMetadata();
 			break;
 			
 			default:

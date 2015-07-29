@@ -21,20 +21,19 @@ $this->params['breadcrumbs'][] = $this->title;
 		'linkSelector' => "[data-pjax='1']",
 		'timeout' => 5000
 	]); ?>
-	<?php
-		echo $this->render("data", [
-				'dataProvider' => $dataProvider,
-				'searchModel' => $searchModel,
-				'primaryModel' => $model,
-				'isWhat' => $isWhat
-			]
-		); 
+	<?=
+		$this->render("data", [
+			'dataProvider' => $dataProvider,
+			'searchModel' => $searchModel,
+			'primaryModel' => $model,
+			'isWhat' => $isWhat
+		]); 
 	?>
 	<?php \yii\widgets\Pjax::end(); ?>
 </div>
 <div class="col-md-4 col-lg-4 col-md-offset-8 col-lg-offset-8 absolute collapsable full-height filter shadow" id="<?= $isWhat; ?>-filter" style='width: 33%;'>
-	<?php
-		echo $this->render('_search', [
+	<?=
+		$this->render('_search', [
 			"data" => [],
 			'isWhat' => $isWhat, 
 			'model' => $searchModel,

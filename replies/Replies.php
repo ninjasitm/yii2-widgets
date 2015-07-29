@@ -74,7 +74,7 @@ class Replies extends BaseWidget
 					]
 				]);
 				
-				$dataProvider = $searchModel->search($params);
+				$dataProvider = $searchModel->search([$this->model->formName() => $params]);
 				$dataProvider->setSort([
 					'defaultOrder' => [
 						'id' => SORT_DESC,

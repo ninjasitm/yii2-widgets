@@ -52,12 +52,13 @@ class RequestController extends \nitm\controllers\DefaultController
 			'with' => [
 				'author', 'editor', 'type', 'requestFor', 
 				'completedBy', 'closedBy', 
-				'replyModel.count', 
-				'issueModel.count', 'revisionModel.count', 
-				'voteModel.currentUserVoted','voteModel.fetchedValue', 'voteModel.count',
+				'replyModel', 
+				'issueModel', 'revisionModel', 
+				'voteModel.currentUserVoted','voteModel.fetchedValue', 'voteModel',
 				'followModel'
 			]
 		];
+		
 		switch((sizeof(\Yii::$app->request->get()) == 0))
 		{	
 			case true:

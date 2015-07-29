@@ -55,7 +55,7 @@ class Alerts extends \yii\base\Widget
 			$params = $get;
 			unset($params['type'], $params['id']);
 	
-			$dataProvider = $searchModel->search(array_merge($params));
+			$dataProvider = $searchModel->search([$this->model->formName() => $params]);
 			$dataProvider->setSort([
 				'defaultOrder' => [
 					'remote_type' => SORT_ASC,

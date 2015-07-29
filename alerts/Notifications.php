@@ -46,7 +46,7 @@ class Notifications extends \yii\base\Widget
 			$params = $get;
 			unset($params['type'], $params['id']);
 	
-			$dataProvider = $searchModel->search(array_merge($params));
+			$dataProvider = $searchModel->search([$this->model->formName() => $params]);
 			$dataProvider->query->andWhere([
 				'read' => false
 			]);

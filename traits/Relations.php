@@ -31,7 +31,7 @@ trait Relations {
 	protected function getWidgetRelationModelQuery($className, $link=null, $options=[])
 	{
 		$link = !is_array($link) ? ['parent_id' => 'id'] : $link;
-		$options['select'] = isset($options['select']) ? $options['select'] : ['id', 'parent_id', 'parent_type'];
+		$options['select'] = isset($options['select']) ? $options['select'] : ['parent_id', 'parent_type'];
 		$options['with'] = array_merge(ArrayHelper::getValue($options, 'with', []), ['count', 'newCount']);
 		$options['andWhere'] = isset($options['andWhere']) ? $options['andWhere'] : ['parent_type' => $this->isWhat()];
 		return $this->getRelationQuery($className, $link, $options);
@@ -95,9 +95,9 @@ trait Relations {
        	return $this->getWidgetRelationQuery(\nitm\widgets\models\Replies::className(), null, $options, true);
     }
 	
-	public function replies()
+	public function replies($useCache=false)
 	{
-		return $this->getCachedRelation('id', \nitm\widgets\models\Replies::className(), [], true, 'replies');
+		return $this->resolveRelation('id', \nitm\widgets\models\Replies::className(), $useCache, [], true, 'replies');
 	}
 	
 	public function issueModel()
@@ -126,9 +126,9 @@ trait Relations {
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Issues::className(), null, $options, true);
     }
 	
-	public function issues()
+	public function issues($useCache=false)
 	{
-		return $this->getCachedRelation('id', \nitm\widgets\models\Issues::className(), [], true, 'issues');
+		return $this->resolveRelation('id', \nitm\widgets\models\Issues::className(), $useCache, [], true, 'issues');
 	}
 
     /**
@@ -144,9 +144,9 @@ trait Relations {
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Revisions::className(), null, $options, true);
     }
 	
-	public function revisions()
+	public function revisions($useCache=false)
 	{
-		return $this->getCachedRelation('id', \nitm\widgets\models\Revisions::className(), [], true, 'revisions');
+		return $this->resolveRelation('id', \nitm\widgets\models\Revisions::className(), $useCache, [], true, 'revisions');
 	}
 	
 	public function revisionModel()
@@ -172,9 +172,9 @@ trait Relations {
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Issues::className(), null, $options, true);
     }
 	
-	public function votes()
+	public function votes($useCache=false)
 	{
-		return $this->getCachedRelation('id', \nitm\widgets\models\Vote::className(), [], true, 'votes');
+		return $this->resolveRelation('id', \nitm\widgets\models\Vote::className(), $useCache, [], true, 'votes');
 	}
 	
 	public function voteModel()
