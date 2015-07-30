@@ -54,7 +54,7 @@ class RepliesCount extends BaseWidget
 		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/reply/index/'.$this->parentType."/".$this->parentId]);
 		$this->options['title'] = \Yii::t('yii', 'View Replies');
 		
-		$info = $this->getInfoLink($this->model->isWhat());
+		$info = $this->getInfoLink($this->model->isWhat(true));
 		return Html::tag('div', $info, $this->widgetOptions).$this->getNewIndicator();
 	}
 }
