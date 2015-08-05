@@ -26,7 +26,7 @@ echo GridView::widget([
 			'format' => 'raw',
 			'value' => function ($model, $index, $widget) {
 				$rating = Html::tag('div',
-					$this->context->VoteWidget([
+					\nitm\widgets\vote\Vote::widget([
 						'size' => 'large',
 						'model' => $model->voteModel(),
 						'parentType' => $model->isWhat(), 

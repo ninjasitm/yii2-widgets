@@ -46,13 +46,6 @@ class Replies extends BaseWidget
 		}
 	}
 	
-	public function behaviors()
-	{
-		$behaviors = [
-		];
-		return array_merge(parent::behaviors(), $behaviors);
-	}
-	
 	public static function tableName()
 	{
 		return 'comments';

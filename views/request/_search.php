@@ -6,7 +6,13 @@ use yii\widgets\ActiveField;
 
 ?>
 <br>
-<?= $filterButton.$this->context->alertWidget().$this->context->legendWidget();?>
+<?= 
+	$filterButton
+	.\nitm\widgets\alert\Alert::widget()
+	.\nitm\widgets\legend\Legend::widget([
+			"legend" => $this->context->legend
+		]);
+?>
 <br>
 <?= $createButton; ?>
 <h3 class="header text-left">FILTER USING THE FOLLOWING</h3>

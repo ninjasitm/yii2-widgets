@@ -9,5 +9,5 @@ use Yii;
  */
 class Category extends BaseSearch
 {
-	use \nitm\widgets\traits\relations\Category;
+	use \nitm\traits\relations\Category;
 }

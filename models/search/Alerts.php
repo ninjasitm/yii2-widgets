@@ -12,4 +12,5 @@ use nitm\widgets\models\Alerts as AlertsModel;
  */
 class Alerts extends BaseSearch
 {
+	use \nitm\filemanager\traits\Relations;
 }

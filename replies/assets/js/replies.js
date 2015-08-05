@@ -254,10 +254,10 @@ function Replies(items)
 		var containers = $nitm.getObj(containerId);
 		containers.each(function(index, element) {
 			var container = $(element);
-			var textareaId = container.find('textarea').attr('id');
-			var textarea = $('#'+textareaId);
+			var textarea = container.find('textarea');
 			if(!textarea.get(0))
 			{
+				var textareaId = container.attr('id')+'-textarea';
 				textarea = $("<textarea id='"+textareaId+"' role='editor' class='form-control' name='Replies[message]' rows=10>");
 				var actions = container.find("[role='"+self.elements.replyActions+"']");
 				actions.removeClass('hidden');

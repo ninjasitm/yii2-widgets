@@ -43,7 +43,7 @@ class ScrollPager extends \kop\y2sp\ScrollPager
 	 * This option was missing from kop's implementation
 	 */
 	public $overflowContainer;
-	public $triggerOffset = 150;
+	public $triggerOffset = 250;
 	
 	
 	public $spinnerTemplate = "<div class='loading-wrapper'><div class='loading'></div></div>";

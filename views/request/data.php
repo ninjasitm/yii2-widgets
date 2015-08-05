@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'label' => '%',
 			'format' => 'raw',
 			'value' => function ($model, $index, $widget) {
-				return $this->context->voteWidget([
+				return \nitm\widgets\vote\Vote::widget([
 					'size' => 'large',
 					'model' => $model->voteModel(),
 					'parentType' => $model->isWhat(), 
@@ -209,17 +209,17 @@ $this->params['breadcrumbs'][] = $this->title;
 		];
 	},
 	'afterRow' => function ($model, $key, $index, $grid){
-		$replies = $this->context->replyCountWidget([
+		$replies = \nitm\widgets\replies\RepliesCount::widget([
 			"model" => $model->replyModel(),
 			'fullDetails' => false,
 		]);
-		$revisions = $this->context->revisionsCountWidget([
+		$revisions = \nitm\widgets\revisions\RevisionsCount::widget([
 			'model' => $model->revisionModel(),
 			"parentId" => $model->getId(), 
 			"parentType" => $model->isWhat(),
 			'fullDetails' => false ,
 		]);
-		$issues = $this->context->issueCountWidget([
+		$issues = \nitm\widgets\issueTracker\IssueCount::widget([
 			'model' => $model->issueModel(),
 			'enableComments' => true,
 			"parentId" => $model->getId(), 

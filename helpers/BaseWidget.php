@@ -106,7 +106,7 @@ class BaseWidget extends Widget
 	{
 		$typeHr = ucfirst($type == null ? $this->model->isWhat() : $type);
 		if($this->useModal) {
-			$this->options['href'] .= '__format=modal';
+			$this->options['href'] = \Yii::$app->urlManager->createUrl($this->options['href'], ['__format' => 'modal']);
 			$info = \nitm\widgets\modal\Modal::widget([
 				'options' => [
 					'id' => $this->options['id'].'-modal'

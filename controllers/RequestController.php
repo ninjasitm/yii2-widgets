@@ -65,9 +65,9 @@ class RequestController extends \nitm\controllers\DefaultController
 			$queryOptions = array_merge([
 				'select' => [
 					'*',
-					$this->getHasNewQuery()
+					\nitm\helpers\QueryFilter::getHasNewQuery($this->model)
 				],
-				'orderBy' => $this->getOrderByQuery(),
+				'orderBy' => \nitm\helpers\QueryFilter::getOrderByQuery(),
 				'andWhere' => ['closed' => false]
 			], $queryOptions);
 			break;

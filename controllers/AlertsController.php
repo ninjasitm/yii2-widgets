@@ -199,7 +199,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		$module = \Yii::$app->getModule('nitm');
 		$ret_val = [
 			'success' => true,
-			'message' => "We're nto setup to send single alerts for $type"
+			'message' => "We're not setup to send single alerts for $type"
 		];
 		if(isset($module->classMap[$type])) {
 			$options = $module->classMap[$type];
@@ -212,7 +212,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 				$this->setResponseFormat('json');
 				$ret_val = [
 					'success' => true,
-					'message' => "Requested attention for this ".$this->model->isWhat()
+					'message' => "Requested attention for ".$this->model->properName().": ".$this->model->title()
 				];
 			}
 		}

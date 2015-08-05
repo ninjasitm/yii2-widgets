@@ -3,9 +3,15 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use nitm\helpers\Icon;
+use yii\helpers\Inflector;
 
 /* @var $this yii\web\View */
 /* @var $model nitm\models\Alerts */
+
+$viewUrl = \Yii::$app->urlManager->createUrl(['/alerts/view/'.$model->getId(), '__format' => 'modal']);
+$updateUrl = \Yii::$app->urlManager->createUrl(['/alerts/form/update/'.$model->getId(), '__format' => 'modal']);
+$deleteUrl = \Yii::$app->urlManager->createUrl(['/alerts/delete/'.$model->getId()]);
+$remoteUrl = \Yii::$app->urlManager->createUrl(['/'.$model->remote_type.'/view/'.$model->remote_id, '__format' => 'modal']);
 
 ?>
 <?php if(!isset($notAsListItem)): ?>
@@ -19,7 +25,19 @@ use nitm\helpers\Icon;
 		<?php
 			echo "<b>".$model->setting('allowed.'.$model->remote_type)."</b>";
 			if(!is_null($model->remote_for) && ($model->remote_for != 'any')) echo " for <b>".$model->setting('for.'.$model->remote_for)."</b>";
-			if(!is_null($model->remote_id)) echo " with id <b>".$model->remote_id."</b>";
+			if(!is_null($model->remote_id)) {
+				echo " with id <b>".$model->remote_id. "</b> ";
+				echo \nitm\widgets\modal\Modal::widget([
+					'size' => 'large',
+					'toggleButton' => [
+						'tag' => 'a',
+						'label' => Icon::forAction('view'), 
+						'href' => $remoteUrl,
+						'title' => Yii::t('yii', 'View '),
+						'role' => 'viewRemoteModel',
+					],
+				]);
+			}
 		?>
 	</div>
 	<div class="col-md-3 col-lg-3">
@@ -35,7 +53,7 @@ use nitm\helpers\Icon;
 					'tag' => 'a',
 					'class' => 'btn btn-info',
 					'label' => Icon::forAction('update'), 
-					'href' => \Yii::$app->urlManager->createUrl(['/alerts/form/update/'.$model->getId(), '__format' => 'modal']),
+					'href' => $updateUrl,
 					'title' => Yii::t('yii', 'Update '),
 					'role' => 'updateAlert',
 				],
@@ -44,7 +62,7 @@ use nitm\helpers\Icon;
 		<?= Html::a(Icon::forAction('delete'), '#', [
 			'class' => 'btn btn-danger',
 			'role' => 'removeAlert',
-			'data-action' => '/alerts/delete/'.$model->getId(),
+			'data-action' => $deleteUrl,
 			'data-parent' => "#alert".$model->getId(),
 			]); ?>
 	</div>

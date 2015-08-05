@@ -31,7 +31,6 @@ class BaseWidget extends \nitm\models\Entity
 	public function init()
 	{
 		$this->setConstraints($this->constrain);
-		parent::init();
 		$this->addWith(['author']);
 		if($this->initSearchClass)
 			//static::initCache($this->constrain, self::cacheKey($this->getId()));

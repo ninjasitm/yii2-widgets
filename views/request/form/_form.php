@@ -58,7 +58,7 @@ $action = $model->getIsNewRecord() ? 'create' : 'update';
 			<div class="row">
 				<div class="col-md-12 col-lg-12">
 				<?php
-					echo $this->context->RevisionsInputWidget([
+					echo \nitm\widgets\revisions\RevisionsInput::widget([
 						"parentId" => $model->getId(),
 						"parentType" => $model->isWhat(),
 						'name' => 'request',
