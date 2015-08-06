@@ -11,5 +11,5 @@ use nitm\widgets\models\Request as RequestModel;
  */
 class Request extends BaseSearch
 {
-	use \nitm\widgets\traits\relations\Request, \nitm\traits\Nitm;
+	use \nitm\widgets\traits\relations\Request;
 }

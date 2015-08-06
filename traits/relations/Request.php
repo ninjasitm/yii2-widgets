@@ -16,9 +16,14 @@ trait Request {
 		'critical'
 	];
 	
+	public function getStatus()
+	{
+		return isset(static::$urgency[$this->status]) ? static::$urgency[$this->status] : 'normal';
+	}
+	
 	public function getUrgency()
 	{
-		return @ucfirst(static::$urgency[$this->status]);
+		return ucfirst($this->getStatus());
 	}
 
     /**
