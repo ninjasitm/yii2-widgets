@@ -20,25 +20,45 @@ class Editor extends \yii\imperavi\Widget
 	public $size;
 	public $toolbarSize;
 	
-	public $options = [];
-	public $htmlOptions = [];
+	public $enableAutoSave;
 	
-	public $_options =  [
-		'height' => 'auto',
-		'buttonOptions' => [
-			'class' => 'btn btn-sm chat-form-btn'
-		]
+	/**
+	 * Autosave path handler. With trailing slash
+	 */
+	public $autoSavePath;
+	
+	/**
+	 * Autosave every X seconds
+	 */
+	public $autoSaveInterval = 10;
+	
+	/**
+	 * The name of the autosave field
+	 */
+	public $autoSaveName;
+	
+	public $options = [
 	];
+	public $htmlOptions = [];
 	
 	public $_htmlOptions = [
 		'style' => 'z-index: 99999',
 		'rows' => 3,
 	];
 	
+	protected $modelId;
+	
+	public function init()
+	{
+		parent::init();
+		$this->modelId = $this->model->isNewRecord ? uniqid() : $this->model->getId();
+		$this->initFiles();
+		$this->initAutoSave();
+	}
+	
 	public function run()
 	{
-		$modelId = $this->model->isNewRecord ? uniqid() : $this->model->getId();
-		$this->options = array_merge($this->_options, $this->options);
+		$this->options = array_merge($this->defaultOptions(), $this->options);
 		$this->options['toolbarFixed'] = true;
 		$this->options['toolbarFixedTarget'] = '#'.$this->htmlOptions['id'];
 		$this->htmlOptions = array_merge($this->_htmlOptions, $this->htmlOptions);
@@ -47,6 +67,7 @@ class Editor extends \yii\imperavi\Widget
 		$this->plugins = [
 			'fullscreen', 'fontcolor', 'fontsize'
 		];
+		
 		switch($this->toolbarSize)
 		{
 			case 'full':
@@ -90,10 +111,16 @@ class Editor extends \yii\imperavi\Widget
 			$this->htmlOptions['rows'] = 3;
 			break;
 		}
-		
+			
+		$this->htmlOptions['role'] = $this->role;
+		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
+	}
+	
+	protected function initFiles()
+	{
 		if($this->enableFiles) {
 			array_push($this->plugins, 'imagemanager', 'filemanager');
-			$this->options['imageUpload'] = ArrayHelper::getValue($this->options, 'imageUpload', '/image/save/'.$this->model->isWHat().'/'.$modelId);
+			$this->options['imageUpload'] = ArrayHelper::getValue($this->options, 'imageUpload', '/image/save/'.$this->model->isWhat().'/'.$this->modelId);
 			$this->options['imageManagerJson'] = json_encode(array_map(function ($image) {
 				if(is_array($image)) {
 					return [
@@ -104,7 +131,7 @@ class Editor extends \yii\imperavi\Widget
 				}
 			}, (array)\nitm\filemanager\models\Image::getImagesFor($this->model, true)->asArray()->all()));
 			
-			$this->options['fileUpload'] = ArrayHelper::getValue($this->options, 'fileUpload', '/file/save/'.$this->model->isWHat().'/'.$modelId);
+			$this->options['fileUpload'] = ArrayHelper::getValue($this->options, 'fileUpload', '/file/save/'.$this->model->isWHat().'/'.$this->modelId);
 			$this->options['fileManagerJson'] = json_encode(array_map(function ($file) {
 				if(is_array($file)) {
 					return [
@@ -117,9 +144,35 @@ class Editor extends \yii\imperavi\Widget
 				}
 			}, (array)\nitm\filemanager\models\File::getFilesFor($this->model, true)->asArray()->all()));
 		}
-			
-		$this->htmlOptions['role'] = $this->role;
-		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
+	}
+	
+	protected function initAutoSave()
+	{		
+		if($this->enableAutoSave && $this->autoSavePath)
+		{
+			$this->options += [
+				'autosave' => $this->autoSavePath,
+				'autosaveName' => (isset($this->autoSaveName) ? $this->autoSaveName : $this->model->formName().'['.(isset($this->autoSaveName) ? $this->autoSaveName : $this->attribute).']'),
+				'autosaveOnChange' => true,
+				'autosaveInterval' => $this->autoSaveInterval,
+				'autosaveFields' => [
+					'do' => true,
+					'__format' => 'json',
+					'getHtml' => true,
+					'ajax' => true
+				]
+			];
+		}
+	}
+	
+	protected function defaultOptions()
+	{
+		return [
+			'height' => 'auto',
+			'buttonOptions' => [
+				'class' => 'btn btn-sm chat-form-btn'
+			]
+		];
 	}
 }
 

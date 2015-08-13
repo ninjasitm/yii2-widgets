@@ -14,7 +14,9 @@ namespace nitm\widgets\models;
  */
 class Revisions extends BaseWidget
 {	
-	public $interval = 300; //Time in seconds for updating/creating new revisions
+	use \nitm\widgets\traits\relations\Revisions;
+	
+	public $interval = 600; //Time in seconds for updating/creating new revisions
 	
 	private $_lastActivity = '___lastActivity';
 	private $_dateFormat = "D M d Y h:iA";
@@ -35,6 +37,7 @@ class Revisions extends BaseWidget
 	public function scenarios()
 	{
 		$scenarios = [
+			'disable' => ['disbale']
 		];
 		return array_merge(parent::scenarios(), $scenarios);
 	}
@@ -52,9 +55,9 @@ class Revisions extends BaseWidget
     public function rules()
     {
         return [
-            [['data', 'parent_type', 'parent_id'], 'required'],
-            [['id', 'author_id', 'parent_id'], 'integer'],
-            [['created_at'], 'safe'],
+            [['data', 'parent_type', 'parent_id', 'version'], 'required'],
+            [['id', 'author_id', 'parent_id', 'version'], 'integer'],
+            [['created_at', 'disabled'], 'safe'],
             [['data'], 'string'],
             [['parent_type'], 'string', 'max' => 64],
             [['author_id', 'parent_type', 'parent_id'], 'unique', 'targetAttribute' => ['author_id', 'parent_type', 'parent_id'], 'message' => 'The combination of User ID, Parent Type and Parent ID has already been taken.', 'on' => 'create']
@@ -73,6 +76,8 @@ class Revisions extends BaseWidget
             'data' => 'Data',
             'parent_type' => 'Remote Type',
             'parent_id' => 'Remote ID',
+			'version' => 'Ver.',
+			'disabled' => 'Disabled'
         ];
     }
 	
@@ -84,17 +89,5 @@ class Revisions extends BaseWidget
 			'updates' => null,
 		];
 		return array_merge(parent::has(), $has);
-	}
-	
-	public function getStatus()
-	{
-		$status = 'normal';
-		switch(1)
-		{	
-			default:
-			$ret_val = isset(self::$statuses[$status]) ? self::$statuses[$status] : 'default';
-			break;
-		}
-		return $ret_val;
 	}
 }

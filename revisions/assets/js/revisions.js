@@ -2,9 +2,10 @@
 function Revisions(items)
 {	
 	NitmEntity.call(this, arguments);
+	
 	var self = this;
 	this.id = 'revisions';
-	var saveInterval = 10; //In seconds
+	this.interval = 3000; //In seconds
 	this.classes = {
 		success: 'bg-success',
 		error: 'bg-danger',
@@ -17,19 +18,8 @@ function Revisions(items)
 		checkStatus: 'revisionStatus'
 	};
 	this.defaultInit = [
-		'initActivity',
-		'initInterval',
+		'initMetaActions'
 	];
-
-	this.init = function (container) {
-		var container = (container == undefined) ? 'body' : container;
-		this.defaultInit.map(function (method, key) {
-			if(typeof self[method] == 'function')
-			{
-				self[method](container);
-			}
-		});
-	}
 	
 	this.initInterval = function (container) {
 		var container = (container == undefined) ? 'body' : container;
@@ -42,12 +32,8 @@ function Revisions(items)
 	this.checkActivity = function (container) {
 		$.map(this.roles, function (role, k) {
 			$(container+" "+"[role='"+role+"']").map(function() {
-				switch($(this).attr('revisionRecentActivity'))
-				{
-					case true:
+				if($(this).attr('revisionRecentActivity'))
 					self.operation(this);
-					break;
-				}
 			})
 		});
 	}
@@ -57,9 +43,10 @@ function Revisions(items)
 		var container = (container == undefined) ? 'body' : container;
 		$.map(this.roles, function (role, k) {
 			var object = $(container+" "+"[role='"+role+"']");
-			switch(1)
+			switch(true)
 			{
-				case object.data('use-redactor') == true:
+				case self.useRedactor == true:
+				case object.data('enable-redactor') == true:
 				var callbacks = {
 					autosaveCallback: function (result) {
 						self.afterCreate(result, container);
@@ -69,36 +56,12 @@ function Revisions(items)
 				self.events.map(function (e, i) {
 					callbacks[e+'Callback'] = function () {
 						$(this).attr('revisionRecentActivity', true);
-						var data = {};
-						data[$(this).attr('name')] = redactorObject.redactor('get');
-						//object.on(e, self.operation(data, null, container));
+						object.on(e, self.operation(self.getData(object, function (){
+							return redactorObject.redactor('code.get');
+						}), null, container));
 					};
 				});
 				redactorObject.redactor(callbacks);
-				break;
-				
-				case self.UseCke == true:
-				CKEDITOR.on('instanceCreated', function(i) {
-					switch($.inArray(i.editor.name, ids) != -1)
-					{
-						case true:
-						i.editor.on('contentDom', function() {
-							events.map(function (e, idx) {
-								i.editor.document.on(e, function(event) {
-									getObj(i.editor.name).attr('recentActivity', true);
-								});
-								switch(event_handler)
-								{
-									case true:
-									var f = (typeof functions[idx] == 'function') ? functions[idx] : functions[0];
-									getObj(i.editor.name).on(e, f);
-									break;
-								}
-							});
-						});
-						break;
-					}
-				});
 				break;
 				
 				default:
@@ -106,24 +69,38 @@ function Revisions(items)
 					object.on(e, function () {
 						$(this).attr('revisionRecentActivity', true);
 					});
-					var data = {};
-					data[$(this).attr('name')] = $(this).val();
-					object.on(e, self.operation(data, this, container));
+					object.on(e, self.operation(self.getData(this), this, container));
 				});
 				break;
 			}
 		});
 	}
 	
+	this.getData = function (elem, valueCallback) {
+		var matches = $(elem).attr('name').match(/\[(.*?)\]/);
+		if(matches)
+			var attrName = matches[1];
+		else
+			var attrName = self.attributeName;
+			
+		var data = {
+			attribute : attrName,
+		};
+		if(typeof valueCallback == 'function')
+			data[attrName] = valueCallback(elem);
+		else
+			data[attrName] = $(elem).val();
+		return data;
+	}
+	
 	this.operation = function (data, element, container) {
-		data.push({'name':'__format', 'value':'json'});
-		data.push({'name':'getHtml', 'value':true});
-		data.push({'name':'do', 'value':true});
-		data.push({'name':'ajax', 'value':true});
-		switch(!self.saveUrl)
-		{
-			case false:
-			var request = $nitm.doRequest($(element).data('save-path'), 
+		data['__format'] = 'json';
+		data['getHtml'] = true;
+		data['do'] = true;
+		data['ajax'] = true;
+		var url = $(element).data('save-path') || self.saveUrl;
+		if(url) {
+			var request = $nitm.doRequest(url, 
 				data,
 				function (result) {
 					switch(result.action)
@@ -134,10 +111,9 @@ function Revisions(items)
 					}
 				},
 				function () {
-					notify('Error Could not perform Revisions action. Please try again', self.classes.error, false);
+					$nitm.notify('Error Could not perform Revisions action. Please try again', self.classes.error, false);
 				}
 			);
-			break;
 		}
 	}
 	
@@ -151,7 +127,7 @@ function Revisions(items)
 			break;
 			
 			default:
-			alert('Unable to add revision');
+			$nitm.notify('Unable to add revision', self.classes.error);
 			break;
 		}
 	}

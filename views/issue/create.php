@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use nitm\models\Issues;
+use nitm\widgets\models\Issues;
 
 /**
  * @var yii\web\View $this

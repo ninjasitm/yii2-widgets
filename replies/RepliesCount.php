@@ -50,7 +50,7 @@ class RepliesCount extends BaseWidget
 	{
 		$this->options['id'] .= $this->parentId;
 		$this->options['class'] .= ' '.($this->model->count() >= 1 ? 'btn-primary' : 'btn-transparent');
-		$this->options['label'] = (int)$this->model->count().' Replies '.Icon::show('eye');
+		$this->options['label'] = $this->getLabel();
 		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/reply/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal']);
 		$this->options['title'] = \Yii::t('yii', 'View Replies');
 		

@@ -11,4 +11,5 @@ use nitm\widgets\models\Revisions as RevisionsModel;
  */
 class Revisions extends BaseSearch
 {
+	use \nitm\widgets\traits\relations\Revisions;
 }

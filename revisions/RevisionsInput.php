@@ -14,6 +14,7 @@ use nitm\widgets\models\Revisions as RevisionsModel;
 use nitm\widgets\helpers\BaseWidget;
 use kartik\icons\Icon;
 use nitm\widgets\editor\Editor;
+use nitm\helpers\ArrayHelper;
 
 class RevisionsInput extends BaseWidget
 {
@@ -22,7 +23,7 @@ class RevisionsInput extends BaseWidget
 	/**
 	 * The name of this input widget
 	 */
-	public $name;
+	public $attribute;
 	
 	/**
 	 * The value for this input widget
@@ -30,7 +31,7 @@ class RevisionsInput extends BaseWidget
 	public $value;
 	
 	public $editorOptions = [
-		'role' => 'revisionsInput',
+		'role' => 'createRevisions',
 		'toolbarSize' => 'medium',
 		'size' => 'medium'
 	];
@@ -52,19 +53,29 @@ class RevisionsInput extends BaseWidget
 	];
 	
 	/**
-	 * Autosave path handler. With trailing slash
+	 * Autosave every X seconds
 	 */
-	public $autoSavePath = "/revisions/create/";
+	public $revisionSaveInterval = 60;
 	
 	/**
-	 * Autosave eevery 5 seconds
+	 * Revision autosave path handler. With trailing slash
 	 */
-	public $autoSaveInterval = 10;
+	public $revisionSavePath = '/revisions/create/';
 	
 	/**
 	 * Enable redactor? True by default
 	 */
 	public $enableRedactor = true;
+	
+	/**
+	 * Autosave path handler. With trailing slash
+	 */
+	public $autoSavePath;
+	
+	/**
+	 * Autosave every X seconds
+	 */
+	public $autoSaveInterval = 5;
 	
 	private $_enableRevisions = true;
 	
@@ -81,24 +92,35 @@ class RevisionsInput extends BaseWidget
 			break;
 		}
 		parent::init();
+		$this->revisionSavePath .= $this->parentType.'/'.$this->parentId;
+		$this->options['id'] .= $this->parentId;
+		$this->widgetOptions['id'] .= $this->parentId;
 	}
 	
 	public function run()
 	{
-		$this->autoSavePath .= $this->parentType.'/'.$this->parentId;
-		$this->options['id'] .= $this->parentId;
-		$this->widgetOptions['id'] .= $this->parentId;
-		
 		switch($this->_enableRevisions)
 		{
 			case true:
 			$this->revisionsModel->setScenario('validateNew');
-			$revisionOptions =  [
+			$this->editorOptions =  [
 				'role' => $this->options['role'],
 				'id' => $this->options['id'].$this->parentId,
-				'data-dave-path' => $this->autoSavePath,
-				'data-use-redactor' => $this->enableRedactor,
 			];
+
+			if(!$this->model->isNewRecord) {
+				$this->editorOptions += [
+					'enableAutoSave' => true,
+					'autoSavePath' => $this->autoSavePath,
+					'autoSaveInterval' => $this->autoSaveInterval,
+					'autoSaveName' => $this->model->formName().'['.$this->attribute.']',
+				];
+				$this->options += [
+					'data-save-path' => $this->revisionSavePath,
+					'data-save-interval' => $this->revisionSaveInterval,
+				];
+			}
+
 			Asset::register($this->getView());
 			break;
 			
@@ -106,22 +128,29 @@ class RevisionsInput extends BaseWidget
 			$revisionOptions = [];
 			break;
 		}
+		$this->options['data-enable-redactor'] = (int)$this->enableRedactor;
 		switch($this->enableRedactor)
 		{
 			case true:
-			$this->editorOptions['id'] = 'message'.uniqid();
+			$this->editorOptions['id'] = $this->options['id'];
 			$this->editorOptions['model'] = $this->model;
-			$this->editorOptions['attribute'] = $this->name;
-			$this->editorOptions['options']['value'] = $this->value;
+			$this->editorOptions['attribute'] = $this->attribute;
+			$this->editorOptions['htmlOptions'] = $this->options;
 			$input = Editor::widget($this->editorOptions);
 			break;
 			
 			default:
-			$input = Html::activeTextarea($this->model, $this->name, $revisionOption);
+			$input = Html::activeTextarea($this->model, $this->attribute, $revisionOptions);
 			break;
 		}
 		$result = Html::tag('div', '', ['role' => 'revisionStatus']);
-		echo Html::tag('div', $input.$result, $this->widgetOptions);
+		return Html::tag('div', $input.$result, $this->widgetOptions).Html::script('$nitm.onModuleLoad("revisions", function (module) {
+			module.attributeName = "'.$this->attribute.'";
+			module.saveUrl = "'.$this->revisionSavePath.'";
+			module.interval = '.($this->revisionSaveInterval*1000).';
+			module.initInterval("#'.$this->widgetOptions['id'].'");
+			module.initActivity("#'.$this->widgetOptions['id'].'");
+		});');
 	}
 }
 ?>

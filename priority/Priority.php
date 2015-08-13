@@ -217,7 +217,15 @@ class Priority extends BaseWidget
 				];
 				return Html::label(Html::radio($name, $checked, $itemOptions).' '. $label['label'], null, $itemsLabels[$value]['options']);
 			};
-			$ret_val = $this->form->field($this->model, $this->attribute)->radioList($itemsLabels, $this->options)->label("Priority", ['class' => 'sr-only']);
+			$ret_val = $this->form
+				->field($this->model, $this->attribute, [
+					'options' => [
+						'class' => '',
+						'tag' => false
+					]
+				])
+				->radioList($itemsLabels, $this->options)
+				->label("Priority", ['class' => 'sr-only']);
 			break;
 			
 			case 'checkboxlist':
@@ -226,12 +234,14 @@ class Priority extends BaseWidget
 					'class' => 'btn'
 				]
 			];
-			$ret_val = $this->form->field($this->model, $this->attribute, [
-				'options' => [
-					'class' => 'btn-group',
-					'data-toggle' => 'buttons',
-				]
-			])->checkBoxList($items, $this->options);
+			$ret_val = $this->form
+				->field($this->model, $this->attribute, [
+					'options' => [
+						//'class' => 'btn-group',
+						'data-toggle' => 'buttons',
+					]
+				])
+				->checkBoxList($items, $this->options);
 			break;
 			
 			default:	

@@ -1,8 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
-use kartik\icons\Icon;
+use kartik\grid\GridView;
+use nitm\helpers\Icon;
 
 /**
  * @var yii\web\View $this
@@ -13,26 +13,22 @@ use kartik\icons\Icon;
 $this->title = 'Revisions';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="revisions-index">
+<div class="revisions-index" id="revisions-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?php //echo Html::a('Create Revisions', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?= GridView::widget([
+		'striped' => false,
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        //'filterModel' => $searchModel,
         'columns' => [
+			'version',
             [
 				'attribute' => 'author',
 				'label' => 'Author',
 				'format' => 'html',
 				'value' => function ($model, $index, $widget) {
-					return Html::a($model->authorUser->getFullName(true, $model->authorUser), \Yii::$app->urlManager->createUrl(['', 'Revisions[author]' => $model->authorUser->id]));
+					return $model->author()->url();
 				}
 			],
             'created_at',
@@ -55,34 +51,51 @@ $this->params['breadcrumbs'][] = $this->title;
 						return Html::a(Icon::show('reply'), $url, [
 							'title' => Yii::t('yii', 'Restore Revision'),
 							'class' => 'fa-2x',
-							'role' => 'dynamicAction',
+							'role' => 'metaAction',
 							'data-parent' => 'tr',
 							'data-pjax' => '0',
 						]);
 					},
-					'delete' => function ($url, $model) {
-						return Html::a(Icon::show('remove'), $url, [
-							'title' => Yii::t('yii', 'Delete Revision'),
+					'disable' => function ($url, $model) {
+						return Html::a(Icon::forAction('delete', 'disabled', $model), \Yii::$app->urlManager->createUrl([$url]), [
+							'title' => Yii::t('yii', ($model->disabled ? 'Un-Delete' : 'Delete')),
 							'class' => 'fa-2x',
-							'role' => 'dynamicAction',
+							'role' => 'metaAction '.(\Yii::$app->getUser()->getIdentity()->isAdmin() ? 'disableAction' : 'deleteAction'),
 							'data-parent' => 'tr',
 							'data-pjax' => '0',
 						]);
-					}
+					},
 				],
-				'template' => "{view} {restore} {delete}",
+				'template' => "{view} {restore} {disable}",
 				'urlCreator' => function($action, $model, $key, $index) {
-					return $this->context->id.'/'.$action.'/'.$model->getId();
+					return '/revisions/'.$action.'/'.$model->getId();
 				},
 				'options' => [
 					'rowspan' => 3
 				]
 			],
         ],
+		'rowOptions' => function ($model, $key, $index, $grid)
+		{
+			return [
+				"class" => 'item '.\nitm\helpers\Statuses::getIndicator($model->getStatus()),
+				'id' => 'documentation'.$model->getId(),
+				'role' => 'iasItem statusIndicator'.$model->getId()
+			];
+		},
     ]); ?>
 
 </div>
 
-<div role="dialog" class="col-md-6 col-lg-6 col-sm-12 col-xs-12 col-md-offset-3 col-lg-offset-3 modal fade" id="revisionsViewModal" style="z-index: 10001">
-<div class="modal-content modal-content-fixed"></div>
+<div role="dialog" class="modal fade" id="revisionsViewModal" style="z-index: 10001">
+	<div class="modal-lg modal-full modal-dialog">
+		<div class="modal-content"></div>
+	</div>
 </div><!-- /.modal -->
+<?php if(\Yii::$app->request->isAjax ): ?>
+<script type="text/javascript">
+$nitm.onModuleLoad('revisions', function (module) {
+	module.initDefaults("#revisions-index", 'revisions');
+});
+</script>
+<?php endif; ?>

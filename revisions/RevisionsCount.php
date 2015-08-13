@@ -50,7 +50,7 @@ class RevisionsCount extends BaseWidget
 	{
 		$this->options['id'] .= $this->parentId;
 		$this->options['class'] .= ' '.($this->model->count() >= 1 ? 'btn-primary' : 'btn-transparent');
-		$this->options['label'] = (int)$this->model->count().' Revisions '.Icon::show('eye');
+		$this->options['label'] = $this->getLabel();
 		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/revisions/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal']);
 		$this->options['title'] = \Yii::t('yii', 'View Revisions');
 		$info = $this->getInfoLink();

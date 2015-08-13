@@ -15,6 +15,7 @@ use yii\data\ArrayDataProvider;
 use nitm\widgets\models\User;
 use nitm\widgets\models\Revisions as RevisionsModel;
 use nitm\widgets\helpers\BaseWidget;
+use nitm\helpers\ArrayHelper;
 use kartik\icons\Icon;
 
 class Revisions extends BaseWidget
@@ -87,56 +88,21 @@ class Revisions extends BaseWidget
 	
 	public function run()
 	{
+		$this->model->queryOptions['orderBy'] = ['id' => SORT_DESC];
+		//$this->model->queryOptions['andWhere'] = array_merge(ArrayHelper::getValue($this->model->queryOptions, 'andWhere', []), ['disabled' => false]);
 		$dataProvider = new \yii\data\ArrayDataProvider([
 			"allModels" => (is_array($this->items) && !empty($this->items)) ? $this->items : $this->model->getModels(),
 			'pagination' => false,
 		]);
-		switch(\Yii::$app->user->identity->isAdmin())
-		{
-			case true:
-			break;
-		}
-		$revisions = GridView::widget([
-			'dataProvider' => $dataProvider,
-			//'filterModel' => $searchModel,
-			'columns' => [
-				[
-					'attribute' => 'author_id',
-					'label' => 'Author',
-					'format' => 'html',
-					'value' => function ($model, $index, $widget) {
-						return $model->author()->url();
-					}
-				],
-				'created_at',
-				[
-					'attribute' => 'parent_type',
-					'label' => 'Type',
-				],
-				[
-					'class' => 'yii\grid\ActionColumn',
-					'buttons' => $this->getActions(),
-					'template' => "{view} {restore} {delete}",
-					'urlCreator' => function($action, $model, $key, $index) {
-						return \Yii::$app->controller->id.'/'.$action.'/'.$model->getId();
-					},
-					'options' => [
-						'rowspan' => 3
-					]
-				],
-			],
-			'rowOptions' => function ($model, $key, $index, $grid)
-			{
-				return [
-					"class" => \nitm\helpers\Statuses::getIndicator($model->getStatus()),
-				];
-			},
-			"tableOptions" => [
-					'class' => 'table'
-			],
+		
+		if(!\Yii::$app->getUser()->getIdentity()->isAdmin())
+			$this->model->queryOptions['andWhere']['disabled'] = false;
+			
+		$revisions = $this->render('@nitm/widgets/views/revisions/index', [
+			'dataProvider' => $dataProvider
 		]);
 		$this->options['id'] .= $this->parentId;
-		echo Html::tag('div', $revisions, $this->options);
+		return Html::tag('div', $revisions, $this->options);
 	}
 	
 	public function getActions()

@@ -61,10 +61,11 @@ $action = $model->getIsNewRecord() ? 'create' : 'update';
 					echo \nitm\widgets\revisions\RevisionsInput::widget([
 						"parentId" => $model->getId(),
 						"parentType" => $model->isWhat(),
-						'name' => 'request',
+						'attribute' => 'request',
 						'revisionsModel' => $model->revisionModel(),
 						'model' => $model,
 						'value' => $model->request,
+						'autoSavePath' => '/'.$this->context->id.'/update/'.$model->getId(),
 						'editorOptions' => [
 							'toolbarSize' => 'full',
 							'size' => 'full'

@@ -12,8 +12,13 @@ use nitm\helpers\Response;
 /**
  * RevisionsController implements the CRUD actions for Revisions model.
  */
-class RevisionsController extends WidgetController
+class RevisionsController extends \nitm\controllers\DefaultController
 {
+	function init()
+	{
+		$this->model = new Revisions();
+	}
+	
     public function behaviors()
     {
         return [
@@ -75,78 +80,64 @@ class RevisionsController extends WidgetController
      */
     public function actionCreate($type, $id)
     {
-		$ret_val = false;
+		$ret_val = [
+			'success' => false,
+			'message' => 'Unable to save the revision for $type: $id'
+		];
+		$fromExisting = false;
+		
         $model = new Revisions;
 		$model->setScenario('create');
 		$model->parent_id = $id;
 		$model->parent_type = $type;
+		
 		//Check to see if a revision was done in the last $model->interval interval
 		$existing = Revisions::find()
-			->select('id')
+			->select(['id', 'created_at'])
 			->where([
 				'parent_id' => $id,
 				'parent_type' => $type,
-				'author' => \Yii::$app->user->getId()
+				'author_id' => \Yii::$app->user->getId()
 			])
-			->andWhere("TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, created_at)) <= ".$model->interval)
 			->orderBy(['id' => SORT_DESC])
 			->one();
-		switch($existing instanceof Revisions)
-		{
-			//There was? Ok let's just update the content
-			case true:
-			$model->id = $existing->id;
+			
+		if($existing instanceof Revisions && $existing->isOutsideInterval()) {
+			$model = $existing;
 			$model->setScenario('update');
-			$model->created_at = time();
-			break;
+			$fromExisting = true;
 		}
-		$model->author = \Yii::$app->user->getId();
-		$model->setAttribute('data', json_encode($_REQUEST));
+		
+		$model->author_id = \Yii::$app->user->getId();
+		$model->version = Revisions::find()->where([
+			'parent_type' => $type,
+			'parent_id' => $id
+		])->count() + 1;
+		
+		$model->setAttribute('data', json_encode($_POST));
 
-        if ($model->validate() && $model->save()) {
-            //return $this->redirect(['view', 'user_id' => $model->user_id, 'remote_type' => $model->remote_type, 'remote_id' => $model->remote_id]);
-			$ret_val = true;
-        } else {
-            /*return $this->render('create', [
-                'model' => $model,
-            ]);*/
-        }
+        $ret_val['success'] = $model->validate() && $model->save();
+		
+		if($fromExisting)
+			$ret_val['message'] = 'Updated recent revision successfully!';
+		else
+			$ret_val['message'] = 'Saved revision successfully!';
+			
+		if(!Response::formatSpecified())
+			$this->setResponseFormat('json');
+			
 		return $this->renderResponse($ret_val);
     }
-
-    /**
-     * Updates an existing Revisions model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $user_id
-     * @param string $remote_type
-     * @param integer $remote_id
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel(Revisions::className(), $id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'user_id' => $model->user_id, 'remote_type' => $model->remote_type, 'remote_id' => $model->remote_id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * Deletes an existing Revisions model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $user_id
-     * @param string $remote_type
-     * @param integer $remote_id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel(Revisions::className(), $id)->delete();
-
-        return $this->redirect(['index']);
-    }
+	
+	/**
+	 * Restore a revision to the base model
+	 */
+	function actionRestore($id)
+	{
+		/**
+		 * We need to find the class and then update the model
+		 * May need to use a wiget search namespace in the module
+		 */
+		throw new \yii\web\BadRequestHttpException("Restoring isn't supported yet");
+	}
 }

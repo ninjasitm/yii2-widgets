@@ -44,9 +44,15 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 							'addonType' => 'radiolist',
 							'attribute' => 'status',
 							'model' => $model,
-							'form' => $form
+							'form' => $form,
+							'options' => [
+								'style' => 'width: 200px'
+							]
 						]),
 						'asButton' => true,
+					],
+					'groupOptions' => [
+						'class' => 'input-group input-group-sm'
 					]
 				],
 				'options' => [

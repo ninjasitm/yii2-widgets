@@ -100,7 +100,7 @@ trait BaseWidget {
 		$model = self::initCache($constrain);
 		$model->setConstraints($constrain);
 		$model->addWith([
-			'last' => function ($query) {
+			'last' => function ($query) use($model) {
 				$query->andWhere($model->queryOptions['andWhere']);
 			}
 		]);

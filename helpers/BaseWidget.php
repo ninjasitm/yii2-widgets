@@ -56,6 +56,10 @@ class BaseWidget extends Widget
 	 */
 	public $modalOptions = [];
 	
+	public $labelOptions = [
+		'style' => 'font-size: large'
+	];
+	
 	/**
 	 * Active form
 	 */
@@ -177,5 +181,10 @@ class BaseWidget extends Widget
 			'data-parent' => $this->model->isWhat().'FormParent',
 			'class' => $this->model->isWhat()
 		];
+	}
+	
+	protected function getLabel()
+	{
+		return Html::tag('strong', (int)$this->model->count(), $this->labelOptions).'<br> '.$this->model->properName($this->model->isWhat(true)).'&nbsp;'.Icon::show('eye');
 	}
 }

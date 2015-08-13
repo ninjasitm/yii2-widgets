@@ -10,18 +10,25 @@ use kartik\icons\Icon;
  * @var nitm\module\models\Revisions $model
  */
 
-$this->title = "Revision for ".$model->parent_type." by ".$model->authorUser->username;
+$this->title = "Revision for ".$model->parent_type." by ".$model->author()->username;
 $this->params['breadcrumbs'][] = ['label' => 'Revisions', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="revisions-view">
+<div class="revisions-view" id="revisions-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Icon::show('reply'), ['restore', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Icon::show('trash-o'), ['delete', 'author' => $model->author, 'parent_type' => $model->parent_type, 'parent_id' => $model->parent_id], [
+    <p class="pull-right">
+        <?= Html::a(Icon::show('reply'), ['restore', 'id' => $model->id], [
+			'class' => 'btn btn-primary',
+			'role' => 'metaAction'
+		]) ?>
+        <?= Html::a(Icon::show('trash-o'), [
+			'disable', 
+			'id' => $model->getId(), 
+		], [
             'class' => 'btn btn-danger',
+			'role' => 'metaAction disableAction',
             'data' => [
                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
                 'method' => 'post',
@@ -44,14 +51,17 @@ $this->params['breadcrumbs'][] = $this->title;
 			{
 				case true:
 				$data = json_decode($model->getAttribute('data'), true);
+				$data['attribute'] = isset($data['attribute']) ? $data['attribute'] : key($data);
+				$attributes = explode(',', $data['attribute']);
 				switch(is_array($data))
 				{
 					case true:
-					foreach($data as $title => $value)
+					$ret_val = '';
+					foreach($attributes as $attribute)
 					{
-						$ret_val = Html::tag('div',
-							Html::tag('h3', ucfirst($title)).
-							Html::tag('div', urldecode($value)),
+						$ret_val .= Html::tag('div',
+							Html::tag('h3', ucfirst($attribute))
+							.Html::tag('div', urldecode($data[$attribute])),
 							[
 								'class' => 'well'
 							]
@@ -79,3 +89,10 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
 </div>
+<?php if(\Yii::$app->request->isAjax ): ?>
+<script type="text/javascript">
+$nitm.onModuleLoad('revisions', function (module) {
+	module.initDefaults("#revisions-view", 'revisions');
+});
+</script>
+<?php endif; ?>
