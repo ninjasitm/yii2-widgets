@@ -11,6 +11,7 @@ use Yii;
 use yii\helpers\Html;
 use nitm\widgets\models\Alerts;
 use nitm\helpers\Icon;
+use nitm\helpers\ArrayHelper;
 
 class Follow extends \yii\base\Widget
 {	
@@ -125,13 +126,8 @@ class Follow extends \yii\base\Widget
 			default:
 			break;
 		}
-		if(isset($this->buttonOptions['size']))
-			$this->options['class'].= ' btn-'.$this->buttonOptions['size'];
-		if(isset($this->buttonOptions['type']))
-			$this->options['class'].= ' btn-'.$this->buttonOptions['type'];
-			
-		if(!isset($this->buttonOptions['type']))
-			$this->options['class'].= ' btn-default';
+		
+		$this->getButtonClass();
 		
 		$this->options['onchange'] = '$nitm.module("tools").dynamicValue(this);';
 		$ret_val = \yii\bootstrap\ButtonDropdown::widget([
@@ -182,6 +178,66 @@ class Follow extends \yii\base\Widget
 				break;
 			}
 		}
+	}
+	
+	protected function getButtonClass($size=null, $type=null)
+	{
+		$size = ArrayHelper::remove($this->buttonOptions, 'size', 'default');
+		$type = ArrayHelper::remove($this->buttonOptions, 'type', 'default');
+		switch($size)
+		{
+			case 'large':
+			case 'lg':
+			$size = 'btn-lg';
+			break;
+			
+			case 'small':
+			case 'sm':
+			$size = 'btn-sm';
+			break;
+			
+			case 'extra-small':
+			case 'xs':
+			$size = 'btn-xs';
+			break;
+			
+			default:
+			$size = 'btn-default';
+			break;
+		}
+		
+		switch($type)
+		{
+			case 'success':
+			$type = 'btn-success';
+			break;
+			
+			case 'danger':
+			case 'error':
+			$type = 'btn-danger';
+			break;
+			
+			case 'info':
+			$type = 'btn-info';
+			break;
+			
+			case 'warning':
+			$type = 'btn-warning';
+			break;
+			
+			case 'primary':
+			$type = 'btn-primary';
+			break;
+			
+			default:
+			$type = 'btn-default';
+			break;
+		}
+		Html::addCssClass($this->options, [
+			'size' => $size,
+			'type' => $type
+		]);
+		return $size.' '.$type;
 	}
 }
 ?>

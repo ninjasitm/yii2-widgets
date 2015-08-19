@@ -14,7 +14,7 @@ function Revisions(items)
 		'blur',
 	];
 	this.roles = {
-		create: 'createRevision',
+		create: ['createRevision'],
 		checkStatus: 'revisionStatus'
 	};
 	this.defaultInit = [
@@ -41,14 +41,14 @@ function Revisions(items)
 	this.initActivity = function(container)
 	{
 		var container = (container == undefined) ? 'body' : container;
-		$.map(this.roles, function (role, k) {
+		$.map(this.roles.create, function (role, k) {
 			var object = $(container+" "+"[role='"+role+"']");
 			switch(true)
 			{
 				case self.useRedactor == true:
 				case object.data('enable-redactor') == true:
 				var callbacks = {
-					autosaveCallback: function (result) {
+					autosaveCallback: function (name, result) {
 						self.afterCreate(result, container);
 					}
 				};
@@ -82,7 +82,7 @@ function Revisions(items)
 			var attrName = matches[1];
 		else
 			var attrName = self.attributeName;
-			
+		
 		var data = {
 			attribute : attrName,
 		};
@@ -127,7 +127,7 @@ function Revisions(items)
 			break;
 			
 			default:
-			$nitm.notify('Unable to add revision', self.classes.error);
+			$nitm.notify('Unable to save revision', self.classes.error);
 			break;
 		}
 	}

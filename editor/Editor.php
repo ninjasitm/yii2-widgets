@@ -4,6 +4,7 @@ namespace nitm\widgets\editor;
 
 use yii\imperavi\Widget;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 /**
  * This class makes it easier to instantiate an editor widget by providing options 
@@ -113,7 +114,10 @@ class Editor extends \yii\imperavi\Widget
 		}
 			
 		$this->htmlOptions['role'] = $this->role;
-		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
+		return parent::run().Html::tag('span', '', [
+			'id' => 'revisionStatus',
+			'style' => 'position: absolute; width: 100%; text-align: center; bottom: 0;'
+		]).\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
 	}
 	
 	protected function initFiles()
@@ -153,14 +157,18 @@ class Editor extends \yii\imperavi\Widget
 			$this->options += [
 				'autosave' => $this->autoSavePath,
 				'autosaveName' => (isset($this->autoSaveName) ? $this->autoSaveName : $this->model->formName().'['.(isset($this->autoSaveName) ? $this->autoSaveName : $this->attribute).']'),
-				'autosaveOnChange' => true,
+				//'autosaveOnChange' => true,
 				'autosaveInterval' => $this->autoSaveInterval,
 				'autosaveFields' => [
 					'do' => true,
 					'__format' => 'json',
 					'getHtml' => true,
 					'ajax' => true
-				]
+				],
+				'autosaveCallback' => new \yii\web\JsExpression('function (name, result) {
+					if(result.success)
+						$nitm.notify(result.message);
+				}')
 			];
 		}
 	}

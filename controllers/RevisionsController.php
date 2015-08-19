@@ -102,7 +102,7 @@ class RevisionsController extends \nitm\controllers\DefaultController
 			->orderBy(['id' => SORT_DESC])
 			->one();
 			
-		if($existing instanceof Revisions && $existing->isOutsideInterval()) {
+		if($existing instanceof Revisions && !$existing->isOutsideInterval()) {
 			$model = $existing;
 			$model->setScenario('update');
 			$fromExisting = true;
