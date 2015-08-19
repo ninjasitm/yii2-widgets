@@ -18,15 +18,13 @@ function Revisions(items)
 		checkStatus: 'revisionStatus'
 	};
 	this.defaultInit = [
-		'initMetaActions'
+		'initMetaActions', 
+		'initInterval'
 	];
 	
 	this.initInterval = function (container) {
 		var container = (container == undefined) ? 'body' : container;
-		setInterval(
-			function () {self.checkActivity(container)},
-			self.interval
-		);	
+		setInterval(function () {self.checkActivity(container)}, self.interval);	
 	}
 	
 	this.checkActivity = function (container) {

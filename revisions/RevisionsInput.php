@@ -18,6 +18,8 @@ use nitm\helpers\ArrayHelper;
 
 class RevisionsInput extends BaseWidget
 {
+	public $callbackEvents = ['blur'];
+	
 	public $revisionsModel;
 	
 	/**
@@ -31,7 +33,6 @@ class RevisionsInput extends BaseWidget
 	public $value;
 	
 	public $editorOptions = [
-		'role' => 'createRevisions',
 		'toolbarSize' => 'medium',
 		'size' => 'medium'
 	];
@@ -41,14 +42,14 @@ class RevisionsInput extends BaseWidget
 	 */
 	public $widgetOptions = [
 		'class' => 'form-group',
-		'id' => 'revision_input_div'
+		'id' => 'revision-input-div'
 	];
 	
 	/*
 	 * HTML options for generating the widget elements
 	 */
 	public $options = [
-		'id' => 'revision_input',
+		'id' => 'revision-input',
 		'role' => 'createRevision',
 	];
 	
@@ -103,7 +104,7 @@ class RevisionsInput extends BaseWidget
 		{
 			case true:
 			$this->revisionsModel->setScenario('validateNew');
-			$this->editorOptions =  [
+			$this->editorOptions +=  [
 				'role' => $this->options['role'],
 				'id' => $this->options['id'].$this->parentId,
 			];
@@ -136,21 +137,51 @@ class RevisionsInput extends BaseWidget
 			$this->editorOptions['model'] = $this->model;
 			$this->editorOptions['attribute'] = $this->attribute;
 			$this->editorOptions['htmlOptions'] = $this->options;
+			$this->initCallbacks();
 			$input = Editor::widget($this->editorOptions);
 			break;
 			
 			default:
-			$input = Html::activeTextarea($this->model, $this->attribute, $revisionOptions);
+			$input = Html::activeTextarea($this->model, $this->attribute, $revisionOptions).$this->initCallbacks();
 			break;
 		}
-		$result = Html::tag('div', '', ['role' => 'revisionStatus']);
-		return Html::tag('div', $input.$result, $this->widgetOptions).Html::script('$nitm.onModuleLoad("revisions", function (module) {
+		return Html::tag('div', $input, $this->widgetOptions).Html::script('$nitm.onModuleLoad("revisions", function (module) {
 			module.attributeName = "'.$this->attribute.'";
 			module.saveUrl = "'.$this->revisionSavePath.'";
 			module.interval = '.($this->revisionSaveInterval*1000).';
 			module.initInterval("#'.$this->widgetOptions['id'].'");
-			module.initActivity("#'.$this->widgetOptions['id'].'");
 		});');
+	}
+	
+	protected function initCallbacks()
+	{
+		$ret_val = '';
+		if($this->enableRedactor) {
+			foreach($this->callbackEvents as $event)
+			{
+				$this->editorOptions['options']['autosaveCallback'] = new \yii\web\JsExpression('function (name, result) {
+					$nitm.module("revisions").afterCreate(result, container);
+				}');
+				$this->editorOptions['options'][$event.'Callback'] = new \yii\web\JsExpression('function () {
+					var $object = $("#'.$this->editorOptions['id'].'");
+					var $revisions = $nitm.module("revisions");
+					$object.attr("revisionRecentActivity", true);
+					$object.on("'.$event.'", $revisions.operation($revisions.getData(object, function (){
+						return $object.redactor("code.get");
+					}), null, "'.$this->widgetOptions['id'].'"));
+				}');
+			} 
+		} else {
+			$ret_val .= '$nitm.onModuleLoad("revisions", function (module) {
+				var $object = $("#'.$this->editorOptions['id'].'");';
+			foreach($this->callbackEvents as $event) {
+				$ret_val .= '$object.on(e, function () {$(this).attr("revisionRecentActivity", true);});
+				$object.on(e, module.operation(module.getData(this), this, "'.$this->widgetOptions['id'].'"));';
+			}
+			$ret_val .= '});';
+			$ret_val = new \yii\web\JsExpression($ret_val);
+		}
+		return $ret_val;
 	}
 }
 ?>

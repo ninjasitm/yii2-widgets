@@ -94,6 +94,7 @@ class Editor extends \yii\imperavi\Widget
 			];
 			break;
 		}
+		
 		switch($this->size)
 		{
 			case 'full':
@@ -114,10 +115,7 @@ class Editor extends \yii\imperavi\Widget
 		}
 			
 		$this->htmlOptions['role'] = $this->role;
-		return parent::run().Html::tag('span', '', [
-			'id' => 'revisionStatus',
-			'style' => 'position: absolute; width: 100%; text-align: center; bottom: 0;'
-		]).\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
+		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
 	}
 	
 	protected function initFiles()
