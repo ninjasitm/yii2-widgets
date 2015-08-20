@@ -76,7 +76,7 @@ class RevisionsInput extends BaseWidget
 	/**
 	 * Autosave every X seconds
 	 */
-	public $autoSaveInterval = 5;
+	public $autoSaveInterval = 30;
 	
 	private $_enableRevisions = true;
 	
@@ -93,7 +93,7 @@ class RevisionsInput extends BaseWidget
 			break;
 		}
 		parent::init();
-		$this->revisionSavePath .= $this->parentType.'/'.$this->parentId;
+		$this->revisionSavePath .= $this->parentType.'/'.$this->parentId.'?'.\nitm\components\Dispatcher::SKIP_ALERT_FLAG.'=1';
 		$this->options['id'] .= $this->parentId;
 		$this->widgetOptions['id'] .= $this->parentId;
 	}
@@ -166,7 +166,7 @@ class RevisionsInput extends BaseWidget
 					var $object = $("#'.$this->editorOptions['id'].'");
 					var $revisions = $nitm.module("revisions");
 					$object.attr("revisionRecentActivity", true);
-					$object.on("'.$event.'", $revisions.operation($revisions.getData(object, function (){
+					$object.on("'.$event.'", $revisions.operation($revisions.getData($object, function (){
 						return $object.redactor("code.get");
 					}), null, "'.$this->widgetOptions['id'].'"));
 				}');
