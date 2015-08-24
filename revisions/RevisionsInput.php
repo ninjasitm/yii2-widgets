@@ -74,9 +74,9 @@ class RevisionsInput extends BaseWidget
 	public $autoSavePath;
 	
 	/**
-	 * Autosave every X seconds
+	 * Autosave every X minutes
 	 */
-	public $autoSaveInterval = 30;
+	public $autoSaveInterval = 10;
 	
 	private $_enableRevisions = true;
 	
@@ -160,7 +160,7 @@ class RevisionsInput extends BaseWidget
 			foreach($this->callbackEvents as $event)
 			{
 				$this->editorOptions['options']['autosaveCallback'] = new \yii\web\JsExpression('function (name, result) {
-					$nitm.module("revisions").afterCreate(result, container);
+					$nitm.module("revisions").afterCreate(result, "#'.$this->options['id'].'", "#'.$this->widgetOptions['id'].'");
 				}');
 				$this->editorOptions['options'][$event.'Callback'] = new \yii\web\JsExpression('function () {
 					var $object = $("#'.$this->editorOptions['id'].'");

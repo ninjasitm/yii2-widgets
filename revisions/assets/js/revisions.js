@@ -104,7 +104,7 @@ function Revisions(items)
 					switch(result.action)
 					{
 						case 'create':
-						self.afterAdd(result, element, container);
+						self.afterCreate(result, element, container);
 						break;
 					}
 				},
@@ -121,11 +121,12 @@ function Revisions(items)
 			case true:
 			ret_val = false;
 			$(element).attr('revisionRecentActivity', false);
-			$(container).find("[role='"+self.revisionStatus+"']").val(result.message);
+			//$(container).find("[role='"+self.revisionStatus+"']").val(result.message);
+			$nitm.notify(result.message, 'alert alert-success');
 			break;
 			
 			default:
-			$nitm.notify('Unable to save revision', self.classes.error);
+			$nitm.notify('Unable to save revision', 'alert alert-warning');
 			break;
 		}
 	}

@@ -101,7 +101,7 @@ class RevisionsController extends \nitm\controllers\DefaultController
 			])
 			->orderBy(['id' => SORT_DESC])
 			->one();
-			
+		
 		if($existing instanceof Revisions && !$existing->isOutsideInterval()) {
 			$model = $existing;
 			$model->setScenario('update');
@@ -117,6 +117,7 @@ class RevisionsController extends \nitm\controllers\DefaultController
 		$model->setAttribute('data', json_encode($_POST));
 
         $ret_val['success'] = $model->validate() && $model->save();
+		$ret_val['action'] = 'create';
 		
 		if($fromExisting)
 			$ret_val['message'] = 'Updated recent revision successfully!';

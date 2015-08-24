@@ -16,7 +16,11 @@ class Revisions extends BaseWidget
 {	
 	use \nitm\widgets\traits\relations\Revisions;
 	
-	public $interval = 600; //Time in seconds for updating/creating new revisions
+	/**
+	 * Time in minutes for updating/creating new revisions
+	 * Default is 10 minutes
+	 */
+	public $interval = 10;
 	
 	private $_lastActivity = '___lastActivity';
 	private $_dateFormat = "D M d Y h:iA";
