@@ -74,9 +74,9 @@ class RevisionsInput extends BaseWidget
 	public $autoSavePath;
 	
 	/**
-	 * Autosave every X minutes
+	 * Autosave every X seconds
 	 */
-	public $autoSaveInterval = 10;
+	public $autoSaveInterval = 30;
 	
 	private $_enableRevisions = true;
 	

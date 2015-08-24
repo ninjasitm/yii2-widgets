@@ -31,7 +31,7 @@ class Editor extends \yii\imperavi\Widget
 	/**
 	 * Autosave every X seconds
 	 */
-	public $autoSaveInterval = 10;
+	public $autoSaveInterval = 30;
 	
 	/**
 	 * The name of the autosave field
@@ -41,11 +41,6 @@ class Editor extends \yii\imperavi\Widget
 	public $options = [
 	];
 	public $htmlOptions = [];
-	
-	public $_htmlOptions = [
-		'style' => 'z-index: 99999',
-		'rows' => 3,
-	];
 	
 	protected $modelId;
 	
@@ -62,7 +57,7 @@ class Editor extends \yii\imperavi\Widget
 		$this->options = array_merge($this->defaultOptions(), $this->options);
 		$this->options['toolbarFixed'] = true;
 		$this->options['toolbarFixedTarget'] = '#'.$this->htmlOptions['id'];
-		$this->htmlOptions = array_merge($this->_htmlOptions, $this->htmlOptions);
+		$this->htmlOptions = array_merge($this->defaultHtmlOptions(), $this->htmlOptions);
 		$buttonParam = isset($this->options['airButtons']) && ($this->options['airButtons'] == true) ? 'airButtons' : 'buttons';
 
 		$this->plugins = [
@@ -178,6 +173,14 @@ class Editor extends \yii\imperavi\Widget
 			'buttonOptions' => [
 				'class' => 'btn btn-sm chat-form-btn'
 			]
+		];
+	}
+	
+	protected function defaultHtmlOptions() 
+	{
+		return [
+			'style' => 'z-index: 99999',
+			'rows' => 3,
 		];
 	}
 }
