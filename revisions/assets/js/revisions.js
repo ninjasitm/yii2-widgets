@@ -5,7 +5,7 @@ function Revisions(items)
 	
 	var self = this;
 	this.id = 'revisions';
-	this.interval = 3000; //In seconds
+	this.interval = undefined; //In seconds
 	this.classes = {
 		success: 'bg-success',
 		error: 'bg-danger',
@@ -23,17 +23,18 @@ function Revisions(items)
 	];
 	
 	this.initInterval = function (container) {
-		var container = (container == undefined) ? 'body' : container;
-		setInterval(function () {self.checkActivity(container)}, self.interval);	
-	}
-	
-	this.checkActivity = function (container) {
-		$.map(this.roles, function (role, k) {
-			$(container+" "+"[role='"+role+"']").map(function() {
-				if($(this).attr('revisionRecentActivity'))
-					self.operation(this);
-			})
-		});
+		if(this.interval != undefined && this.interval >= 1000) {
+			console.log('Setting up intervals '+this.interval);
+			var container = (container == undefined) ? 'body' : container;
+			setInterval(function () {
+				$.map(self.roles.create, function (role, k) {
+					$(container+" "+"[role='"+role+"']").map(function(idx, elem) {
+						if($(elem).attr('revisionRecentActivity'))
+							self.operation(self.getData(elem), elem, container);
+					})
+				});
+			}, self.interval);
+		}
 	}
 	
 	this.initActivity = function(container)
@@ -121,12 +122,17 @@ function Revisions(items)
 			case true:
 			ret_val = false;
 			$(element).attr('revisionRecentActivity', false);
-			//$(container).find("[role='"+self.revisionStatus+"']").val(result.message);
-			$nitm.notify(result.message, 'alert alert-success');
+			if(result.isRevision)
+				$(container).find("[role='"+self.revisionStatus+"']").val(result.message);
+			else
+				$nitm.notify(result.message, 'alert alert-success');
 			break;
 			
 			default:
-			$nitm.notify('Unable to save revision', 'alert alert-warning');
+			if(result.isRevision)
+				$(container).find("[role='"+self.revisionStatus+"']").val(result.message);
+			else
+				$nitm.notify(result.message, 'alert alert-warning');
 			break;
 		}
 	}

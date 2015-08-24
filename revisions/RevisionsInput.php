@@ -56,7 +56,7 @@ class RevisionsInput extends BaseWidget
 	/**
 	 * Autosave every X seconds
 	 */
-	public $revisionSaveInterval = 60;
+	public $revisionSaveInterval;
 	
 	/**
 	 * Revision autosave path handler. With trailing slash
@@ -94,6 +94,7 @@ class RevisionsInput extends BaseWidget
 		}
 		parent::init();
 		$this->revisionSavePath .= $this->parentType.'/'.$this->parentId.'?'.\nitm\components\Dispatcher::SKIP_ALERT_FLAG.'=1';
+		$this->autoSavePath = \Yii::$app->urlManager->createUrl([$this->autoSavePath, \nitm\components\Dispatcher::SKIP_ALERT_FLAG => 1]);
 		$this->options['id'] .= $this->parentId;
 		$this->widgetOptions['id'] .= $this->parentId;
 	}
@@ -148,7 +149,7 @@ class RevisionsInput extends BaseWidget
 		return Html::tag('div', $input, $this->widgetOptions).Html::script('$nitm.onModuleLoad("revisions", function (module) {
 			module.attributeName = "'.$this->attribute.'";
 			module.saveUrl = "'.$this->revisionSavePath.'";
-			module.interval = '.($this->revisionSaveInterval*1000).';
+			module.interval = '.(isset($this->revisionSaveInterval) ? $this->revisionSaveInterval*1000 : 0).';
 			module.initInterval("#'.$this->widgetOptions['id'].'");
 		});');
 	}

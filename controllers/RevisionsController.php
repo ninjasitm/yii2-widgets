@@ -82,7 +82,8 @@ class RevisionsController extends \nitm\controllers\DefaultController
     {
 		$ret_val = [
 			'success' => false,
-			'message' => 'Unable to save the revision for $type: $id'
+			'message' => 'Unable to save the revision for $type: $id',
+			'isRevision' => true
 		];
 		$fromExisting = false;
 		
