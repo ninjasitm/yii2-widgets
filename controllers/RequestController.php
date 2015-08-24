@@ -81,6 +81,15 @@ class RequestController extends \nitm\controllers\DefaultController
 		]);
     }
 	
+	public function actionFilter($searchOptions=[])
+	{
+		$options = [
+			'namespace' => '\nitm\widgets\models\search\\',
+			'className' => '\nitm\widgets\models\search\Request'
+		];
+		return parent::actionFilter($options, $searchOptions);
+	}
+	
 	/**
 	 * Add some custom values for the search model
 	 */

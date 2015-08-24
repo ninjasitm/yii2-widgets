@@ -150,7 +150,7 @@ class Editor extends \yii\imperavi\Widget
 			$this->options += [
 				'autosave' => $this->autoSavePath,
 				'autosaveName' => (isset($this->autoSaveName) ? $this->autoSaveName : $this->model->formName().'['.(isset($this->autoSaveName) ? $this->autoSaveName : $this->attribute).']'),
-				//'autosaveOnChange' => true,
+				'autosaveOnChange' => false,
 				'autosaveInterval' => $this->autoSaveInterval,
 				'autosaveFields' => [
 					'do' => true,
