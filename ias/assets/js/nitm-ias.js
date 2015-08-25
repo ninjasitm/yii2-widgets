@@ -43,6 +43,7 @@ function NitmIas ()
 				 * Initialize loaded items using $nitm Tools
 				 */
 				$nitm.module('tools').init($(items));
+				$nitm.module('entity').init($(items), 'entity', ['initMetaActions', 'initForms']);
 			});
 			for(var event in data.events)
 			{
