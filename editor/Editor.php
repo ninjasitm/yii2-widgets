@@ -20,6 +20,7 @@ class Editor extends \yii\imperavi\Widget
 	public $role = 'message';
 	public $size;
 	public $toolbarSize;
+	public $toolbarFixed;
 	
 	public $enableAutoSave;
 	
@@ -31,15 +32,14 @@ class Editor extends \yii\imperavi\Widget
 	/**
 	 * Autosave every X seconds
 	 */
-	public $autoSaveInterval = 30;
+	public $autoSaveInterval = 60;
 	
 	/**
 	 * The name of the autosave field
 	 */
 	public $autoSaveName;
 	
-	public $options = [
-	];
+	public $options = [];
 	public $htmlOptions = [];
 	
 	protected $modelId;
@@ -55,8 +55,9 @@ class Editor extends \yii\imperavi\Widget
 	public function run()
 	{
 		$this->options = array_merge($this->defaultOptions(), $this->options);
-		$this->options['toolbarFixed'] = true;
-		$this->options['toolbarFixedTarget'] = '#'.$this->htmlOptions['id'];
+		$this->options['toolbarFixed'] = $this->toolbarFixed;
+		if($this->toolbarFixed)
+			$this->options['toolbarFixedTarget'] = '#'.$this->htmlOptions['id'];
 		$this->htmlOptions = array_merge($this->defaultHtmlOptions(), $this->htmlOptions);
 		$buttonParam = isset($this->options['airButtons']) && ($this->options['airButtons'] == true) ? 'airButtons' : 'buttons';
 
@@ -110,7 +111,7 @@ class Editor extends \yii\imperavi\Widget
 		}
 			
 		$this->htmlOptions['role'] = $this->role;
-		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
+		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}").$this->redactorAutosaveFix();
 	}
 	
 	protected function initFiles()
@@ -150,8 +151,6 @@ class Editor extends \yii\imperavi\Widget
 			$this->options += [
 				'autosave' => $this->autoSavePath,
 				'autosaveName' => (isset($this->autoSaveName) ? $this->autoSaveName : $this->model->formName().'['.(isset($this->autoSaveName) ? $this->autoSaveName : $this->attribute).']'),
-				'autosaveOnChange' => false,
-				'autosaveInterval' => $this->autoSaveInterval,
 				'autosaveFields' => [
 					'do' => true,
 					'__format' => 'json',
@@ -161,8 +160,17 @@ class Editor extends \yii\imperavi\Widget
 				'autosaveCallback' => new \yii\web\JsExpression('function (name, result) {
 					if(result.success)
 						$nitm.notify(result.message);
-				}')
+				}'),
+				'initCallback' => $this->redactorAutosaveFix()
 			];
+			if(isset($this->autoSaveInterval) && $this->autoSaveInterval >= 10)
+				$this->options += [
+					'autosaveInterval' => $this->autoSaveInterval
+				];
+			else
+				$this->options += [
+					'autosaveOnChange' => true
+				];
 		}
 	}
 	
@@ -182,6 +190,47 @@ class Editor extends \yii\imperavi\Widget
 			'style' => 'z-index: 99999',
 			'rows' => 3,
 		];
+	}
+	
+	protected function redactorAutosaveFix() {
+		return new \yii\web\JsExpression("function () {
+			var autosaveLoadFix = function() {
+				switch(true)
+				{
+					case this.autosave.inProgress:
+					case this.opts.autosaveInterval >= ((Date.now() - this.autosave.last)/1000):
+					return;
+					break;
+					
+					default:
+					this.autosave.inProgress = true;
+					this.autosave.source = this.code.get();
+	
+					if (this.autosave.html === this.autosave.source) return;
+	
+					// data
+					var data = {};
+					data['name'] = this.autosave.name;
+					data[this.autosave.name] = this.autosave.source;
+					data = this.autosave.getHiddenFields(data);
+	
+					// ajax
+					var jsxhr = $.ajax({
+						url: this.opts.autosave,
+						type: 'post',
+						data: data
+					});
+					
+					jsxhr.done(function (data) {
+						this.autosave.success(data);
+						this.autosave.inProgress = false;
+						this.autosave.last = Date.now();
+					}.bind(this));
+					break;
+				}
+			}.bind(this)
+			this.autosave.load = $.Redactor.prototype.autosave.load = autosaveLoadFix;
+		}");
 	}
 }
 
