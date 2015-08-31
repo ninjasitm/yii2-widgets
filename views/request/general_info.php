@@ -104,11 +104,12 @@ echo GridView::widget([
 		$statusInfo = \nitm\widgets\metadata\StatusInfo::widget([
 			'items' => [
 				[
-					'blamable' => $model->author(),
-					'date' => $model->created_at,
-					'value' => $model->created_at,
+					'blamable' => $model->editor(),
+					'date' => $model->updated_at,
+					'value' => $model->edits,
 					'label' => [
-						'true' => "Created ",
+						'true' => "Updated ",
+						'false' => "No updates"
 					]
 				],
 				[
@@ -132,7 +133,7 @@ echo GridView::widget([
 			],
 		]);
 		
-		$metaInfo = empty($statusInfo) ? $shortLink : $shortLink.$statusInfo;
+		$metaInfo = empty($statusInfo) ? $shortLink : $statusInfo.$shortLink;
 		/*$issues = $this->context->issueCountWidget([
 			"model" => $model->issues, 
 		]);*/

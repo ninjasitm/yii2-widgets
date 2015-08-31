@@ -111,7 +111,7 @@ class Editor extends \yii\imperavi\Widget
 		}
 			
 		$this->htmlOptions['role'] = $this->role;
-		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}").$this->redactorAutosaveFix();
+		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
 	}
 	
 	protected function initFiles()

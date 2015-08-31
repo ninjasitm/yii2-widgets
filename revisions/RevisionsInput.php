@@ -146,12 +146,13 @@ class RevisionsInput extends BaseWidget
 			$input = Html::activeTextarea($this->model, $this->attribute, $revisionOptions).$this->initCallbacks();
 			break;
 		}
-		return Html::tag('div', $input, $this->widgetOptions).Html::script('$nitm.onModuleLoad("revisions", function (module) {
+		$this->getView()->registerJs('$nitm.onModuleLoad("revisions", function (module) {
 			module.attributeName = "'.$this->attribute.'";
 			module.saveUrl = "'.$this->revisionSavePath.'";
 			module.interval = '.(isset($this->revisionSaveInterval) ? $this->revisionSaveInterval*1000 : 0).';
 			module.initInterval("#'.$this->widgetOptions['id'].'");
 		});');
+		return Html::tag('div', $input, $this->widgetOptions);
 	}
 	
 	protected function initCallbacks()

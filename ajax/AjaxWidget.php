@@ -31,7 +31,8 @@ class AjaxWidget extends \yii\base\Widget
 		
 	public $options = [
 		'class' => 'text-left',
-		'role' => 'AjaxWidget'
+		'role' => 'AjaxWidget',
+		'style' => 'overflow: auto'
 	];
 	/**
 	 * When should the request be pulled?

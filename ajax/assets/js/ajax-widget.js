@@ -31,28 +31,34 @@ function AjaxWidget () {
 	}
 	
 	this.inViewPort = function (elem) {
-		var element = $(elem);
-		element.scrollable({direction: 'vertical', in: function () {}});
-		var position = element.scrollable('position');
+		var $elem = $(elem);
+		$elem.scrollable({direction: 'vertical', in: function () {}});
+		var position = $elem.scrollable('position');
 		switch(position.inside)
 		{
 			case true:
-			element.load(element.data('url'), element.data('query-params'));
+			self.now(elem);
 			break;
 			
 			default:
-			element.scrollable({
-				in: function () {element.load(element.data('url'), element.data('query-params'))},
-				out: function () {element.off('scrollin');element.off('scrollout');}
-			});
+			$elem.on('scrollin', function () {
+				console.log("Scrolled In...");
+				self.now(this)
+			})
+			.on('scrollout', function () {
+				$(this).off('scrollin');
+				$(this).off('scrollout');
+			})
+			.scrollable();
+			console.log($elem.onscroll);
 			break;
 		}
 	}
 	
 	this.now = function (elem) {
-		var $element = $(elem);
+		var $elem = $(elem);
 		$(document).ready(function () {
-			$element.load($element.data('url'), $element.data('query-params'));
+			$elem.load($elem.data('url'), $elem.data('query-params'));
 		});
 	}
 }

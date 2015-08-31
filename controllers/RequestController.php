@@ -75,9 +75,12 @@ class RequestController extends \nitm\controllers\DefaultController
 		
 		return parent::actionIndex(RequestSearch::className(), [
 			'construct' => [
-				'queryOptions' => $queryOptions
-			],
-			'defaultParams' => [$this->model->formName() => ['closed' => false]]
+				'queryOptions' => $queryOptions,
+				'defaults' => [
+					'sort' => \nitm\helpers\QueryFilter::getOrderByQuery(),
+					'params' => ['closed' => false]
+				]
+			]
 		]);
     }
 	

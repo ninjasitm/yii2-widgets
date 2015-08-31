@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace nitm\widgets\ajax;
+namespace nitm\widgets;
 
 use yii\web\AssetBundle;
 
@@ -13,17 +13,17 @@ use yii\web\AssetBundle;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class AjaxWidgetAsset extends AssetBundle
+class jQueryScrollableAsset extends AssetBundle
 {
-	public $sourcePath = '@nitm/widgets/ajax/assets';
+	public $sourcePath = '@nitm/widgets/assets';
 	public $css = [
 	];
 	public $js = [
-		'js/ajax-widget.js',
+		'js/jquery-plugins/jquery-ui/ui/widget.js',
+		'js/jquery-plugins/jquery-ui-scrollable/jquery-ui-scrollable.js'
 	];
 	public $jsOptions = ['position' => \yii\web\View::POS_END];
 	public $depends = [
 		'nitm\assets\AppAsset',
-		'nitm\widgets\jQueryScrollableAsset',
 	];
 }
