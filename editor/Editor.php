@@ -48,6 +48,9 @@ class Editor extends \yii\imperavi\Widget
 	{
 		parent::init();
 		$this->modelId = $this->model->isNewRecord ? uniqid() : $this->model->getId();
+		$this->plugins = [
+			'fullscreen', 'fontcolor', 'fontsize'
+		];
 		$this->initFiles();
 		$this->initAutoSave();
 	}
@@ -60,10 +63,6 @@ class Editor extends \yii\imperavi\Widget
 			$this->options['toolbarFixedTarget'] = '#'.$this->htmlOptions['id'];
 		$this->htmlOptions = array_merge($this->defaultHtmlOptions(), $this->htmlOptions);
 		$buttonParam = isset($this->options['airButtons']) && ($this->options['airButtons'] == true) ? 'airButtons' : 'buttons';
-
-		$this->plugins = [
-			'fullscreen', 'fontcolor', 'fontsize'
-		];
 		
 		switch($this->toolbarSize)
 		{
@@ -118,29 +117,11 @@ class Editor extends \yii\imperavi\Widget
 	{
 		if($this->enableFiles) {
 			array_push($this->plugins, 'imagemanager', 'filemanager');
-			$this->options['imageUpload'] = ArrayHelper::getValue($this->options, 'imageUpload', '/image/save/'.$this->model->isWhat().'/'.$this->modelId);
-			$this->options['imageManagerJson'] = json_encode(array_map(function ($image) {
-				if(is_array($image)) {
-					return [
-						'thumb' => $image['metadata']['thumb'],
-						'image' => $image['url'],
-						'title' => $image['title']
-					];
-				}
-			}, (array)\nitm\filemanager\models\Image::getImagesFor($this->model, true)->asArray()->all()));
+			$this->options['imageUpload'] = ArrayHelper::getValue($this->options, 'imageUpload', \Yii::$app->urlManager->createUrl(['/image/save/'.$this->model->isWhat().'/'.$this->modelId, 'imageParam' => 'file']));
+			$this->options['imageManagerJson'] = \Yii::$app->urlManager->createUrl(['/image/index/'.$this->model->isWhat().'/'.$this->modelId, '__format' => 'json']);
 			
-			$this->options['fileUpload'] = ArrayHelper::getValue($this->options, 'fileUpload', '/file/save/'.$this->model->isWHat().'/'.$this->modelId);
-			$this->options['fileManagerJson'] = json_encode(array_map(function ($file) {
-				if(is_array($file)) {
-					return [
-						'name' => $file['metadata']['thumb'],
-						'image' => $file['url'],
-						'name' => $file['file_name'],
-						'title' => $file['title'],
-						'size' => \Yii::$app->formatter->asShortSize($file['size'])
-					];
-				}
-			}, (array)\nitm\filemanager\models\File::getFilesFor($this->model, true)->asArray()->all()));
+			$this->options['fileUpload'] = ArrayHelper::getValue($this->options, 'fileUpload', \Yii::$app->urlManager->createUrl(['/files/save/'.$this->model->isWhat().'/'.$this->modelId, 'fileParam' => 'file']));
+			$this->options['fileManagerJson'] = \Yii::$app->urlManager->createUrl(['/files/index/'.$this->model->isWhat().'/'.$this->modelId, '__format' => 'json']);
 		}
 	}
 	

@@ -133,15 +133,15 @@ class Priority extends BaseWidget
 		switch($this->type)
 		{
 			case 'buttons':
-			echo $this->getAsButtons();
+			return $this->getAsButtons();
 			break;
 			
 			case 'addon':
-			echo $this->getAsAddon();
+			return $this->getAsAddon();
 			break;
 			
 			default:
-			echo $this->getAsText();
+			return $this->getAsText();
 			break;
 		}
 	}
@@ -196,6 +196,7 @@ class Priority extends BaseWidget
 		}
 		$itemsLabels[$this->model->$attribute]['options']['class'] .= ' active';
 		$this->options['inline'] = $this->inputsInline;
+		
 		switch($this->addonType)
 		{
 			case 'dropdown':
@@ -218,14 +219,10 @@ class Priority extends BaseWidget
 				return Html::label(Html::radio($name, $checked, $itemOptions).' '. $label['label'], null, $itemsLabels[$value]['options']);
 			};
 			$ret_val = $this->form
-				->field($this->model, $this->attribute, [
-					'options' => [
-						'class' => '',
-						'tag' => false
-					]
-				])
+				->field($this->model, $this->attribute)
 				->radioList($itemsLabels, $this->options)
 				->label("Priority", ['class' => 'sr-only']);
+				
 			break;
 			
 			case 'checkboxlist':
