@@ -43,7 +43,7 @@ class ParentListInput extends \nitm\widgets\ajax\Dropdown
 		$this->options = array_merge($this->options, [
 			'data-model-id' => $this->model->getId(),
 			'data-real-input' => "#".$this->model->isWhat()."-parent_ids",
-			'placeholder' => "Search for ".$this->model->isWhat()." parents"
+			'placeholder' => "Search for parent ".$this->model->isWhat(true)
 		]);
 		
 		$this->pluginEvents = [
@@ -59,11 +59,5 @@ class ParentListInput extends \nitm\widgets\ajax\Dropdown
 		];
 		
 		parent::init();
-	}
-		
-	
-	public function run()
-	{
-		return parent::run();
 	}
 }

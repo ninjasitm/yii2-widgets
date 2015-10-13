@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		<?= Html::a('Create Token', ['create'], ['class' => 'btn btn-success']) ?>
 	</p>
 	
-	<?= $this->context->legendWidget(); ?>
+	<?= \nitm\widgets\legend\Legend::widget(); ?>
 
 	<?php
 		echo GridView::widget([

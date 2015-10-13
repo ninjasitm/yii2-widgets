@@ -19,6 +19,7 @@ class Dropdown extends Select2
 	public $url;
 	public $minLength = 3;
 	public $dataType = 'json';
+	public $data = [];
 	
 	public function init()
 	{

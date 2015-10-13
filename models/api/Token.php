@@ -91,7 +91,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 	 * @param Token $token object
 	 * @return string name of level
      */
-	public static function getLevel($token)
+	public function getLevel($token)
 	{
 		$levels = static::getLevels();
 		return $levels[$token->level];

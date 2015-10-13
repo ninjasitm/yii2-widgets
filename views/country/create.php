@@ -13,14 +13,17 @@ $this->title = Yii::t('app', 'Create {modelClass}', [
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Countries'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-	<?= yii\widgets\Breadcrumbs::widget([
-		'links' => $this->params['breadcrumbs']
-	]); ?>
-
-    <h1><?= Html::encode($this->title) ?></h1>
+	<?php if(!\Yii::$app->request->isAjax): ?>
+	<?= \yii\widgets\Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]); ?>
+	<h2><?= Html::encode($this->title) ?></h2>
+	<?php endif; ?>
 
     <?= $this->render('_form', [
         'model' => $model,
+		'formOptions' => $formOptions,
+		'scenario' => $scenario,
+		'action' => $action,
+		'type' => $type
     ]) ?>
 
 </div>
