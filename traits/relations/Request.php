@@ -2,6 +2,7 @@
 namespace nitm\widgets\traits\relations;
 
 use nitm\widgets\models\Category as CategoryModel;
+use nitm\models\User;
 
 /**
  * Traits defined for expanding active relation scopes until yii2 resolves traits issue
@@ -37,6 +38,19 @@ trait Request {
 	public function requestFor()
 	{
 		return \nitm\helpers\Relations::getRelatedRecord('requestFor', $this, CategoryModel::className());
+	}
+	
+	public function getSort()
+	{
+		$sort = [
+			'type' => [
+				'asc' => [CategoryModel::tableName().'.name' => SORT_ASC],
+				'desc' => [CategoryModel::tableName().'.name' => SORT_DESC],
+				'default' => SORT_DESC,
+				'label' => 'Type'
+			],
+		];
+		return array_merge(parent::getSort(), $sort);
 	}
 }
 ?>

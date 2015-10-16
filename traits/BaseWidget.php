@@ -293,5 +293,20 @@ trait BaseWidget {
 		}
 		return $model;
 	}
+	
+	public function title()
+	{
+		if($this->hasProperty('title') || $this->hasAttribute('title'))
+			$ret_val = $this->title;
+		else if($this->hasProperty('name') || $this->hasAttribute('name'))
+			$ret_val = $this->name;
+		else if($this->hasProperty('parent_type') || $this->hasAttribute('parent_type'))
+			$ret_val = \nitm\helpers\ClassHelper::properName($this->parent_type).' ('.$this->parent_id.')';
+		else if($this->hasProperty('remote_type') || $this->hasAttribute('remote_type'))
+			$ret_val = \nitm\helpers\ClassHelper::properName($this->remote_type).' ('.$this->remote_id.')';
+		else
+			$ret_val = $this->getId();
+		return $ret_val;
+	}
 }
 ?>

@@ -64,10 +64,10 @@ class RequestController extends \nitm\controllers\DefaultController
 			case true:
 			$queryOptions = array_merge([
 				'select' => [
-					'*',
+					$this->model->tableName().'.*',
 					\nitm\helpers\QueryFilter::getHasNewQuery($this->model)
 				],
-				'orderBy' => \nitm\helpers\QueryFilter::getOrderByQuery(),
+				'orderBy' => \nitm\helpers\QueryFilter::getOrderByQuery($this->model),
 				'andWhere' => ['closed' => false]
 			], $queryOptions);
 			break;
@@ -77,7 +77,7 @@ class RequestController extends \nitm\controllers\DefaultController
 			'construct' => [
 				'queryOptions' => $queryOptions,
 				'defaults' => [
-					'sort' => \nitm\helpers\QueryFilter::getOrderByQuery(),
+					'orderby' => \nitm\helpers\QueryFilter::getOrderByQuery($this->model),
 					'params' => ['closed' => false]
 				]
 			]
