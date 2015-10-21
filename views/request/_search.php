@@ -20,7 +20,7 @@ use yii\widgets\ActiveField;
 <?php $form = ActiveForm::begin(['id' => 'filter',
 	'method' => 'get',
 	'type' => ActiveForm::TYPE_HORIZONTAL,
-	'action' => \Yii::$app->urlManager->createUrl(['/search/filter', '__format' => 'json', '_type' => $model->isWhat()]),
+	'action' => \Yii::$app->urlManager->createUrl(["$isWhat/filter", '__format' => 'json', '_type' => $model->isWhat()]),
 	'options' => [
 		'class' => 'form-horizontal',
 		"role" => "filter",

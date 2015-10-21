@@ -71,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'data-pjax' => 1
 			],
 			'format'  => 'raw',
-			'attribute' => 'type',
+			'attribute' => 'type_id',
 			'label' => 'Type',
 			'value' => function ($model) {
 				return $model->url('type_id', [$model->typeOf(), 'name']);

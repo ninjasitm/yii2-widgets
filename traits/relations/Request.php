@@ -43,11 +43,17 @@ trait Request {
 	public function getSort()
 	{
 		$sort = [
-			'type' => [
-				'asc' => [CategoryModel::tableName().'.name' => SORT_ASC],
-				'desc' => [CategoryModel::tableName().'.name' => SORT_DESC],
+			'type_id' => [
+				'asc' => ['type.name' => SORT_ASC],
+				'desc' => ['type.name' => SORT_DESC],
 				'default' => SORT_DESC,
 				'label' => 'Type'
+			],
+			'request_for_id' => [
+				'asc' => ['requestFor.name' => SORT_ASC],
+				'desc' => ['requestFor.name' => SORT_DESC],
+				'default' => SORT_DESC,
+				'label' => 'Request For'
 			],
 		];
 		return array_merge(parent::getSort(), $sort);

@@ -41,6 +41,16 @@ class RequestController extends \nitm\controllers\DefaultController
 		return [
 		];
 	}
+	
+	protected function getWith()
+	{
+		return array_merge(parent::getWith(), [
+			'author', 'editor', 'type', 'requestFor', 'completedBy', 'closedBy', 
+			'replyModel', 'issueModel', 'revisionModel', 
+			'voteModel.currentUserVoted','voteModel.fetchedValue', 'voteModel',
+			'followModel'
+		]);
+	}
 
     /**
      * Lists all Request models.
@@ -49,14 +59,7 @@ class RequestController extends \nitm\controllers\DefaultController
     public function actionIndex()
     {
 		$queryOptions = [
-			'with' => [
-				'author', 'editor', 'type', 'requestFor', 
-				'completedBy', 'closedBy', 
-				'replyModel', 
-				'issueModel', 'revisionModel', 
-				'voteModel.currentUserVoted','voteModel.fetchedValue', 'voteModel',
-				'followModel'
-			]
+			'with' => $this->getWith()
 		];
 		
 		switch((sizeof(\Yii::$app->request->get()) == 0))
@@ -88,7 +91,9 @@ class RequestController extends \nitm\controllers\DefaultController
 	{
 		$options = [
 			'namespace' => '\nitm\widgets\models\search\\',
-			'className' => '\nitm\widgets\models\search\Request'
+			'className' => '\nitm\widgets\models\search\Request',
+			'view' => 'data',
+			'with' => $this->getWith()
 		];
 		return parent::actionFilter($options, $searchOptions);
 	}
@@ -100,11 +105,7 @@ class RequestController extends \nitm\controllers\DefaultController
 	{
 		return parent::actionSearch([
 			'queryOptions' => [
-				'with' => [
-					'author', 'type', 'requestFor', 
-					'completedBy', 'closedBy', 'replyModel', 
-					'issueModel', 'revisionModel', 'voteModel'
-				]
+				'with' => $this->getWith()
 			]
 		]);
 	}
