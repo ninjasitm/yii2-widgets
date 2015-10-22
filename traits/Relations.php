@@ -37,7 +37,7 @@ trait Relations {
 		return $this->getRelationQuery($className, $link, $options);
 	}
 	
-	protected function getCachedWidgetModel($className, $idKey=null, $many=false, $options=[])
+	protected function getCachedWidget($className, $idKey=null, $many=false, $options=[])
 	{
 		$relation = \nitm\helpers\Helper::getCallerName();
 		$options['construct'] = isset($options['construct']) ? $options['construct'] : [
@@ -48,7 +48,7 @@ trait Relations {
 		return $this->getCachedRelation($idKey, $className, $options, $many, $relation);
 	}
 	
-	protected function getWidgetModel($className, $idKey=null, $many=false, $options=[])
+	protected function getWidget($className, $idKey=null, $many=false, $options=[])
 	{
 		$relation = \nitm\helpers\Helper::getCallerName();
 		$options['construct'] = isset($options['construct']) ? $options['construct'] : [
@@ -59,15 +59,15 @@ trait Relations {
 		return RelationsHelper::getRelatedRecord($relation, $this, $className, $options, $many);
 	}
 	
-	public function replyModel()
+	public function reply()
 	{
-		return $this->getWidgetModel(\nitm\widgets\models\Replies::className());
+		return $this->getWidget(\nitm\widgets\models\Replies::className());
 	}
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getReplyModel()
+    public function getReply()
     {
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Replies::className());
     }
@@ -100,15 +100,15 @@ trait Relations {
 		return $this->resolveRelation('id', \nitm\widgets\models\Replies::className(), $useCache, [], true, 'replies');
 	}
 	
-	public function issueModel()
+	public function issue()
 	{
-		return $this->getWidgetModel(\nitm\widgets\models\Issues::className(), 'issueModel');
+		return $this->getWidget(\nitm\widgets\models\Issues::className(), 'issue');
 	}
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getIssueModel()
+    public function getIssue()
     {
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Issues::className());
     }
@@ -149,15 +149,15 @@ trait Relations {
 		return $this->resolveRelation('id', \nitm\widgets\models\Revisions::className(), $useCache, [], true, 'revisions');
 	}
 	
-	public function revisionModel()
+	public function revision()
 	{
-		return $this->getWidgetModel(\nitm\widgets\models\Revisions::className(), 'revisionModel');
+		return $this->getWidget(\nitm\widgets\models\Revisions::className(), 'revision');
 	}
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRevisionModel()
+    public function getRevision()
     {
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Revisions::className());
     }
@@ -177,17 +177,18 @@ trait Relations {
 		return $this->resolveRelation('id', \nitm\widgets\models\Vote::className(), $useCache, [], true, 'votes');
 	}
 	
-	public function voteModel()
+	public function vote()
 	{
-		return $this->getWidgetModel(\nitm\widgets\models\Vote::className(), 'voteModel');
+		return $this->getWidget(\nitm\widgets\models\Vote::className(), 'vote');
 	}
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVoteModel()
+    public function getVote()
     {
-        return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Vote::className());
+        return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Vote::className())
+			->with(['fetchedValue', 'currentUserVoted']);
     }
 
     /**
@@ -197,36 +198,24 @@ trait Relations {
      */
     public function getRating($options=[])
     {
-        return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Rating::className(), ['parent_id' => 'id'], [], true);
-    }
-	
-	public function rating()
-	{
 		$options = array_merge([
 			'orderBy' => ['id' => SORT_DESC],
 		], $options);
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Issues::className(), [
 			'remote_id' => $this->getId(), 
 			'remote_type' => $this->isWhat()
-		], $options, true);
+		], $options, true)
+			->with(['currentUserVoted']);
 	}
 	
-	public function ratingModel()
+	public function rating()
 	{
-		return $this->getWidgetModel(\nitm\widgets\models\Rating::className(), 'ratingModel');
+		return $this->getWidget(\nitm\widgets\models\Rating::className(), 'rating');
 	}
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRatingModel()
-    {
-        return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Rating::className());
-    }
 	
-	public function followModel()
+	public function follow()
 	{
-		return $this->getWidgetModel(\nitm\widgets\models\Alerts::className(), 'followModel', false, [
+		return $this->getWidget(\nitm\widgets\models\Alerts::className(), 'follow', false, [
 			'select' => ['id', 'remote_id', 'remote_type'],
 			'construct' => [
 				'remote_id' => $this->getId(), 
@@ -238,7 +227,7 @@ trait Relations {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFollowModel()
+    public function getFollow()
     {
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Alerts::className(), ['remote_id' => 'id'], [
 			//Disabled due to Yii framework inability to return statistical relations

@@ -79,28 +79,23 @@ class Vote extends BaseWidget
 	public function rating()
 	{
 		$ret_val = ['positive' => 0, 'negative' => 0, 'ratio' => 0];
-		switch(1)
+		switch(static::$allowMultiple)
 		{
-			case $this->isRelationPopulated('fetchedValue'):
-			switch(static::$allowMultiple)
-			{
-				case true:
-				$ret_val = [
-					'positive' => (int)$this->fetchedValue->_up, 
-					'negative' => (int)$this->fetchedValue->_down
-				];
-				break;
-				
-				default:
-				$ret_val = [
-					'positive' => round(((int)$this->fetchedValue->_up/static::getMax()) * 100), 
-					'negative' => round(((int)$this->fetchedValue->_down/static::getMax()) * 100)
-				];
-				break;
-			}
-			$ret_val['ratio'] = (int)$this->fetchedValue->_up/static::getMax();
+			case true:
+			$ret_val = [
+				'positive' => (int)$this->fetchedValue['_up'], 
+				'negative' => (int)$this->fetchedValue['_down']
+			];
+			break;
+			
+			default:
+			$ret_val = [
+				'positive' => round(((int)$this->fetchedValue['_up']/static::getMax()) * 100), 
+				'negative' => round(((int)$this->fetchedValue['_down']/static::getMax()) * 100)
+			];
 			break;
 		}
+		$ret_val['ratio'] = (int)$this->fetchedValue['_up']/static::getMax();
 		return $ret_val;
 	}
 	
@@ -149,16 +144,11 @@ class Vote extends BaseWidget
 		switch(static::$allowMultiple)
 		{
 			case false:
-			switch($this->isRelationPopulated('currentUserVoted'))
+			switch(1)
 			{
-				case true:
-				switch(1)
-				{
-					case ($this->currentUserVoted->value == -1) && $direction == 'down':
-					case ($this->currentUserVoted->value == 1) && $direction == 'up':
-					$ret_val = true;
-					break;
-				}
+				case ($this->currentUserVoted['value'] == -1) && $direction == 'down':
+				case ($this->currentUserVoted['value'] == 1) && $direction == 'up':
+				$ret_val = true;
 				break;
 			}
 			break;

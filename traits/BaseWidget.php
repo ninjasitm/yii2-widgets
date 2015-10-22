@@ -183,7 +183,7 @@ trait BaseWidget {
 	
 	public function fetchedValue()
 	{
-		return $this->hasRelation('fetchedValue') ? $this->fetchedValue['_value'] : 0;
+		return $this->fetchedValue['_value'];
 	}
 	
 	public function hasNew()

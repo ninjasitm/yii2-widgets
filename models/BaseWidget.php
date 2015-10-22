@@ -49,5 +49,19 @@ class BaseWidget extends \nitm\models\Entity
 		];
 		return array_merge(parent::has(), $has);
 	}
+	
+	/**
+	 * Get the query that orders items by their activity
+	 */
+	public function getSort()
+	{
+		$ret_val = [];
+		//Create the user sort parameters
+		static::addSortParams($ret_val, [
+			'rating' => ['rating', 'Rating', new \yii\db\Expression('COUNT(rating.id)')],
+			'vote' => ['vote', 'Vote', new \yii\db\Expression('COUNT(vote.id)')],
+		]);
+		return array_merge(parent::getSort(), $ret_val);
+	}
 }
 ?>

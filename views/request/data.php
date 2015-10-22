@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				return [
 					'rowspan' => 2,
 					'role' => 'voteIndicator'.$model->getId(),
-					'style' => "vertical-align: middle; background-color:rgba(255,51,0,".$model->voteModel()->rating()['ratio'].")"
+					'style' => "vertical-align: middle; background-color:rgba(255,51,0,".$model->vote()->rating()['ratio'].")"
 				];
 			}
 		],
@@ -51,15 +51,13 @@ $this->params['breadcrumbs'][] = $this->title;
 			'sortLinkOptions' => [
 				'data-pjax' => 1
 			],
-			'attribute' => 'rating',
+			'attribute' => 'vote',
 			'label' => '%',
 			'format' => 'raw',
 			'value' => function ($model, $index, $widget) {
 				return \nitm\widgets\vote\Vote::widget([
 					'size' => 'large',
-					'model' => $model->voteModel(),
-					'parentType' => $model->isWhat(), 
-					'parentId' => $model->getId(),
+					'model' => $model->vote(),
 				]);
 			},
 			'options' => [
@@ -209,25 +207,26 @@ $this->params['breadcrumbs'][] = $this->title;
 		];
 	},
 	'afterRow' => function ($model, $key, $index, $grid){
+		
 		$replies = \nitm\widgets\replies\RepliesCount::widget([
-			"model" => $model->replyModel(),
+			"model" => $model->reply(),
 			'fullDetails' => false,
 		]);
 		$revisions = \nitm\widgets\revisions\RevisionsCount::widget([
-			'model' => $model->revisionModel(),
+			'model' => $model->revision(),
 			"parentId" => $model->getId(), 
 			"parentType" => $model->isWhat(),
 			'fullDetails' => false ,
 		]);
 		$issues = \nitm\widgets\issueTracker\IssueCount::widget([
-			'model' => $model->issueModel(),
+			'model' => $model->issue(),
 			'enableComments' => true,
 			"parentId" => $model->getId(), 
 			"parentType" => $model->isWhat(),
 			'fullDetails' => false,
 		]);
 		$follow = \nitm\widgets\alerts\Follow::widget([
-			'model' => $model->followModel(),
+			'model' => $model->follow(),
 			'buttonOptions' => [
 				'size' => 'normal'
 			]

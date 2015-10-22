@@ -43,12 +43,6 @@ trait Request {
 	public function getSort()
 	{
 		$sort = [
-			'type_id' => [
-				'asc' => ['type.name' => SORT_ASC],
-				'desc' => ['type.name' => SORT_DESC],
-				'default' => SORT_DESC,
-				'label' => 'Type'
-			],
 			'request_for_id' => [
 				'asc' => ['requestFor.name' => SORT_ASC],
 				'desc' => ['requestFor.name' => SORT_DESC],

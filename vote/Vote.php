@@ -112,16 +112,16 @@ class Vote extends BaseWidget
 	
 	public function init()
 	{
-		if (!($this->model instanceof VoteModel) && ($this->parentType == null) || ($this->parentId == null)) {
+		if ($this->model instanceof VoteModel && ($this->parentType == null) || ($this->parentId == null)) {
+			$this->parentId = $this->model->parent_id;
+			$this->parentType = $this->model->parent_type;
+		} else if($this->parentType && $this->parentId)
+			$this->model = VoteModel::findModel([$this->parentId, $this->parentType]);
+		else 
 			$this->model = new VoteModel([
 				'parent_id' => $this->parentId,
 				'parent_type' => $this->parentType
 			]);
-		}
-		else 
-		{
-			$this->model = ($this->model instanceof VoteModel) ? $this->model : VoteModel::findModel([$this->parentId, $this->parentType]);
-		}
 		$this->uniqid = uniqid();
 		$this->iconOptions = !isset($this->iconOptions) ? $this->_defaultIconOptions: $this->iconOptions;
 		parent::init();
