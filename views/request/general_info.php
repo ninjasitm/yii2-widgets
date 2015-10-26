@@ -28,8 +28,8 @@ echo GridView::widget([
 				$rating = Html::tag('div',
 					\nitm\widgets\vote\Vote::widget([
 						'size' => 'large',
-						'model' => $model->voteModel(),
-						'parentType' => $model->isWhat(), 
+						'model' => $model->vote(),
+						'parentType' => $model->isWhat(),
 						'parentId' => $model->getId(),
 					])
 				);
@@ -92,7 +92,7 @@ echo GridView::widget([
 		'class' => 'table table-bordered'
 	],
 	'afterRow' => function ($model, $key, $index, $grid) {
-		
+
 		$shortLink = \nitm\widgets\metadata\ShortLink::widget([
 			'url' => \Yii::$app->urlManager->createAbsoluteUrl([$model->isWhat().'/view/'.$model->getId()]),
 			'viewOptions' => [
@@ -100,7 +100,7 @@ echo GridView::widget([
 				'data-target' => '#view'
 			]
 		]);
-		
+
 		$statusInfo = \nitm\widgets\metadata\StatusInfo::widget([
 			'items' => [
 				[
@@ -132,17 +132,17 @@ echo GridView::widget([
 				],
 			],
 		]);
-		
+
 		$metaInfo = empty($statusInfo) ? $shortLink : $statusInfo.$shortLink;
 		/*$issues = $this->context->issueCountWidget([
-			"model" => $model->issues, 
+			"model" => $model->issues,
 		]);*/
-		return Html::tag('tr', 
+		return Html::tag('tr',
 			Html::tag(
-				'td', 
-				$metaInfo, 
+				'td',
+				$metaInfo,
 				[
-					'colspan' => 6, 
+					'colspan' => 6,
 					'rowspan' => 1,
 					"class" => \nitm\helpers\Statuses::getIndicator($model->getStatus()),
 					'role' => 'statusIndicator'.$model->getId()

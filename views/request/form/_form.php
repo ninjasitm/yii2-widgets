@@ -23,7 +23,7 @@ $action = $model->getIsNewRecord() ? 'create' : 'update';
 	<?= $this->render('meta_info', ['model' => $model]); ?>
 	</div>
 	<?php endif ?>
-	
+
 	<?php if (!$model->getIsNewRecord()) : ?>
 	<div class="col-md-5 col-lg-5 full-height absolute col-md-offset-7 col-lg-offset-7">
 	<br><br>
@@ -34,21 +34,21 @@ $action = $model->getIsNewRecord() ? 'create' : 'update';
 			echo Html::tag('div', '', ['id' => 'alert']);
 			$form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php"));
 		?>
-	
+
 		<?= $form->field($model, 'title') ?>
-	
+
 		<?=
 			$form->field($model, 'type_id')->widget(Select2::className(), [
 				'data' => $model->getCategoryList($model->isWhat().'-categories'),
 			])->label("Type");
 		?>
-	
+
 		<?=
 			$form->field($model, 'request_for_id')->widget(Select2::className(), [
 				'data' => $model->getCategoryList($model->isWhat().'-for'),
 			])->label("Request For");
 		?>
-	
+
 		<?=
 			$form->field($model, 'status')->widget(Select2::className(), [
 				'data' => $model->getStatuses(),
@@ -62,7 +62,7 @@ $action = $model->getIsNewRecord() ? 'create' : 'update';
 						"parentId" => $model->getId(),
 						"parentType" => $model->isWhat(),
 						'attribute' => 'request',
-						'revisionsModel' => $model->revisionModel(),
+						'revisionsModel' => $model->revision(),
 						'model' => $model,
 						'value' => $model->request,
 						'autoSavePath' => '/'.$this->context->id.'/update/'.$model->getId(),
@@ -75,13 +75,13 @@ $action = $model->getIsNewRecord() ? 'create' : 'update';
 				</div>
 			</div>
 		</div>
-		
+
 		<?php if(!\Yii::$app->request->isAjax): ?>
 		<div class="fixed-actions text-right">
 			<?= Html::submitButton(ucfirst($action), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
 		</div>
 		<?php endif; ?>
-	
+
 		<?php ActiveForm::end(); ?>
 	</div>
 </div>

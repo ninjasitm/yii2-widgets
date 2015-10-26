@@ -56,6 +56,7 @@ class RequestController extends \nitm\controllers\DefaultController
     public function actionIndex()
     {
         $queryOptions = [];
+		$orderByQuery = $this->getOrderByQuery();
 
         switch ((sizeof(\Yii::$app->request->get()) == 0)) {
             case true:
@@ -64,7 +65,6 @@ class RequestController extends \nitm\controllers\DefaultController
                     $this->model->tableName().'.*',
                     \nitm\helpers\QueryFilter::getHasNewQuery($this->model),
                 ],
-                'orderBy' => \nitm\helpers\QueryFilter::getOrderByQuery($this->model),
                 'andWhere' => ['closed' => false],
             ], $queryOptions);
             break;
@@ -75,7 +75,7 @@ class RequestController extends \nitm\controllers\DefaultController
             'construct' => [
                 'queryOptions' => $queryOptions,
                 'defaults' => [
-                    'orderby' => \nitm\helpers\QueryFilter::getOrderByQuery($this->model),
+                    'orderby' => $orderByQuery,
                     'params' => ['closed' => false],
                 ],
             ],
@@ -145,18 +145,21 @@ class RequestController extends \nitm\controllers\DefaultController
      */
     protected function getOrderByQuery()
     {
+		$isWhat = $this->model->isWHat();
+		$remoteTable = $this->model->tableName();
+		$voteTable = \nitm\widgets\models\Vote::tableName();
         $localOrderBy = [
-            '('.new Expression('SELECT COUNT(*) FROM '.\nitm\widgets\models\Vote::tableName()." WHERE
-				parent_id=id AND
-				parent_type='".$this->model->isWhat())."'
-			)" => SORT_DESC,
-            "(CASE status
+            serialize(new Expression("(SELECT COUNT(*) FROM $voteTable WHERE
+				$voteTable.parent_id=$remoteTable.id AND
+				$voteTable.parent_type='$isWhat'
+			)")) => SORT_DESC,
+            serialize(new Expression("(CASE $remoteTable.status
 				WHEN 'normal' THEN 0
 				WHEN 'important' THEN 1
 				WHEN 'critical' THEN 2
-			END)" => SORT_DESC,
+			END)")) => SORT_DESC,
         ];
 
-        return array_merge(parent::getOrderByQuery(), $localOrderBy);
+        return array_merge($localOrderBy, \nitm\helpers\QueryFilter::getOrderByQuery($this->model));
     }
 }

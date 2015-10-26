@@ -13,7 +13,7 @@ use \yii\bootstrap\Tabs;
 		'items' => [
 			[
 				'label' => 'General Info',
-				'content' =>Html::tag('div', 
+				'content' =>Html::tag('div',
 					$this->render('../general_info', [
 						"model" => $model,
 					]),
@@ -25,7 +25,7 @@ use \yii\bootstrap\Tabs;
 				)
 			],
 			[
-				'label' => 'Issues '.Html::tag('span', (int)$model->issueModel()->count(), ['class' => 'badge']),
+				'label' => 'Issues '.Html::tag('span', (int)$model->issue()->count(), ['class' => 'badge']),
 				'content' =>Html::tag('div', '',
 					[
 						'class' => \nitm\helpers\Statuses::getIndicator($model->getStatus()),
@@ -43,7 +43,7 @@ use \yii\bootstrap\Tabs;
 				]
 			],
 			[
-				'label' => 'Comments '.Html::tag('span', (int)$model->replyModel()->count(), ['class' => 'badge']),
+				'label' => 'Comments '.Html::tag('span', (int)$model->reply()->count(), ['class' => 'badge']),
 				'content' => Html::tag('div', '',
 					[
 						'class' => "col-lg-12 col-md-12 ".\nitm\helpers\Statuses::getIndicator($model->getStatus()),
@@ -61,7 +61,7 @@ use \yii\bootstrap\Tabs;
 				]
 			],
 			[
-				'label' => 'Revisions '.Html::tag('span', (int)$model->revisionModel()->count(), ['class' => 'badge']),
+				'label' => 'Revisions '.Html::tag('span', (int)$model->revision()->count(), ['class' => 'badge']),
 				'content' => Html::tag('div', '',
 					[
 						'class' => "col-lg-12 col-md-12 ".\nitm\helpers\Statuses::getIndicator($model->getStatus()),
