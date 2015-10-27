@@ -61,6 +61,7 @@ class RequestController extends \nitm\controllers\DefaultController
         switch ((sizeof(\Yii::$app->request->get()) == 0)) {
             case true:
             $queryOptions = array_merge([
+				'distinct' => true,
                 'select' => [
                     $this->model->tableName().'.*',
                     \nitm\helpers\QueryFilter::getHasNewQuery($this->model),
@@ -149,6 +150,20 @@ class RequestController extends \nitm\controllers\DefaultController
 		$remoteTable = $this->model->tableName();
 		$voteTable = \nitm\widgets\models\Vote::tableName();
         $localOrderBy = [
+			/*serialize(new Expression('COALESCE('.implode(', ', array_map(function ($table) {
+				return implode(', ', array_map(function($field) use($table) {
+					return $table.'.'.$field;
+				}, ['created_at', 'updated_at']));
+			}, [
+				\nitm\widgets\models\Issues::tableName(),
+				\nitm\widgets\models\Replies::tableName(),
+				\nitm\widgets\models\Revisions::tableName()
+			])).')')) => SORT_DESC,*/
+			'issue.created_at' => SORT_DESC,
+			'issue.updated_at' => SORT_DESC,
+			'reply.created_at' => SORT_DESC,
+			'reply.updated_at' => SORT_DESC,
+			'revision.created_at' => SORT_DESC,
             serialize(new Expression("(SELECT COUNT(*) FROM $voteTable WHERE
 				$voteTable.parent_id=$remoteTable.id AND
 				$voteTable.parent_type='$isWhat'
