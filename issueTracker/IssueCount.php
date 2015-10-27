@@ -27,11 +27,11 @@ class IssueCount extends BaseWidget
 		'id' => 'issue-count',
 		'tag' => 'a'
 	];
-	
+
 	public $widgetOptions = [
 		'class' => 'btn-group'
 	];
-	
+
 	public function init()
 	{
 		switch(1)
@@ -39,14 +39,14 @@ class IssueCount extends BaseWidget
 			case !($this->model instanceof IssuesModel) && (($this->parentType == null) || ($this->parentId == null)):
 			$this->model = null;
 			break;
-			
+
 			default:
 			$this->model = ($this->model instanceof IssuesModel) ? $this->model : IssuesModel::findModel([$this->parentId, $this->parentType]);
 			break;
-		}	
+		}
 		parent::init();
 	}
-	
+
 	public function run()
 	{
 		//print_r($this->model);

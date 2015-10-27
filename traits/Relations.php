@@ -11,7 +11,7 @@ use nitm\traits\Relations as NitmRelations;
  */
 
 trait Relations {
-	
+
 	/**
 	 * Widget based relations
 	 */
@@ -24,7 +24,7 @@ trait Relations {
 		$options['andWhere'] = isset($options['andWhere']) ? $options['andWhere'] : ['parent_type' => $this->isWhat()];
 		return $this->getRelationQuery($className, $link, $options, $many);
 	}
-	
+
 	/**
 	 * Widget based relations
 	 */
@@ -36,29 +36,29 @@ trait Relations {
 		$options['andWhere'] = isset($options['andWhere']) ? $options['andWhere'] : ['parent_type' => $this->isWhat()];
 		return $this->getRelationQuery($className, $link, $options);
 	}
-	
+
 	protected function getCachedWidget($className, $idKey=null, $many=false, $options=[])
 	{
 		$relation = \nitm\helpers\Helper::getCallerName();
 		$options['construct'] = isset($options['construct']) ? $options['construct'] : [
-			'parent_id' => $this->getId(), 
+			'parent_id' => $this->getId(),
 			'parent_type' => $this->isWhat()
 		];
 		$idKey = is_null($idKey) ? ['getId', 'isWhat'] : $idKey;
 		return $this->getCachedRelation($idKey, $className, $options, $many, $relation);
 	}
-	
+
 	protected function getWidget($className, $idKey=null, $many=false, $options=[])
 	{
 		$relation = \nitm\helpers\Helper::getCallerName();
 		$options['construct'] = isset($options['construct']) ? $options['construct'] : [
-			'parent_id' => $this->getId(), 
+			'parent_id' => $this->getId(),
 			'parent_type' => $this->isWhat()
 		];
 		$idKey = is_null($idKey) ? ['getId', 'isWhat'] : $idKey;
 		return RelationsHelper::getRelatedRecord($relation, $this, $className, $options, $many);
 	}
-	
+
 	public function reply()
 	{
 		return $this->getWidget(\nitm\widgets\models\Replies::className());
@@ -82,10 +82,10 @@ trait Relations {
 		$params = [
 			"parent_type" => $this->isWhat()
 		];
-		
+
 		if(!\Yii::$app->user->identity->isAdmin())
 			$params['hidden'] = false;
-			
+
 		$options = array_merge([
 			"select" => "*",
 			'orderBy' => ['id' => SORT_DESC],
@@ -94,12 +94,12 @@ trait Relations {
 		], $options);
        	return $this->getWidgetRelationQuery(\nitm\widgets\models\Replies::className(), null, $options, true);
     }
-	
+
 	public function replies($useCache=false)
 	{
 		return $this->resolveRelation('id', \nitm\widgets\models\Replies::className(), $useCache, [], true, 'replies');
 	}
-	
+
 	public function issue()
 	{
 		return $this->getWidget(\nitm\widgets\models\Issues::className(), 'issue');
@@ -125,7 +125,7 @@ trait Relations {
 		], $options);
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Issues::className(), null, $options, true);
     }
-	
+
 	public function issues($useCache=false)
 	{
 		return $this->resolveRelation('id', \nitm\widgets\models\Issues::className(), $useCache, [], true, 'issues');
@@ -143,12 +143,12 @@ trait Relations {
 		], $options);
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Revisions::className(), null, $options, true);
     }
-	
+
 	public function revisions($useCache=false)
 	{
 		return $this->resolveRelation('id', \nitm\widgets\models\Revisions::className(), $useCache, [], true, 'revisions');
 	}
-	
+
 	public function revision()
 	{
 		return $this->getWidget(\nitm\widgets\models\Revisions::className(), 'revision');
@@ -171,12 +171,12 @@ trait Relations {
     {
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Issues::className(), null, $options, true);
     }
-	
+
 	public function votes($useCache=false)
 	{
 		return $this->resolveRelation('id', \nitm\widgets\models\Vote::className(), $useCache, [], true, 'votes');
 	}
-	
+
 	public function vote()
 	{
 		return $this->getWidget(\nitm\widgets\models\Vote::className(), 'vote');
@@ -202,23 +202,23 @@ trait Relations {
 			'orderBy' => ['id' => SORT_DESC],
 		], $options);
         return $this->getWidgetRelationModelQuery(\nitm\widgets\models\Issues::className(), [
-			'remote_id' => $this->getId(), 
+			'remote_id' => $this->getId(),
 			'remote_type' => $this->isWhat()
 		], $options, true)
 			->with(['currentUserVoted']);
 	}
-	
+
 	public function rating()
 	{
 		return $this->getWidget(\nitm\widgets\models\Rating::className(), 'rating');
 	}
-	
+
 	public function follow()
 	{
 		return $this->getWidget(\nitm\widgets\models\Alerts::className(), 'follow', false, [
 			'select' => ['id', 'remote_id', 'remote_type'],
 			'construct' => [
-				'remote_id' => $this->getId(), 
+				'remote_id' => $this->getId(),
 				'remote_type' => $this->isWhat()
 			]
 		]);

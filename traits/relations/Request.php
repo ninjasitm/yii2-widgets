@@ -10,18 +10,18 @@ use nitm\models\User;
 
 trait Request {
 	public $requestModel;
-	
+
 	protected static $urgency = [
 		'normal',
 		'important',
 		'critical'
 	];
-	
+
 	public function getStatus()
 	{
 		return isset(static::$urgency[$this->status]) ? static::$urgency[$this->status] : 'normal';
 	}
-	
+
 	public function getUrgency()
 	{
 		return ucfirst($this->getStatus());
@@ -34,12 +34,12 @@ trait Request {
     {
         return $this->hasOne(CategoryModel::className(), ['id' => 'request_for_id']);
     }
-	
+
 	public function requestFor()
 	{
 		return \nitm\helpers\Relations::getRelatedRecord('requestFor', $this, CategoryModel::className());
 	}
-	
+
 	public function getSort()
 	{
 		$sort = [

@@ -23,15 +23,15 @@ switch(\Yii::$app->request->isAjax)
 }
 $this->params['breadcrumbs'][] = $title;
 $baseModel = new Issues;
-?>	
+?>
 <?php
 	$viewOptions = [
 		'enableComments' => $enableComments
 	];
 	$issuesOpen = Html::tag('div', '', ['id' => 'alert'.$parentId]).$this->render('issues', [
 		'searchModel' => $searchModel,
-		"options" => $viewOptions, 
-		'dataProvider' => $dataProviderOpen, 
+		"options" => $viewOptions,
+		'dataProvider' => $dataProviderOpen,
 		'filterType' => 'open',
 		'enableComments' => $enableComments,
 		'parentType' => $parentType,
@@ -58,7 +58,7 @@ $baseModel = new Issues;
 			'encodeLabels' => false,
 			'items' => [
 				[
-					'label' => 'Open '.Html::tag('span', $dataProviderOpen->getCount(), ['class' => 'badge']),
+					'label' => 'Open '.Html::tag('span', $dataProviderOpen->getTotalCount(), ['class' => 'badge']),
 					'content' =>Html::tag('div', $issuesOpen,
 						[
 							'id' => 'open-issues-content'.$uniqid,
@@ -79,7 +79,7 @@ $baseModel = new Issues;
 					]
 				],
 				[
-					'label' => 'Closed '.Html::tag('span', $dataProviderClosed->getCount(), ['class' => 'badge']),
+					'label' => 'Closed '.Html::tag('span', $dataProviderClosed->getTotalCount(), ['class' => 'badge']),
 					'content' => Html::tag('div', $issuesClosed,
 						[
 							'id' => 'closed-issues-content'.$uniqid,
@@ -100,7 +100,7 @@ $baseModel = new Issues;
 					]
 				],
 				[
-					'label' => 'Resolved '.Html::tag('span', $dataProviderResolved->getCount(), ['class' => 'badge']),
+					'label' => 'Resolved '.Html::tag('span', $dataProviderResolved->getTotalCount(), ['class' => 'badge']),
 					'content' => Html::tag('div', $issuesResolved,
 						[
 							'id' => 'resolved-issues-content'.$uniqid,
@@ -121,7 +121,7 @@ $baseModel = new Issues;
 					]
 				],
 				[
-					'label' => 'Un-Resolved '.Html::tag('span', $dataProviderUnresolved->getCount(), ['class' => 'badge']),
+					'label' => 'Un-Resolved '.Html::tag('span', $dataProviderUnresolved->getTotalCount(), ['class' => 'badge']),
 					'content' => Html::tag('div', $issuesUnResolved,
 						[
 							'id' => 'unresolved-issues-content'.$uniqid,
@@ -142,7 +142,7 @@ $baseModel = new Issues;
 					]
 				],
 				[
-					'label' => 'Duplicate '.Html::tag('span', $dataProviderDuplicate->getCount(), ['class' => 'badge']),
+					'label' => 'Duplicate '.Html::tag('span', $dataProviderDuplicate->getTotalCount(), ['class' => 'badge']),
 					'content' => Html::tag('div', $issuesDuplicate,
 						[
 							'id' => 'duplicate-issues-content'.$uniqid,
@@ -176,7 +176,7 @@ $baseModel = new Issues;
 						'id' => 'issues-form-tab'.$uniqid,
 						'class' => 'bg-success'
 					],
-					'linkOptions' => [ 
+					'linkOptions' => [
 						'id' => 'issues-form-link'.$uniqid,
 					]
 				],
@@ -196,7 +196,7 @@ $baseModel = new Issues;
 						'class' => 'hidden'
 					],
 					'linkOptions' => [
-						'id' => 'issues-update-form-link'.$uniqid, 
+						'id' => 'issues-update-form-link'.$uniqid,
 					]
 				],
 			]

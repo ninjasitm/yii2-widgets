@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	'export' => false,
 	'pjax' => false,
 	'striped' => false,
-	'responsive' => true, 
+	'responsive' => true,
 	'floatHeader'=> false,
 	'options' => [
 		'id' => $isWhat
@@ -152,7 +152,7 @@ $this->params['breadcrumbs'][] = $this->title;
 						'size' => 'x-large',
 						'toggleButton' => [
 							'tag' => 'a',
-							'label' => Icon::forAction('update'), 
+							'label' => Icon::forAction('update'),
 							'href' => \Yii::$app->urlManager->createUrl([$url, '__format' => 'modal']),
 							'title' => Yii::t('yii', 'Edit '),
 							'class' => 'fa-2x',
@@ -214,14 +214,14 @@ $this->params['breadcrumbs'][] = $this->title;
 		]);
 		$revisions = \nitm\widgets\revisions\RevisionsCount::widget([
 			'model' => $model->revision(),
-			"parentId" => $model->getId(), 
+			"parentId" => $model->getId(),
 			"parentType" => $model->isWhat(),
 			'fullDetails' => false ,
 		]);
 		$issues = \nitm\widgets\issueTracker\IssueCount::widget([
 			'model' => $model->issue(),
 			'enableComments' => true,
-			"parentId" => $model->getId(), 
+			"parentId" => $model->getId(),
 			"parentType" => $model->isWhat(),
 			'fullDetails' => false,
 		]);
@@ -232,10 +232,10 @@ $this->params['breadcrumbs'][] = $this->title;
 			]
 		]);
 		$title = Html::tag(
-			'h4', 
+			'h4',
 			$model->title
 		);
-		
+
 		$activityInfo = Html::tag('div',
 			Html::tag('div', $replies, ['class' => 'col-md-3 col-lg-3 center-block']).
 			Html::tag('div', $revisions, ['class' => 'col-md-3 col-lg-3 center-block']).
@@ -264,7 +264,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				]
 			]
 		]));
-			
+
 		$statusInfo = \nitm\widgets\metadata\StatusInfo::widget([
 			'items' => [
 				[
@@ -296,20 +296,20 @@ $this->params['breadcrumbs'][] = $this->title;
 				],
 			],
 		]);
-		
-		$metaInfo = Html::tag('div', 
-			Html::tag('div', 
+
+		$metaInfo = Html::tag('div',
+			Html::tag('div',
 				implode('<br>', [$title, $statusInfo, $activityInfo, $links])
 			),[
 				'class' => 'wrapper'
 			]
 		);
-		return Html::tag('tr', 
+		return Html::tag('tr',
 			Html::tag(
-				'td', 
-				$metaInfo, 
+				'td',
+				$metaInfo,
 				[
-					'colspan' => 9, 
+					'colspan' => 9,
 					'rowspan' => 1,
 				]
 			),

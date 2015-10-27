@@ -5,6 +5,7 @@ namespace nitm\widgets\controllers;
 use nitm\widgets\models\Request;
 use nitm\widgets\models\search\Request as RequestSearch;
 use yii\db\Expression;
+use yii\db\Query;
 use nitm\helpers\Response;
 
 /**
@@ -131,10 +132,8 @@ class RequestController extends \nitm\controllers\DefaultController
     public function actionForm($type = null, $id = null)
     {
         $options = [
-            'modelOptions' => [
-                'queryOptions' => [
-                    'with' => ['type', 'requestFor'],
-                ],
+            'queryOptions' => [
+                'with' => ['type', 'requestFor', 'issue', 'reply', 'revision'],
             ],
         ];
 
@@ -146,34 +145,39 @@ class RequestController extends \nitm\controllers\DefaultController
      */
     protected function getOrderByQuery()
     {
-		$isWhat = $this->model->isWHat();
+		$isWhat = $this->model->isWhat();
 		$remoteTable = $this->model->tableName();
-		$voteTable = \nitm\widgets\models\Vote::tableName();
-        $localOrderBy = [
-			/*serialize(new Expression('COALESCE('.implode(', ', array_map(function ($table) {
-				return implode(', ', array_map(function($field) use($table) {
-					return $table.'.'.$field;
-				}, ['created_at', 'updated_at']));
-			}, [
-				\nitm\widgets\models\Issues::tableName(),
-				\nitm\widgets\models\Replies::tableName(),
-				\nitm\widgets\models\Revisions::tableName()
-			])).')')) => SORT_DESC,*/
-			'issue.created_at' => SORT_DESC,
-			'issue.updated_at' => SORT_DESC,
-			'reply.created_at' => SORT_DESC,
-			'reply.updated_at' => SORT_DESC,
-			'revision.created_at' => SORT_DESC,
-            serialize(new Expression("(SELECT COUNT(*) FROM $voteTable WHERE
-				$voteTable.parent_id=$remoteTable.id AND
-				$voteTable.parent_type='$isWhat'
-			)")) => SORT_DESC,
+		$localOrderBy = [];
+		$relations = [
+			\nitm\widgets\models\Vote::tableName() => [
+				'select' => new Expression('COUNT(*)'),
+			],
+			\nitm\widgets\models\Issues::tableName() => [
+				'select' => new Expression('COALESCE(created_at, updated_at)'),
+			],
+			\nitm\widgets\models\Replies::tableName() => [
+				'select' => new Expression('COALESCE(created_at, updated_at)'),
+			],
+			\nitm\widgets\models\Revisions::tableName() => [
+				'select' => ['created_at'],
+			]
+		];
+		foreach($relations as $table=>$relation){
+			$localOrderBy[serialize(new Expression('('.(new Query)
+				->from($table)
+				->select($relation['select'])
+				->where([
+					"$table.parent_id" => "$remoteTable.id",
+					"$table.parent_type" => $isWhat
+				])->createCommand()->getRawSql().')'))] = SORT_DESC;
+		}
+        $localOrderBy = array_merge($localOrderBy, [
             serialize(new Expression("(CASE $remoteTable.status
 				WHEN 'normal' THEN 0
 				WHEN 'important' THEN 1
 				WHEN 'critical' THEN 2
 			END)")) => SORT_DESC,
-        ];
+        ]);
 
         return array_merge($localOrderBy, \nitm\helpers\QueryFilter::getOrderByQuery($this->model));
     }

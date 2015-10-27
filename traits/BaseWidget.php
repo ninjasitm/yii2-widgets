@@ -9,12 +9,12 @@ use yii\db\ActiveRecord;
  */
 
 trait BaseWidget {
-	
+
 	public $_value;
 	public $constrain;
 	public $constraints = [];
 	public $initSearchClass = true;
-	
+
 	public static $usePercentages;
 	public static $allowMultiple;
 	public static $individualCounts;
@@ -23,18 +23,18 @@ trait BaseWidget {
 		'important' => 'info',
 		'critical' => 'error'
 	];
-	
-	protected $_new; 
+
+	protected $_new;
 	protected $_supportedConstraints =  [
 		'parent_id' => [0, 'id', 'parent_id'],
 		'parent_type' => [1, 'type', 'parent_type'],
 	];
-	
+
 	protected static $userLastActive;
 	protected static $currentUser;
-	
+
 	private static $_dateFormat = "D M d Y h:iA";
-	
+
 	public function scenarios()
 	{
 		$scenarios = [
@@ -42,7 +42,7 @@ trait BaseWidget {
 		];
 		return array_merge(parent::scenarios(), $scenarios);
 	}
-	
+
 	/**
 	 * Get the constraints for a widget model
 	 */
@@ -63,7 +63,7 @@ trait BaseWidget {
 		}
 		return $this->constraints;
 	}
-	
+
 	/*
 	 * Set the constrining parameters
 	 * @param mixed $using
@@ -91,7 +91,7 @@ trait BaseWidget {
 		}
 		$this->queryOptions['andWhere'] = array_replace((array)@$this->queryOptions['andWhere'], $this->constraints);
 	}
-	
+
 	/**
 	 * Find a model
 	 */
@@ -111,14 +111,14 @@ trait BaseWidget {
 			$ret_val->queryOptions = $model->queryOptions;
 			$ret_val->constraints = $model->constraints;
 			break;
-			
+
 			default:
 			$ret_val = $model;
 			break;
 		}
 		return $ret_val;
 	 }
-	
+
 	/**
 	 * Get the count for the current parameters
 	 * @return \yii\db\ActiveQuery
@@ -134,8 +134,8 @@ trait BaseWidget {
 			{
 				case -1:
 				$andWhere = ['<=', 'value',  0];
-				break; 
-				
+				break;
+
 				case 1:
 				$andWhere = ['>=', 'value', 1];
 				break;
@@ -166,7 +166,7 @@ trait BaseWidget {
 				"_up" => "SUM(IF(value>=1, value, 0))"
 			];
 			break;
-			
+
 			default:
 			$select = [
 				'_down' => "SUM(value=-1)",
@@ -180,19 +180,19 @@ trait BaseWidget {
 			->asArray()
 			->andWhere($filters);
     }
-	
+
 	public function fetchedValue()
 	{
 		return $this->fetchedValue['_value'];
 	}
-	
+
 	public function hasNew()
 	{
 		return \nitm\helpers\Relations::getRelatedRecord('newCount', $this, static::className(), [
 			'_new' => 0
 		])['_new'];
 	}
-	
+
 	public function getNewCount()
 	{
 		$primaryKey = $this->primaryKey()[0];
@@ -206,7 +206,7 @@ trait BaseWidget {
 		static::currentUser()->updateActivity();
 		return $ret_val;
 	}
-	
+
 	/*
 	 * Get the author for this object
 	 * @return mixed user array
@@ -216,7 +216,7 @@ trait BaseWidget {
 		static::$userLastActive = is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive;
 		return strtotime($this->created_at) > strtotime(static::$userLastActive);
 	}
-	
+
 	/*
 	 * Get the author for this object
 	 * @return boolean
@@ -225,8 +225,8 @@ trait BaseWidget {
 	{
 		return $this->count() >= 1;
 	}
-	
-	
+
+
 	/*
 	 * Get the author for this object
 	 * @return mixed user array
@@ -238,19 +238,19 @@ trait BaseWidget {
 			->with('author');
 		return $ret_val;
 	}
-	
+
 	public function currentUser()
 	{
 		if(isset(static::$currentUser))
 			return static::$currentUser;
-			
+
 		if(\Yii::$app instanceof \yii\console\Application)
 			static::$currentUser = new \nitm\models\User(['username' => 'console']);
 		else if(\Yii::$app->getUser() && !\Yii::$app->getUser()->getIsGuest()) {
-			static::$currentUser = \nitm\helpers\Cache::getModel($this, 
+			static::$currentUser = \nitm\helpers\Cache::getModel($this,
 				'currentUser',
 				false,
-				\Yii::$app->getUser()->identityClass, 
+				\Yii::$app->getUser()->identityClass,
 				null, [
 					'id' => 1
 				]);
@@ -260,7 +260,7 @@ trait BaseWidget {
 		}
 		return static::$currentUser;
 	}
-	 
+
 	protected function populateMetadata()
 	{
 		switch(!isset($this->count) && !isset($this->hasNew))
@@ -276,7 +276,7 @@ trait BaseWidget {
 			break;
 		}
 	}
-	
+
 	protected static function initCache($constrain, $key=null)
 	{
 		if(!\nitm\helpers\Cache::exists($key))
@@ -293,7 +293,7 @@ trait BaseWidget {
 		}
 		return $model;
 	}
-	
+
 	public function title()
 	{
 		if($this->hasProperty('title') || $this->hasAttribute('title'))
