@@ -73,7 +73,6 @@ class RequestController extends \nitm\controllers\DefaultController
         }
 
         return parent::actionIndex(RequestSearch::className(), [
-            'with' => $this->getWith(),
             'construct' => [
                 'queryOptions' => $queryOptions,
                 'defaults' => [
@@ -159,7 +158,7 @@ class RequestController extends \nitm\controllers\DefaultController
 				'select' => new Expression('COALESCE(created_at, updated_at)'),
 			],
 			\nitm\widgets\models\Revisions::tableName() => [
-				'select' => ['created_at'],
+				'select' => ['COUNT(*)'],
 			]
 		];
 		foreach($relations as $table=>$relation){

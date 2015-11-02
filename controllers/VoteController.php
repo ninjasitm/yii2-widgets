@@ -11,7 +11,7 @@ use nitm\widgets\models\Vote;
 
 class VoteController extends \nitm\controllers\DefaultController
 {
-	
+
 	public function behaviors()
 	{
 		$behaviors = [
@@ -29,16 +29,16 @@ class VoteController extends \nitm\controllers\DefaultController
 			'verbs' => [
 				//'class' => \yii\filters\VerbFilter::className(),
 				'actions' => [
-					'down' => ['get'],
-					'up' => ['get'],
-					'reset' => ['get'],
+					'down' => ['post'],
+					'up' => ['post'],
+					'reset' => ['post'],
 				],
 			],
 		];
-		
+
 		return array_merge_recursive(parent::behaviors(), $behaviors);
 	}
-	
+
 	/**
 	 * Place a downvote
 	 * @param string $type the type of object
@@ -61,26 +61,33 @@ class VoteController extends \nitm\controllers\DefaultController
 			$vote = new Vote();
 			$vote->setScenario('create');
 			$vote->load([
-				'parent_type' => $type, 
-				'parent_id' => $id, 
+				'parent_type' => $type,
+				'parent_id' => $id,
 				'author_id' => \Yii::$app->user->getId()
 			]);
 			break;
-			
+
 			default:
 			$vote->setScenario('update');
 			break;
 		}
-		$vote->value = Vote::$allowMultiple ? $vote->value-1 : -1;
+
+		if(Vote::$allowMultiple)
+			$vote->value -= 1;
+		else
+			$vote->value = ($vote->value == 1 || $vote->value == -1 ? 0 : -1);
+
 		$ret_val['success'] = $vote->save();
 		unset($existing->queryOptions['andWhere']['author_id']);
+		//Recalculate the fetched value after updating the new vote value
+		$vote->fetchedValue;
 		$ret_val['value'] = $vote->rating();
 		$ret_val['atMax'] = Vote::$allowMultiple ? false : ($vote->value == 1);
 		$ret_val['atMin'] = Vote::$allowMultiple ? false : ($vote->value == -1);
 		$this->setResponseFormat('json');
 		return $this->renderResponse($ret_val);
     }
-	
+
 	/**
 	 * Place an upvote
 	 * @param string $type the type of object
@@ -104,27 +111,36 @@ class VoteController extends \nitm\controllers\DefaultController
 			$vote->setScenario('create');
 			$vote->load([
 				'Vote' => [
-					'parent_type' => $type, 
-					'parent_id' => $id, 
+					'parent_type' => $type,
+					'parent_id' => $id,
 					'author_id' => \Yii::$app->user->getId()
 				]
 			]);
 			break;
-			
+
 			default:
 			$vote->setScenario('update');
-			$vote->value = Vote::$allowMultiple ? $vote->value+1 : 1;
 			break;
 		}
+
+		$originalValue = $vote->value;
+
+		if(Vote::$allowMultiple)
+			$vote->value += 1;
+		else
+			$vote->value = ($vote->value == 1 || $vote->value == -1 ? 0 : 1);
+
 		$ret_val['success'] = $vote->save();
 		unset($existing->queryOptions['andWhere']['author_id']);
+		//Recalculate the fetched value after updating the new vote value
+		$vote->fetchedValue;
 		$ret_val['value'] = $vote->rating();
 		$ret_val['atMax'] = Vote::$allowMultiple ? false : ($vote->value == 1);
 		$ret_val['atMin'] = Vote::$allowMultiple ? false : ($vote->value == -1);
 		$this->setResponseFormat('json');
 		return $this->renderResponse($ret_val);
     }
-	
+
 	/**
 	 * Place an upvote
 	 * @param string $type the type of object

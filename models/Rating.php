@@ -14,7 +14,7 @@ namespace nitm\widgets\models;
  */
 class Rating extends BaseWidget
 {
-	
+
 	public function scenarios()
 	{
 		$scenarios = [
@@ -25,7 +25,7 @@ class Rating extends BaseWidget
 		];
 		return array_merge(parent::scenarios(), $scenarios);
 	}
-	
+
     /**
      * @inheritdoc
      */
@@ -64,7 +64,7 @@ class Rating extends BaseWidget
             'parent_id' => 'parent ID',
         ];
     }
-	
+
 	/**
 	 * Get the rating, percentage out of 100%
 	 * @return int
@@ -80,14 +80,5 @@ class Rating extends BaseWidget
 			break;
 		}
 		return $ret_val;
-	}
-	
-	public function getCurrentUserVoted()
-	{
-		$primaryKey = $this->primaryKey()[0];
-		return $this->hasOne(static::className(), [
-			'parent_type' => 'parent_type',
-			'parent_id' => 'parent_id'
-		])->andWhere(['author_id' => static::currentUser()->getId()]);
 	}
 }

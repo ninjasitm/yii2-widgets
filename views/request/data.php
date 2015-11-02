@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				return [
 					'rowspan' => 2,
 					'role' => 'voteIndicator'.$model->getId(),
-					'style' => "vertical-align: middle; background-color:rgba(255,51,0,".$model->vote()->rating()['ratio'].")"
+					'style' => "vertical-align: middle; background-color:".$model->vote()->getIndicator()
 				];
 			}
 		],
@@ -207,7 +207,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		];
 	},
 	'afterRow' => function ($model, $key, $index, $grid){
-		
+
 		$replies = \nitm\widgets\replies\RepliesCount::widget([
 			"model" => $model->reply(),
 			'fullDetails' => false,

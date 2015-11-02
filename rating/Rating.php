@@ -17,12 +17,12 @@ use kartik\icons\Icon;
 
 class Rating extends BaseWidget
 {
-	
+
 	/**
 	 * The actions to enable
 	 */
 	public $actions;
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -31,7 +31,7 @@ class Rating extends BaseWidget
 		'role' => 'entityRating',
 		'id' => 'rating',
 	];
-	
+
 	/*
 	 * Options for Rating
 	 */
@@ -39,22 +39,22 @@ class Rating extends BaseWidget
 		'class' => '',
 		'id' => ''
 	];
-	
+
 	/*
 	 * The number of Rating to get on each select query
 	 */
 	public $limit = 10;
-	
+
 	/**
 	 * \commond\models\rating $rating
 	 */
 	public $rating;
-	
+
 	/**
 	 * Does the user exist?
 	 */
 	private $_userExists = false;
-	
+
 	/**
 	 * The current user
 	 */
@@ -63,7 +63,7 @@ class Rating extends BaseWidget
 	 * The current users
 	 */
 	private $_users;
-	
+
 	/**
 	 * The actions that are supported
 	 */
@@ -103,7 +103,7 @@ class Rating extends BaseWidget
 			'adminOnly' => true
 		],
 	];
-	
+
 	public function init()
 	{
 		if (($this->parentType == null) || ($this->parentId == null)) {
@@ -111,7 +111,7 @@ class Rating extends BaseWidget
 		}
 		Icon::map($this->getView());
 	}
-	
+
 	public function run()
 	{
 		$r = new RatingModel(['parent_id' => $this->parentId, 'parent_type' => $this->parentType]);
@@ -121,19 +121,19 @@ class Rating extends BaseWidget
 			case true:
 			break;
 		}
-		$rating .= Html::tag('div', 
+		$rating .= Html::tag('div',
 			Html::tag(
-				'strong', 
-				$r->rating($this->model), 
+				'strong',
+				$r->rating($this->model),
 				['id' => 'rating-value'.$this->model->getUnique()]
 			)."%",
 			['class' => 'center-block text-center']
 		);
 		$rating .= $this->getActions();
 		$this->options['id'] .= $this->parentId;
-		echo Html::tag('div', $rating, $this->options);
+		return Html::tag('div', $rating, $this->options);
 	}
-	
+
 	public function getActions()
 	{
 		$actions = is_null($this->actions) ? $this->_actions : array_intersect_key($this->_actions, $this->actions);
@@ -149,33 +149,33 @@ class Rating extends BaseWidget
 					$action['options']['id'] = $action['options']['id'].$this->parentId;
 					$ret_val .= Html::a(
 						Html::tag(
-							$action['tag'], 
+							$action['tag'],
 							Icon::show(
 								$action['text']
 							)
-						), 
+						),
 						$action['action'].'/'.$this->parentType.'/'.$this->parentId, $action['options']
 					);
 					break;
 				}
 				break;
-				
+
 				default:
 				$action['options']['id'] = $action['options']['id'].$this->parentId;
 				$ret_val .= Html::a(
 					Html::tag(
-						$action['tag'], 
+						$action['tag'],
 						Icon::show(
-							$action['text'], 
+							$action['text'],
 							['class' => 'fa-2x']
 						)
-					), 
+					),
 					$action['action'].'/'.$this->parentType.'/'.$this->parentId,
 					$action['options']
 				);
 				break;
 			}
-			
+
 		}
 		return Html::tag('div', $ret_val, ['class' => 'center-block text-center']);
 	}

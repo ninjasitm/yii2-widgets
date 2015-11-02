@@ -18,12 +18,15 @@ use kartik\icons\Icon;
 class Vote extends BaseWidget
 {
 	public $size;
-		
+
+	//The colors used for indicating vote direction. With 1 being positive and 0 being negative color
+	public $colors = ['51, 192, 0', '192, 51, 0'];
+
 	/**
 	 * The actions to enable
 	 */
 	public $actions;
-	
+
 	/**
 	 * Options for the vote Icons
 	 * [
@@ -35,7 +38,7 @@ class Vote extends BaseWidget
 	 * ]
 	 */
 	public $iconOptions;
-	
+
 	/*
 	 * HTML options for genevote the widget
 	 */
@@ -44,17 +47,17 @@ class Vote extends BaseWidget
 		'role' => 'entityVote',
 		'id' => 'vote',
 	];
-	
+
 	/*
 	 * The number of Vote to get on each select query
 	 */
 	public $limit = 10;
-	
+
 	/**
 	 * int rating value
 	 */
 	public $rating;
-	
+
 	private $_defaultIconOptions = [
 		'up' => [
 			'class' => 'fa',
@@ -72,7 +75,7 @@ class Vote extends BaseWidget
 			'icon' => 'refresh'
 		]
 	];
-	
+
 	/**
 	 * The actions that are supported
 	 */
@@ -102,14 +105,14 @@ class Vote extends BaseWidget
 			'action' => '/vote/reset',
 			'options' => [
 				'class' => 'col-lg-12 col-md-12 text-danger',
-				'role' => 'resetVote',
+				'role' => 'resetVote metaAction',
 				'id' => 'vote-reset',
 				'title' => 'Reset the votes'
 			],
 			'adminOnly' => true
 		],
 	];
-	
+
 	public function init()
 	{
 		if ($this->model instanceof VoteModel && ($this->parentType == null) || ($this->parentId == null)) {
@@ -117,7 +120,7 @@ class Vote extends BaseWidget
 			$this->parentType = $this->model->parent_type;
 		} else if($this->parentType && $this->parentId)
 			$this->model = VoteModel::findModel([$this->parentId, $this->parentType]);
-		else 
+		else
 			$this->model = new VoteModel([
 				'parent_id' => $this->parentId,
 				'parent_type' => $this->parentType
@@ -127,7 +130,7 @@ class Vote extends BaseWidget
 		parent::init();
 		Asset::register($this->getView());
 	}
-	
+
 	public function run()
 	{
 		$vote = '';
@@ -142,8 +145,8 @@ class Vote extends BaseWidget
 			$positive = Html::tag(
 				'div',
 				Html::tag(
-					'strong', 
-					$this->model->rating()['positive'], 
+					'strong',
+					$this->model->rating()['positive'],
 					['id' => 'vote-value-positive'.$this->parentId]
 				).(VoteModel::$usePercentages ? '%' : ""),
 				['class' => 'text-success col-md-6 col-lg-6']
@@ -151,32 +154,35 @@ class Vote extends BaseWidget
 			$negative = Html::tag(
 				'div',
 				Html::tag(
-					'strong', 
-					$this->model->rating()['negative'], 
+					'strong',
+					$this->model->rating()['negative'],
 					['id' => 'vote-value-negative'.$this->parentId]
 				).(VoteModel::$usePercentages ? '%' : ""),
 				['class' => 'text-danger col-md-6 col-lg-6']
 			);
 			break;
-			
+
 			default:
 			$negative = '';
 			$positive = Html::tag(
-				'strong', 
-				$this->model->rating()['positive'], 
+				'strong',
+				$this->model->rating()['positive'],
 				['id' => 'vote-value-positive'.$this->parentId]
 			).(VoteModel::$usePercentages ? "%" :'');
 			break;
 		}
-		$vote .= Html::tag('div', 
+		$vote .= Html::tag('div',
 			$positive.$negative,
 			['class' => 'center-block text-center']
 		);
 		$vote .= $this->getActions();
 		$this->widgetOptions['id'] .= $this->parentId.$this->uniqid;
-		return Html::tag('div', $vote, $this->widgetOptions).Html::script((new \yii\web\JsExpression("\$nitm.onModuleLoad('vote', function () {\$nitm.module('vote').init('".$this->widgetOptions['id']."');});")));
+		$script = \yii::$app->request->isAjax ? new \yii\web\JsExpression("\$nitm.onModuleLoad('vote', function (module) {module.init('".$this->widgetOptions['id']."');});") : '';
+		$script .= new \yii\web\JsExpression("\$nitm.module('vote').colors = ".json_encode($this->colors).";");
+		$this->getView()->registerJs($script, \yii\web\View::POS_READY, 'vote-init');
+		return Html::tag('div', $vote, $this->widgetOptions);
 	}
-	
+
 	public function getActions()
 	{
 		$actions = is_null($this->actions) ? $this->_actions : array_intersect_key($this->_actions, $this->actions);
@@ -187,7 +193,7 @@ class Vote extends BaseWidget
 			extract( $iconOptions, EXTR_PREFIX_ALL, '_');
 			if(isset($action['adminOnly']) && ($action['adminOnly'] == true) && !\Yii::$app->user->identity->isAdmin())
 			continue;
-			
+
 			$action['options']['id'] = $action['options']['id'].$this->parentId;
 			switch(1)
 			{
@@ -198,17 +204,17 @@ class Vote extends BaseWidget
 			}
 			$ret_val .= Html::a(
 				Html::tag(
-					$action['tag'], 
+					$action['tag'],
 					$this->getActionHtml($__text, $__class, $__icon)
-				), 
+				),
 				$action['action'].'/'.$this->parentType.'/'.$this->parentId,
 				$action['options']
 			);
-			
+
 		}
 		return Html::tag('div', $ret_val, ['class' => 'center-block text-center']);
 	}
-	
+
 	protected function getActionHtml($text, $class, $icon)
 	{
 		$options = ['class' => $class];
@@ -220,25 +226,25 @@ class Vote extends BaseWidget
 				case 'large':
 				$class .= '-2x';
 				break;
-				
+
 				case 'x-large':
 				$class .= '-4x';
 				break;
 			}
 			$options['class'] = $class;
 			break;
-			
+
 			default:
 			switch($this->size)
 			{
 				case 'x-large':
 				$style = 'font-size: 4rem';
 				break;
-				
+
 				case 'large':
 				$style = 'font-size: 2rem';
 				break;
-				
+
 				default:
 				$style = 'font-size: 1rem';
 				break;

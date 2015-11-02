@@ -18,6 +18,7 @@ trait Relations {
 	protected function getWidgetRelationQuery($className, $link=null, $options=[], $many=false)
 	{
 		$link = !is_array($link) ? ['parent_id' => 'id'] : $link;
+		$options['groupBy'] = array_keys($link);
 		$options = is_array($options) ? $options : (array)$options;
 		$options['select'] = isset($options['select']) ? $options['select'] : ['id', 'parent_id', 'parent_type'];
 		$options['with'] = array_merge(ArrayHelper::getValue($options, 'with', []), ['author', 'last', 'count', 'newCount']);
@@ -34,6 +35,9 @@ trait Relations {
 		$options['select'] = isset($options['select']) ? $options['select'] : ['parent_id', 'parent_type'];
 		$options['with'] = array_merge(ArrayHelper::getValue($options, 'with', []), ['count', 'newCount']);
 		$options['andWhere'] = isset($options['andWhere']) ? $options['andWhere'] : ['parent_type' => $this->isWhat()];
+		$options['groupby'] = array_intersect_key($options['select'], array_flip([
+			'parent_type', 'parent_id', 'remote_type', 'remote_id'
+		]));
 		return $this->getRelationQuery($className, $link, $options);
 	}
 
@@ -48,7 +52,7 @@ trait Relations {
 		return $this->getCachedRelation($idKey, $className, $options, $many, $relation);
 	}
 
-	protected function getWidget($className, $idKey=null, $many=false, $options=[])
+	protected function getWidgetModel($className, $idKey=null, $many=false, $options=[])
 	{
 		$relation = \nitm\helpers\Helper::getCallerName();
 		$options['construct'] = isset($options['construct']) ? $options['construct'] : [
@@ -61,7 +65,7 @@ trait Relations {
 
 	public function reply()
 	{
-		return $this->getWidget(\nitm\widgets\models\Replies::className());
+		return $this->getWidgetModel(\nitm\widgets\models\Replies::className());
 	}
 
     /**
@@ -102,7 +106,7 @@ trait Relations {
 
 	public function issue()
 	{
-		return $this->getWidget(\nitm\widgets\models\Issues::className(), 'issue');
+		return $this->getWidgetModel(\nitm\widgets\models\Issues::className(), 'issue');
 	}
 
     /**
@@ -151,7 +155,7 @@ trait Relations {
 
 	public function revision()
 	{
-		return $this->getWidget(\nitm\widgets\models\Revisions::className(), 'revision');
+		return $this->getWidgetModel(\nitm\widgets\models\Revisions::className(), 'revision');
 	}
 
     /**
@@ -179,7 +183,7 @@ trait Relations {
 
 	public function vote()
 	{
-		return $this->getWidget(\nitm\widgets\models\Vote::className(), 'vote');
+		return $this->getWidgetModel(\nitm\widgets\models\Vote::className(), 'vote');
 	}
 
     /**
@@ -210,12 +214,12 @@ trait Relations {
 
 	public function rating()
 	{
-		return $this->getWidget(\nitm\widgets\models\Rating::className(), 'rating');
+		return $this->getWidgetModel(\nitm\widgets\models\Rating::className(), 'rating');
 	}
 
 	public function follow()
 	{
-		return $this->getWidget(\nitm\widgets\models\Alerts::className(), 'follow', false, [
+		return $this->getWidgetModel(\nitm\widgets\models\Alerts::className(), 'follow', false, [
 			'select' => ['id', 'remote_id', 'remote_type'],
 			'construct' => [
 				'remote_id' => $this->getId(),

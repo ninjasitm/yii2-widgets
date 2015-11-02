@@ -3,6 +3,7 @@ namespace nitm\widgets\traits;
 
 use yii\base\Event;
 use yii\db\ActiveRecord;
+use nitm\helpers\ArrayHelper;
 
 /**
  * Traits defined for expanding active relation scopes until yii2 resolves traits issue
@@ -41,6 +42,11 @@ trait BaseWidget {
 			'count' => ['parent_id', 'parent_type'],
 		];
 		return array_merge(parent::scenarios(), $scenarios);
+	}
+
+	public function fields()
+	{
+		return array_merge(parent::fields(), ['_value']);
 	}
 
 	/**
@@ -177,13 +183,19 @@ trait BaseWidget {
 		$filters = $this->queryOptions['andWhere'];
 		unset($filters['parent_id'], $filters['parent_type']);
 		return $ret_val->select(array_merge($this->link, $select))
-			->asArray()
+			->groupBy(array_keys($this->link))
 			->andWhere($filters);
     }
 
-	public function fetchedValue()
+	public function fetchedValue($key=null)
 	{
-		return $this->fetchedValue['_value'];
+		$ret_val = \nitm\helpers\Relations::getRelatedRecord('fetchedValue', $this, static::className(), [
+			'_value' => 0,
+			'_up' => 0,
+			'_down' => 0
+		]);
+
+		return ArrayHelper::getValue(ArrayHelper::toArray($ret_val), $key, $ret_val);
 	}
 
 	public function hasNew()
@@ -201,6 +213,7 @@ trait BaseWidget {
 		$ret_val->select(array_merge($this->link, [
 				'_new' => 'COUNT('.$primaryKey.')'
 			]))
+			->groupBy(array_keys($this->link))
 			->andWhere($andWhere)
 			->asArray();
 		static::currentUser()->updateActivity();
@@ -235,6 +248,7 @@ trait BaseWidget {
 	{
 		$ret_val = $this->hasOne(static::className(), $this->link)
 			->orderBy([array_shift($this->primaryKey()) => SORT_DESC])
+			->groupBy(array_keys($this->link))
 			->with('author');
 		return $ret_val;
 	}
@@ -259,6 +273,14 @@ trait BaseWidget {
 			static::$currentUser = \Yii::$app->getUser()->getIdentity();
 		}
 		return static::$currentUser;
+	}
+
+	public function getCurrentUserVoted()
+	{
+		$primaryKey = $this->primaryKey()[0];
+		return $this->hasOne(static::className(), $this->link)
+		->andWhere(['author_id' => static::currentUser()->getId()])
+		->groupBy(array_keys($this->link));
 	}
 
 	protected function populateMetadata()
