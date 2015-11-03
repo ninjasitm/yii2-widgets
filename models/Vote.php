@@ -114,7 +114,7 @@ class Vote extends BaseWidget
 				];
 				break;
 			}
-			$ret_val['ratio'] = round(abs($ret_val['positive']/static::getMax() - $ret_val['negative']/static::getMax())/static::getMax(), 2);
+			$ret_val['ratio'] = abs(round($this->fetchedValue('_up') - abs($this->fetchedValue('_down')) /static::getMax(), 2));
 			$this->_rating = $ret_val;
 		}
 		return ArrayHelper::getValue($ret_val, $get, $ret_val);

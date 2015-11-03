@@ -47,7 +47,7 @@ class VoteController extends \nitm\controllers\DefaultController
 	 */
     public function actionDown($type, $id)
     {
-		$ret_val = ['success' => false, 'value' => null, 'id' => $id];
+		$ret_val = ['success' => false, 'value' => null, 'id' => (int)$id];
 		$existing = new Vote();
 		$existing->queryOptions['andWhere'] = [
 			'author_id' => \Yii::$app->user->getId(),
@@ -81,7 +81,7 @@ class VoteController extends \nitm\controllers\DefaultController
 		unset($existing->queryOptions['andWhere']['author_id']);
 		//Recalculate the fetched value after updating the new vote value
 		$vote->fetchedValue;
-		$ret_val['value'] = $vote->rating();
+		$ret_val['value'] = $vote->rating(null, true);
 		$ret_val['atMax'] = Vote::$allowMultiple ? false : ($vote->value == 1);
 		$ret_val['atMin'] = Vote::$allowMultiple ? false : ($vote->value == -1);
 		$this->setResponseFormat('json');
@@ -96,7 +96,7 @@ class VoteController extends \nitm\controllers\DefaultController
 	 */
     public function actionUp($type, $id)
     {
-		$ret_val = ['success' => false, 'value' => null, 'id' => $id];
+		$ret_val = ['success' => false, 'value' => null, 'id' => (int)$id];
 		$existing = new Vote();
 		$existing->queryOptions['andWhere'] = [
 			'author_id' => \Yii::$app->user->getId(),
@@ -134,7 +134,7 @@ class VoteController extends \nitm\controllers\DefaultController
 		unset($existing->queryOptions['andWhere']['author_id']);
 		//Recalculate the fetched value after updating the new vote value
 		$vote->fetchedValue;
-		$ret_val['value'] = $vote->rating();
+		$ret_val['value'] = $vote->rating(null, true);
 		$ret_val['atMax'] = Vote::$allowMultiple ? false : ($vote->value == 1);
 		$ret_val['atMin'] = Vote::$allowMultiple ? false : ($vote->value == -1);
 		$this->setResponseFormat('json');
