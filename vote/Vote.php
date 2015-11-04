@@ -189,7 +189,7 @@ class Vote extends BaseWidget
 		$ret_val = '';
 		foreach($actions as $name=>$action)
 		{
-			$iconOptions = !isset($this->iconOptions[$name]) ? ['clas' => $name, 'text' => $name, 'icon' => $name] : $this->iconOptions[$name];
+			$iconOptions = !isset($this->iconOptions[$name]) ? ['class' => $name, 'text' => $name, 'icon' => $name] : $this->iconOptions[$name];
 			extract( $iconOptions, EXTR_PREFIX_ALL, '_');
 			if(isset($action['adminOnly']) && ($action['adminOnly'] == true) && !\Yii::$app->user->identity->isAdmin())
 			continue;
@@ -197,9 +197,12 @@ class Vote extends BaseWidget
 			$action['options']['id'] = $action['options']['id'].$this->parentId;
 			switch(1)
 			{
-				case ($name == 'up') && (($this->model->rating()['positive'] >= $this->model->getMax()) || ($this->model->currentUserVoted($name))):
-				case ($name == 'down') && (($this->model->rating()['positive'] <= 0) || ($this->model->currentUserVoted($name))):
-				$action['options']['style'] = 'display:none';
+				case ($name == 'up') && $this->model->currentUserVoted($name):
+				$action['options']['class'] .= ' text-success';
+				break;
+
+				case ($name == 'down') && $this->model->currentUserVoted($name):
+				$action['options']['class'] .= ' text-danger';
 				break;
 			}
 			$ret_val .= Html::a(
@@ -218,20 +221,21 @@ class Vote extends BaseWidget
 	protected function getActionHtml($text, $class, $icon)
 	{
 		$options = ['class' => $class];
-		switch($class)
+		$class = explode(' ', $class);
+		switch($class[0])
 		{
 			case 'fa':
 			switch($this->size)
 			{
 				case 'large':
-				$class .= '-2x';
+				$class[0] .= '-2x';
 				break;
 
 				case 'x-large':
-				$class .= '-4x';
+				$class[0] .= '-4x';
 				break;
 			}
-			$options['class'] = $class;
+			$options['class'] = implode(' ', $class);
 			break;
 
 			default:
@@ -252,7 +256,7 @@ class Vote extends BaseWidget
 			$options['style'] = $style;
 			break;
 		}
-		return !empty($icon) ? Icon::show($icon, $options) : Html::span($text, ['class' => $class]);
+		return !empty($icon) ? Icon::show($icon, $options) : Html::span($text, ['class' => implode(' ', $class)]);
 	}
 }
 ?>

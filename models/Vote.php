@@ -85,6 +85,21 @@ class Vote extends BaseWidget
         ];
     }
 
+	public function allowMultiple()
+	{
+		return static::$allowMultiple;
+	}
+
+	public function individualCounts()
+	{
+		return static::$individualCounts;
+	}
+
+	public function usePrecentages()
+	{
+		return static::$usePrecentages;
+	}
+
 	/**
 	 * Get rating parameters
 	 * @method rating
@@ -98,23 +113,14 @@ class Vote extends BaseWidget
 			$ret_val = $this->_rating;
 		else {
 			$ret_val = ['positive' => 0, 'negative' => 0, 'ratio' => 0];
-			switch(static::$allowMultiple)
-			{
-				case true:
-				$ret_val = [
-					'positive' => (int)$this->fetchedValue('_up'),
-					'negative' => (int)$this->fetchedValue('_down')
-				];
-				break;
-
-				default:
-				$ret_val = [
-					'positive' => round(((int)$this->fetchedValue('_up')/static::getMax()) * 100),
-					'negative' => round(((int)$this->fetchedValue('_down')/static::getMax()) * 100)
-				];
-				break;
-			}
-			$ret_val['ratio'] = abs(round($this->fetchedValue('_up') - abs($this->fetchedValue('_down')) /static::getMax(), 2));
+			static::$allowMultiple = false;
+			$max = static::getMax($this);
+			$ret_val = [
+				'positive' => round(((int)$this->fetchedValue('_up')/$max) * 100),
+				'negative' => round(((int)$this->fetchedValue('_down')/$max) * 100)
+			];
+			$ret_val['ratio'] = round(abs($this->fetchedValue('_up') - abs($this->fetchedValue('_down')))/$max, 2);
+			$ret_val['max'] = $max;
 			$this->_rating = $ret_val;
 		}
 		return ArrayHelper::getValue($ret_val, $get, $ret_val);
@@ -124,18 +130,16 @@ class Vote extends BaseWidget
 	 * Get the rating, percentage out of 100%
 	 * @return int
 	 */
-	public static function getMax()
+	public static function getMax($vote=null)
 	{
 		switch(isset(static::$maxVotes))
 		{
 			case false:
-			$ret_val = 100000000000000;
-			switch(static::$allowMultiple)
-			{
-				case false:
+			if(!static::$allowMultiple)
 				$ret_val = User::find()->where(['disabled' => 0])->count();
-				break;
-			}
+			else
+				$ret_val = $vote instanceof static ? $vote->fetchedValue('_up')+$vote->fetchedValue('_down') : 1000;
+			$ret_val = !$ret_val ? 1 : $ret_val;
 			static::$maxVotes = $ret_val;
 			break;
 
@@ -143,7 +147,16 @@ class Vote extends BaseWidget
 			$ret_val = static::$maxVotes;
 			break;
 		}
-		return $ret_val;
+		return (int)$ret_val;
+	}
+
+	public function getCurrentUserVoted()
+	{
+		$primaryKey = $this->primaryKey()[0];
+		return $this->hasOne(static::className(), $this->link)
+			->select(['*', '_down' => "SUM(value=-1)", "_up" => "SUM(value=1)"])
+			->andWhere(['author_id' => static::currentUser()->getId()])
+			->groupBy(array_keys($this->link));
 	}
 
 	/**
@@ -153,14 +166,23 @@ class Vote extends BaseWidget
 	{
 		$ret_val = false;
 		$model = \nitm\helpers\Relations::getRelatedRecord('currentUserVoted', $this, static::className(), [
-			'_value' => 0,
 			'_up' => 0,
 			'_down' => 0
 		]);
 		//If we don't multiple votes then we will check, otherwise let the user vote!
 		switch(static::$allowMultiple)
 		{
-			case false:
+			case true:
+			switch(1)
+			{
+				case ($model['_down'] >= 1) && $direction == 'down':
+				case ($model['_up'] >= 1) && $direction == 'up':
+				$ret_val = true;
+				break;
+			}
+			break;
+
+			default:
 			switch(1)
 			{
 				case ($model['value'] == -1) && $direction == 'down':
@@ -185,5 +207,13 @@ class Vote extends BaseWidget
 		else
 			$color = '192, 51, 0';
 		return "rgba(".$color.",".$this->rating('ratio').")";
+	}
+
+	public function getIndicators()
+	{
+		return [
+			'up' => 'text-success',
+			'down' =>  'text-danger',
+		];
 	}
 }

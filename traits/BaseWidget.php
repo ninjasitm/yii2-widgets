@@ -260,7 +260,7 @@ trait BaseWidget {
 
 		if(\Yii::$app instanceof \yii\console\Application)
 			static::$currentUser = new \nitm\models\User(['username' => 'console']);
-		else if(\Yii::$app->getUser() && !\Yii::$app->getUser()->getIsGuest()) {
+		else if(\Yii::$app->getUser() && \Yii::$app->getUser()->getIsGuest()) {
 			static::$currentUser = \nitm\helpers\Cache::getModel($this,
 				'currentUser',
 				false,
@@ -273,14 +273,6 @@ trait BaseWidget {
 			static::$currentUser = \Yii::$app->getUser()->getIdentity();
 		}
 		return static::$currentUser;
-	}
-
-	public function getCurrentUserVoted()
-	{
-		$primaryKey = $this->primaryKey()[0];
-		return $this->hasOne(static::className(), $this->link)
-		->andWhere(['author_id' => static::currentUser()->getId()])
-		->groupBy(array_keys($this->link));
 	}
 
 	protected function populateMetadata()

@@ -79,7 +79,9 @@ function Vote(items)
 		{
 			var $down = $nitm.getObj(self.elements.vote.down+result.id);
 			var $up = $nitm.getObj(self.elements.vote.up+result.id);
-			switch(result.atMin)
+			$up.toggleClass(result.class.up);
+			$down.toggleClass(result.class.down);
+			/*switch(result.atMin)
 			{
 				case true:
 				//Hide the downvote button
@@ -111,12 +113,12 @@ function Vote(items)
 				switch($up.css('display'))
 				{
 					case 'none':
-					$up.show('slow');
+					//$up.show('slow');
 					$up.click($up.attr('oldonclick'));
 					break;
 				}
 				break;
-			}
+			}*/
 			var bgColor = this.colors[~~!(result.value.positive > result.value.negative)];
 			try {
 				$nitm.getObj('vote-value-positive'+result.id).html(Math.round(result.value.positive));

@@ -84,6 +84,7 @@ class VoteController extends \nitm\controllers\DefaultController
 		$ret_val['value'] = $vote->rating(null, true);
 		$ret_val['atMax'] = Vote::$allowMultiple ? false : ($vote->value == 1);
 		$ret_val['atMin'] = Vote::$allowMultiple ? false : ($vote->value == -1);
+		$ret_val['class'] = $vote->getIndicators();
 		$this->setResponseFormat('json');
 		return $this->renderResponse($ret_val);
     }
@@ -137,6 +138,7 @@ class VoteController extends \nitm\controllers\DefaultController
 		$ret_val['value'] = $vote->rating(null, true);
 		$ret_val['atMax'] = Vote::$allowMultiple ? false : ($vote->value == 1);
 		$ret_val['atMin'] = Vote::$allowMultiple ? false : ($vote->value == -1);
+		$ret_val['class'] = $vote->getIndicators();
 		$this->setResponseFormat('json');
 		return $this->renderResponse($ret_val);
     }
