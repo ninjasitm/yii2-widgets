@@ -14,7 +14,7 @@ use nitm\widgets\replies\Replies as RepliesWidget;
 use nitm\widgets\replies\RepliesForm;
 
 class ReplyController extends \nitm\controllers\DefaultController
-{	
+{
 	public function behaviors()
 	{
 		return [
@@ -44,13 +44,13 @@ class ReplyController extends \nitm\controllers\DefaultController
 			]
 		];
 	}
-	
+
 	public function init()
 	{
 		parent::init();
 		$this->model = new \nitm\widgets\models\Replies();
 	}
-	
+
 	public static function has()
 	{
 		$has = [
@@ -58,7 +58,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 		];
 		return array_merge(parent::has(), $has);
 	}
-	
+
 	public function beforeAction($action)
 	{
 		switch($action->id)
@@ -89,17 +89,17 @@ class ReplyController extends \nitm\controllers\DefaultController
 				'url' => '/reply/get-new/chat/0'
 			];
 			$replies = \nitm\widgets\replies\ChatMessages::widget([
-				'model' => $this->model, 
+				'model' => $this->model,
 				'noContainer' => $key,
 				'withForm' => is_null(\Yii::$app->request->get(Replies::FORM_PARAM, null)) ? true : \Yii::$app->request->get(Replies::FORM_PARAM),
 				'updateOptions' => $updateOptions
 			]);
 			$form = false;
 			break;
-			
+
 			default:
 			$replies = RepliesWidget::widget([
-				"model" => $this->model,  
+				"model" => $this->model,
 				'noContainer' => $key,
 				'formOptions' => [
 					'useModal' => false,
@@ -107,6 +107,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 			]);
 			break;
 		}
+		
 		Response::viewOptions(null, [
 			'args' => [
 				"content" => $replies,
@@ -136,7 +137,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 		}
 		$constrain = [$id, $type, urldecode($key)];
 		$this->model->setConstraints($constrain);
-		
+
 		switch($this->model->validate())
 		{
 			case true:
@@ -148,12 +149,12 @@ class ReplyController extends \nitm\controllers\DefaultController
 				return $this->model->validate();
 				break;
 			}
-			
+
 			switch($this->model->reply())
 			{
 				case true:
 				$viewOptions = [
-					'model' => $this->model, 
+					'model' => $this->model,
 					'isNew' => true,
 					'uniqid' => $this->model->getId()
 				];
@@ -162,7 +163,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 					case 'chat':
 					$ret_val['data'] = $this->renderAjax('@nitm/widgets/views/chat/view', $viewOptions);
 					break;
-					
+
 					default:
 					$ret_val['data'] = $this->renderAjax('@nitm/widgets/views/replies/view', $viewOptions);
 					break;
@@ -174,7 +175,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 				$this->setResponseFormat(\Yii::$app->request->isAjax ? 'json' : 'html');
 				Response::viewOptions('args.content', $ret_val['data']);
 				break;
-				
+
 				case false:
 				$this->setResponseFormat('json');
 				Response::viewOptions('args.content', $ret_val);
@@ -182,9 +183,9 @@ class ReplyController extends \nitm\controllers\DefaultController
 			}
 			break;
 		}
-		return $this->renderResponse($ret_val, Response::viewOptions());	
+		return $this->renderResponse($ret_val, Response::viewOptions());
 	}
-	
+
 	public function actionHide($id)
 	{
 		$ret_val = [
@@ -206,7 +207,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 			break;
 		}
 		$this->setResponseFormat('json');
-		return $this->renderResponse($ret_val, Response::viewOptions());	
+		return $this->renderResponse($ret_val, Response::viewOptions());
 	}
 
     /**
@@ -250,7 +251,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 					case 'chat':
 					$ret_val['data'] .= $this->renderAjax('@nitm/views/chat/view', ['model' => $newReply, 'isNew' => true]);
 					break;
-					
+
 					default:
 					$ret_val['data'] .= $this->renderAjax('@nitm/views/replies/view', ['model' => $newReply, 'isNew' => true]);
 					break;
@@ -269,7 +270,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 		$this->setResponseFormat(\Yii::$app->request->isAjax ? 'json' : 'html');
 		return $this->renderResponse($ret_val, null, \Yii::$app->request->isAjax);
     }
-	
+
 	public function actionTo()
 	{
 	}

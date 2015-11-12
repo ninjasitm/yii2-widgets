@@ -44,12 +44,12 @@ class ScrollPager extends \kop\y2sp\ScrollPager
 	 */
 	public $overflowContainer;
 	public $triggerOffset = 250;
-	
-	
+
+
 	public $spinnerTemplate = "<div class='loading-wrapper'><div class='loading'></div></div>";
 	public $noneLeftTemplate = "<h4 style='position: absolute; min-height: 20px; width: 90%; left: 5%; right: 5%; text-align: center; padding: 6px;'>{text}</h4>";
 	public $noneLeftText = 'To not be continued!';
-	
+
 	public function init()
 	{
 		parent::init();

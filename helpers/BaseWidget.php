@@ -21,9 +21,9 @@ class BaseWidget extends Widget
 	/**
 	 * Show the count even if the number is 0
 	 */
-	public $showEmptyCount = false;	
-	public $fullDetails = true;	
-	
+	public $showEmptyCount = false;
+	public $fullDetails = true;
+
 	/*
 	 * The options used to constrain the Revisions
 	 */
@@ -31,22 +31,22 @@ class BaseWidget extends Widget
 	public $parentKey;
 	public $parentId;
 	public $model;
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
 	public $options;
-	
+
 	/**
 	 * The actions to enable
 	 */
 	public $actions = [];
-	
+
 	/*
 	 * The number of replies to get on each select query
 	 */
 	public $limit = 10;
-	
+
 	/*
 	 * Options for widget
 	 */
@@ -55,31 +55,31 @@ class BaseWidget extends Widget
 	 * Options for use in a modal
 	 */
 	public $modalOptions = [];
-	
+
 	public $labelOptions = [
 		'style' => 'font-size: large'
 	];
-	
+
 	/**
 	 * Active form
 	 */
 	protected $_form = false;
-	
+
 	/**
 	 * Does the user exist?
 	 */
 	protected $_userExists = false;
-	
+
 	/**
 	 * The current user
 	 */
 	protected $_user;
-	
+
 	/**
 	 * The current users
 	 */
 	protected $_users;
-	
+
 	public function init()
 	{
 		switch(empty($this->parentType) && !is_null($this->model))
@@ -105,7 +105,7 @@ class BaseWidget extends Widget
 			else
 				$this->uniqid = uniqid();
 	}
-	
+
 	protected function getInfoLink($type=null)
 	{
 		$typeHr = ucfirst($type == null ? $this->model->isWhat() : $type);
@@ -132,7 +132,7 @@ class BaseWidget extends Widget
 				$last .= Html::tag('span', " on ".$this->model->last->created_at, []);
 			}
 			$info = Html::tag('ul',
-				Html::tag('li', 
+				Html::tag('li',
 					Html::tag('strong', $header, ['class' => 'list-group-item-heading'])
 					.Html::tag('span', $last, ['class' => 'list-group-item-text', 'style' => 'margin-left: 15px'])
 					.Html::tag('div', Html::a('View '.$typeHr.' '.Icon::show('eye'), $this->options['href'], [
@@ -152,7 +152,7 @@ class BaseWidget extends Widget
 		}
 		return $info;
 	}
-	
+
 	protected function getNewIndicator()
 	{
 		$new = $this->model->hasNew();
@@ -165,14 +165,14 @@ class BaseWidget extends Widget
 				'text' => Html::tag('span', $new." new")
 			]);
 			break;
-			
+
 			default:
 			$new = '';
 			break;
 		}
 		return $new;
 	}
-	
+
 	protected function defaultOptions()
 	{
 		return  [
@@ -182,9 +182,15 @@ class BaseWidget extends Widget
 			'class' => $this->model->isWhat()
 		];
 	}
-	
+
 	protected function getLabel()
 	{
 		return Html::tag('strong', (int)$this->model->count(), $this->labelOptions).'<br> '.$this->model->properName($this->model->isWhat(true)).'&nbsp;'.Icon::show('eye');
+	}
+
+	protected function getUrl($baseUrl, $extraParams = [])
+	{
+		$urlParams = $this->useModal ? ['__format' => 'modal'] : ['__format' => 'prepared'];
+		return \Yii::$app->urlManager->createUrl(array_merge([rtrim($baseUrl, '/').'/'.$this->parentType."/".$this->parentId], $urlParams, $extraParams));
 	}
 }

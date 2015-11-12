@@ -26,11 +26,11 @@ class RevisionsCount extends BaseWidget
 		'id' => 'revisions-count',
 		'tag' => 'a'
 	];
-	
+
 	public $widgetOptions = [
 		'class' => 'btn-group'
 	];
-	
+
 	public function init()
 	{
 		switch(1)
@@ -38,20 +38,20 @@ class RevisionsCount extends BaseWidget
 			case !($this->model instanceof RevisionsModel) && (($this->parentType == null) || ($this->parentId == null)):
 			$this->model = null;
 			break;
-			
+
 			default:
 			$this->model = ($this->model instanceof RevisionsModel) ? $this->model : RevisionsModel::findModel([$this->parentId, $this->parentType]);
 			break;
-		}	
+		}
 		parent::init();
 	}
-	
+
 	public function run()
 	{
 		$this->options['id'] .= $this->parentId;
 		$this->options['class'] .= ' '.($this->model->count() >= 1 ? 'btn-primary' : 'btn-transparent');
 		$this->options['label'] = $this->getLabel();
-		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/revisions/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal']);
+		$this->options['href'] = $this->getUrl('/revisions/index/');
 		$this->options['title'] = \Yii::t('yii', 'View Revisions');
 		$info = $this->getInfoLink();
 		return $info = Html::tag('div', $info, $this->widgetOptions).$this->getNewIndicator();

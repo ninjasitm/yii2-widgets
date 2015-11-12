@@ -55,7 +55,7 @@ class IssueCount extends BaseWidget
 		$this->options['id'] .= $this->parentId;
 		$this->options['class'] .= ' '.($this->model->count() >= 1 ? 'btn-primary' : 'btn-transparent');
 		$this->options['label'] = $this->getLabel();
-		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/issue/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal', IssuesModel::COMMENT_PARAM => $this->enableComments]);
+		$this->options['href'] = $this->getUrl('/issue/index', [IssuesModel::COMMENT_PARAM => $this->enableComments]);
 		$this->options['title'] = \Yii::t('yii', 'View Issues');
 		$info = $this->getInfoLink();
 		return Html::tag('div', $info, $this->widgetOptions).$this->getNewIndicator();

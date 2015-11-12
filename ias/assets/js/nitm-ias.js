@@ -11,7 +11,7 @@ function NitmIas ()
 	this.defaultInit = [
 		'initIas'
 	];
-	
+
 	this.initIas = function (containerId) {
 		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
 		container.find("[role~='iasContainer']").each(function() {
@@ -19,7 +19,7 @@ function NitmIas ()
 			var data = element.data('ias');
 			var options = data.ias;
 			delete data.ias;
-			
+
 			var defaultOptions = {
 				pagination: options.container+' .pagination',
 				next: '.next a'

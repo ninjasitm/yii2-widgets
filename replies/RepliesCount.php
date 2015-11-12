@@ -26,11 +26,11 @@ class RepliesCount extends BaseWidget
 		'id' => 'reply-count',
 		'tag' => 'a'
 	];
-	
+
 	public $widgetOptions = [
 		'class' => 'btn-group'
 	];
-	
+
 	public function init()
 	{
 		switch(1)
@@ -38,22 +38,22 @@ class RepliesCount extends BaseWidget
 			case !($this->model instanceof RepliesModel) && (($this->parentType == null) || ($this->parentId == null) || ($this->parentKey == null)):
 			$this->model = null;
 			break;
-			
+
 			default:
 			$this->model = ($this->model instanceof RepliesModel) ? $this->model : RepliesModel::findModel([$this->parentId, $this->parentType, $this->parentKey]);
 			break;
 		}
 		parent::init();
 	}
-	
+
 	public function run()
 	{
 		$this->options['id'] .= $this->parentId;
 		$this->options['class'] .= ' '.($this->model->count() >= 1 ? 'btn-primary' : 'btn-transparent');
 		$this->options['label'] = $this->getLabel();
-		$this->options['href'] = \Yii::$app->urlManager->createUrl(['/reply/index/'.$this->parentType."/".$this->parentId, '__format' => 'modal']);
+		$this->options['href'] = $this->getUrl('/reply/index');
 		$this->options['title'] = \Yii::t('yii', 'View Replies');
-		
+
 		$info = $this->getInfoLink($this->model->isWhat(true));
 		return Html::tag('div', $info, $this->widgetOptions).$this->getNewIndicator();
 	}
