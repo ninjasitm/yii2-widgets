@@ -188,8 +188,9 @@ class BaseWidget extends Widget
 		return Html::tag('strong', (int)$this->model->count(), $this->labelOptions).'<br> '.$this->model->properName($this->model->isWhat(true)).'&nbsp;'.Icon::show('eye');
 	}
 
-	protected function getUrl($baseUrl, $extraParams = [])
+	public function getUrl($baseUrl=null, $extraParams = [])
 	{
+		$baseUrl = is_null($baseUrl) ? $this->isWhat() : $baseUrl;
 		$urlParams = $this->useModal ? ['__format' => 'modal'] : ['__format' => 'prepared'];
 		return \Yii::$app->urlManager->createUrl(array_merge([rtrim($baseUrl, '/').'/'.$this->parentType."/".$this->parentId], $urlParams, $extraParams));
 	}

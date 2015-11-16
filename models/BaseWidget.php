@@ -50,6 +50,15 @@ class BaseWidget extends \nitm\models\Entity
 		return array_merge(parent::has(), $has);
 	}
 
+	public function indexUrl($baseUrl=null, $extraParams = [])
+	{
+		$urlParams = [];
+		$baseUrl = is_null($baseUrl) ? $this->isWhat() : $baseUrl.'/index';
+		$urlParams['__format'] = isset($extraParams['__format']) ? $extraParams['__format'] : 'prepared';
+		$attributes = array_intersect_key($this->link, array_flip(['parent_type', 'parent_id', 'remote_type', 'remote_id']));
+		return \Yii::$app->urlManager->createUrl(array_merge([rtrim($baseUrl, '/').'/'.implode('/', $this->getAttributes($attributes))], $urlParams, $extraParams));
+	}
+
 	/**
 	 * Get the query that orders items by their activity
 	 */
