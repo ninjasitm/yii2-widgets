@@ -10,10 +10,10 @@ use yii\data\ActiveDataProvider;
  * BaseElasticSearch provides the basic search functionality based on the class it extends from.
  */
 class BaseSearch extends \nitm\search\BaseSearch
-{	
+{
 	use \nitm\traits\Nitm, \nitm\traits\Relations,\nitm\traits\Cache,
-		\nitm\widgets\traits\BaseWidget, \nitm\widgets\traits\Relations;
-	
+		\nitm\widgets\traits\BaseWidgetModel, \nitm\widgets\traits\Relations;
+
 	public $engine = 'db';
 	public static $namespace = '\nitm\widgets\models\\';
 }

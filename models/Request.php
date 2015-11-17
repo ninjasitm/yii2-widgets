@@ -25,12 +25,12 @@ namespace nitm\widgets\models;
  * @property integer $rating
  * @property string $rated_on
  */
-class Request extends BaseWidget
-{	
+class Request extends BaseWidgetModel
+{
 	use \nitm\widgets\traits\relations\Request, \nitm\widgets\traits\Relations;
-	
+
 	protected $is = 'request';
-	
+
     /**
      * @inheritdoc
      */
@@ -38,9 +38,9 @@ class Request extends BaseWidget
     {
         return 'requests';
     }
-	
+
 	/*
-	 * Initialize with 
+	 * Initialize with
 	 */
 	public function init()
 	{
@@ -61,7 +61,7 @@ class Request extends BaseWidget
 			[['title'], 'unique', 'targetAttribute' => ['title', 'type_id', 'request_for_id'], 'message' => 'There is a request exactly matching this one. Please update that one instead']
         ];
     }
-	
+
 	public function scenarios()
 	{
 		$scenarios = [
@@ -100,7 +100,7 @@ class Request extends BaseWidget
             'rated_on' => 'Rated On',
         ];
     }
-	
+
 	public static function filters()
 	{
 		return array_merge(
@@ -116,7 +116,7 @@ class Request extends BaseWidget
 			]
 		);
 	}
-	
+
 	public function afterSaveEvent($event)
 	{
 		$event->data['variables'] = array_merge((array)$event->data['variables'], [

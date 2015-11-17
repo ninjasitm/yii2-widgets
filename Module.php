@@ -3,6 +3,7 @@
 namespace nitm\widgets;
 
 use nitm\helpers\Session;
+use yii\helpers\Inflector;
 
 class Module extends \yii\base\Module implements \yii\base\BootstrapInterface
 {
@@ -44,25 +45,29 @@ class Module extends \yii\base\Module implements \yii\base\BootstrapInterface
 
 	public function getUrls($id = 'nitm-widgets')
 	{
-		return [
-            $id => $id,
-            $id . '/<controller:[\w\-]+>' => $id . '/<controller>/index',
-            $id . '/<controller:[\w\-]+>/<action:[\w\-]+>' => $id . '/<controller>/<action>',
-            $id . '/<controller:[\w\-]+>/<action:[\w\-]+>/<id>' => $id . '/<controller>/<action>',
-            $id . '/<controller:[\w\-]+>/<action:[\w\-]+>/<type>/<id>' => $id . '/<controller>/<action>',
-			'<controller:(alerts|reply|issue|revisions|vote|reply|request)>/<action>/<type>/<id:\d+>' => $id . '/<controller>/<action>',
-		   	//Three type parameter routes
-		   	'<controller:(alerts|reply|issue)>/<action>/<type>/<id:\d+>/<key>' => $id . '/<controller>/<action>',
-		   	//Two type parameter routes
-		   	//Single type parameter routes
-		   	'<controller:(alerts|reply|issue|revisions|request)>/<action>/<id:\d+>' => $id . '/<controller>/<action>',
-		   	'<controller:(request|alerts)>/<action>/<type>' => $id . '/<controller>/<action>',
-		   	//No type parameter routes
-		   	'<controller:(alerts|reply|issue|revisions|request)>/<action>' => $id . '/<controller>/<action>',
-
-		   	//No parameter routes
-		   	'<controller:(alerts|reply|issue|revisions|request)>' => $id . '/<controller>',
-        ];
+		$parameters = [];
+		$routeHelper = new \nitm\helpers\Routes([
+			'moduleId' => $id,
+			'map' => [
+				'type-id-key' => '<controller:%controllers%>/<action>/<type>/<id:\d+>/<key>',
+				'type-id' => '<controller:%controllers%>/<action>/<type>/<id:\d+>',
+				'id' => '<controller:%controllers%>/<action>/<id:\d+>',
+				'type' => '<controller:%controllers%>/<action>/<type>',
+				'action-only' => '<controller:%controllers%>/<action>',
+				'none' => '<controller:%controllers%>'
+			],
+			'controllers' => [
+				'alert', 'reply', 'issue', 'revision', 'request', 'vote'
+			]
+		]);
+		$routeHelper->pluralize();
+		$parameters['type-id-Key'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue']);
+		$parameters['type-id'] = $routeHelper->getControllers();
+		$parameters['id'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue', 'revision', 'request']);
+		$parameters['type'] = $routeHelper->getControllerMap(['alerts', 'request']);
+		$parameters['action-only'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue', 'revision', 'request']);
+		$parameters['none'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue', 'revisions', 'request']);
+		return $routeHelper->create($parameters);
 	}
 
 	public function bootstrap($app)

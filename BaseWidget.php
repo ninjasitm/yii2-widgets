@@ -5,7 +5,7 @@
 * @license http://www.yiiframework.com/license/
 */
 
-namespace nitm\widgets\helpers;
+namespace nitm\widgets;
 
 use Yii;
 use yii\base\InvalidConfigException;

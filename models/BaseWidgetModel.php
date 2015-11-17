@@ -19,9 +19,9 @@ use nitm\helpers\Cache;
  *
  */
 
-class BaseWidget extends \nitm\models\Entity
+class BaseWidgetModel extends \nitm\models\Entity
 {
-	use \nitm\widgets\traits\BaseWidget, \nitm\filemanager\traits\Relations;
+	use \nitm\widgets\traits\BaseWidgetModel, \nitm\filemanager\traits\Relations;
 
 	protected $link = [
 		'parent_type' => 'parent_type',

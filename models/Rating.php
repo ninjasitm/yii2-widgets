@@ -12,7 +12,7 @@ namespace nitm\widgets\models;
  * @property string $parent_type
  * @property integer $parent_id
  */
-class Rating extends BaseWidget
+class Rating extends BaseWidgetModel
 {
 
 	public function scenarios()

@@ -11,7 +11,7 @@ use Yii;
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
 use nitm\widgets\models\Revisions as RevisionsModel;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 use kartik\icons\Icon;
 use nitm\widgets\editor\Editor;
 use nitm\helpers\ArrayHelper;
@@ -19,24 +19,24 @@ use nitm\helpers\ArrayHelper;
 class RevisionsInput extends BaseWidget
 {
 	public $callbackEvents = ['blur'];
-	
+
 	public $revisionsModel;
-	
+
 	/**
 	 * The name of this input widget
 	 */
 	public $attribute;
-	
+
 	/**
 	 * The value for this input widget
 	 */
 	public $value;
-	
+
 	public $editorOptions = [
 		'toolbarSize' => 'medium',
 		'size' => 'medium'
 	];
-		
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -44,7 +44,7 @@ class RevisionsInput extends BaseWidget
 		'class' => 'form-group',
 		'id' => 'revision-input-div'
 	];
-	
+
 	/*
 	 * HTML options for generating the widget elements
 	 */
@@ -52,34 +52,34 @@ class RevisionsInput extends BaseWidget
 		'id' => 'revision-input',
 		'role' => 'createRevision',
 	];
-	
+
 	/**
 	 * Autosave every X seconds
 	 */
 	public $revisionSaveInterval;
-	
+
 	/**
 	 * Revision autosave path handler. With trailing slash
 	 */
 	public $revisionSavePath = '/revisions/create/';
-	
+
 	/**
 	 * Enable redactor? True by default
 	 */
 	public $enableRedactor = true;
-	
+
 	/**
 	 * Autosave path handler. With trailing slash
 	 */
 	public $autoSavePath;
-	
+
 	/**
 	 * Autosave every X seconds
 	 */
 	public $autoSaveInterval = 30;
-	
+
 	private $_enableRevisions = true;
-	
+
 	public function init()
 	{
 		switch(1)
@@ -87,7 +87,7 @@ class RevisionsInput extends BaseWidget
 			case !($this->revisionsModel instanceof RevisionsModel) && (($this->parentType == null) || ($this->parentId == null)):
 			$this->_enableRevisions = false;
 			break;
-			
+
 			default:
 			$this->revisionsModel = ($this->revisionsModel instanceof RevisionsModel) ? $this->model : RevisionsModel::findModel([$this->parentId, $this->parentType]);
 			break;
@@ -98,7 +98,7 @@ class RevisionsInput extends BaseWidget
 		$this->options['id'] .= $this->parentId;
 		$this->widgetOptions['id'] .= $this->parentId;
 	}
-	
+
 	public function run()
 	{
 		switch($this->_enableRevisions)
@@ -125,7 +125,7 @@ class RevisionsInput extends BaseWidget
 
 			Asset::register($this->getView());
 			break;
-			
+
 			default:
 			$revisionOptions = [];
 			break;
@@ -141,7 +141,7 @@ class RevisionsInput extends BaseWidget
 			$this->initCallbacks();
 			$input = Editor::widget($this->editorOptions);
 			break;
-			
+
 			default:
 			$input = Html::activeTextarea($this->model, $this->attribute, $revisionOptions).$this->initCallbacks();
 			break;
@@ -154,7 +154,7 @@ class RevisionsInput extends BaseWidget
 		});');
 		return Html::tag('div', $input, $this->widgetOptions);
 	}
-	
+
 	protected function initCallbacks()
 	{
 		$ret_val = '';
@@ -172,7 +172,7 @@ class RevisionsInput extends BaseWidget
 						return $object.redactor("code.get");
 					}), null, "'.$this->widgetOptions['id'].'"));
 				}');
-			} 
+			}
 		} else {
 			$ret_val .= '$nitm.onModuleLoad("revisions", function (module) {
 				var $object = $("#'.$this->editorOptions['id'].'");';

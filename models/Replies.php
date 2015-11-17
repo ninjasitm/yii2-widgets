@@ -16,23 +16,23 @@ use nitm\interfaces\DataInterface;
  *
  */
 
-class Replies extends BaseWidget
+class Replies extends BaseWidgetModel
 {
 	use \nitm\widgets\traits\relations\Replies;
-	
+
 	public $maxLength;
 	public static $statuses = [
 		'normal' => 'default',
 		'important' => 'info',
 		'critical' => 'error'
 	];
-	
+
 	protected $author_idIdKey = 'author_id';
-	
+
 	const LAST_ACTIVITY = '___lastActivity';
 	const FORM_PARAM = '__withForm';
 	private $_dateFormat = "D M d Y g:iA";
-	
+
 	public function init()
 	{
 		//$this->_supportedConstraints['key'] = [3, 'key'];
@@ -45,16 +45,16 @@ class Replies extends BaseWidget
 			break;
 		}
 	}
-	
+
 	public static function tableName()
 	{
 		return 'comments';
 	}
-	
+
 	public static function has()
 	{
 		$has = [
-			'created_at' => null, 
+			'created_at' => null,
 			'updated_at' => null,
 			'updates' => null,
 			'hidden' => null,
@@ -64,7 +64,7 @@ class Replies extends BaseWidget
 		];
 		return array_merge(parent::has(), $has);
 	}
-	
+
 	public function rules()
 	{
 		return [
@@ -73,31 +73,31 @@ class Replies extends BaseWidget
 			['message', 'isTooLong', 'message' => 'This message is too long'],
 		];
 	}
-	
+
 	public function scenarios()
 	{
 		$scenarios =  [
 			'create' => [
-				'parent_id', 
-				'parent_key', 
+				'parent_id',
+				'parent_key',
 				'parent_type',
 				'message',
 				'priority',
 				'ip_addr',
 				'ip_host',
 				'cookie_hash',
-				'reply_to', 
+				'reply_to',
 				'reply_to_author_id',
 				'title',
 			],
 			'update' => [
-				'parent_id', 
-				'parent_key', 
-				'parent_type', 
-				'message', 
+				'parent_id',
+				'parent_key',
+				'parent_type',
+				'message',
 				'priority',
-				'public', 
-				'disabled', 
+				'public',
+				'disabled',
 				'hidden',
 				'title'
 			],
@@ -105,14 +105,14 @@ class Replies extends BaseWidget
 				'hidden'
 			],
 			'validateNew' => [
-				'message', 
+				'message',
 				'reply_to'
 			],
 			'default' => []
 		];
 		return array_merge(parent::scenarios(), $scenarios);
 	}
-	
+
 	/*
 	 * Reply to a post/user
 	 * @param mixed $message A maessage containing the necessary fileds
@@ -134,7 +134,7 @@ class Replies extends BaseWidget
 			case true:
 			$this->cookie_hash = $cookie->value;
 			break;
-			
+
 			default:
 			$this->cookie_hash = Fingerprint::getBrowserFingerPrint();
 			break;
@@ -161,13 +161,13 @@ class Replies extends BaseWidget
 			break;
 		}
 	}
-	
+
 	public function getStatus()
 	{
 		$ret_val = isset(self::$statuses[$this->priority]) ? self::$statuses[$this->priority] : 'default';
 		return $ret_val;
 	}
-	
+
 	public function isTooLong()
 	{
 		switch($this->maxLength)
@@ -177,14 +177,14 @@ class Replies extends BaseWidget
 			case false:
 			$ret_val = false;
 			break;
-			
+
 			default:
 			$ret_val = ($this->remote_type == 'chat') ? strlen(strip_tags($this->message)) > $this->maxLength : false;
 			break;
 		}
 		return $ret_val;
 	}
-	
+
 	public function getAlertOptions($event)
 	{
 		$message = parent::getAlertOptions($event);
@@ -199,7 +199,7 @@ class Replies extends BaseWidget
 					$text = " %who% to @".$event->sender->getReplyTo()->one()->author()->username.": ".$event->sender->message;
 				else
 					$text = $event->sender->message;
-					
+
 				$message = array_merge($message, [
 					'subject' => "%who% posted a %priority% chat message",
 					'message' => [
@@ -208,7 +208,7 @@ class Replies extends BaseWidget
 					]
 				]);
 				break;
-				
+
 				default:
 				$message = array_merge($message, [
 					'subject' => "%who% replied to %subjectDt% %priority% %remoteFor%, with id: %id%, on %when%",
@@ -230,12 +230,12 @@ class Replies extends BaseWidget
 				'action' => ($event->sender->reply_to != null ? 'reply' : 'create'),
 				'priority' => $event->sender->priority
 			]);
-			
+
 			if($event->sender->reply_to != null)
 				$event->data['reportedAction'] = 'replied';
 			else
 				$event->data['reportedAction'] = 'create';
-				
+
 			$message['owner_id'] = $event->sender->hasAttribute('author_id') ? $event->sender->author_id : null;
 		}
 		return $message;

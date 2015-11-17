@@ -10,7 +10,7 @@ namespace nitm\widgets\replies;
 use Yii;
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 use nitm\widgets\models\User;
 use nitm\widgets\models\Replies as RepliesModel;
 use nitm\widgets\models\search\Replies as RepliesSearch;
@@ -23,11 +23,11 @@ class Chat extends BaseWidget
 	public $miscPane = [
 		'title' => 'Alerts',
 		'content' => ''
-		
+
 	];
-	
+
 	public $updateOptions = [];
-	 
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -36,7 +36,7 @@ class Chat extends BaseWidget
 		'id' => 'chat-container',
 		'class' => 'pull-left'
 	];
-	 
+
 	/*
 	 * HTML options for the chat message container
 	 */
@@ -46,7 +46,7 @@ class Chat extends BaseWidget
 		'class' => 'chat col-md-4 col-lg-4',
 		'style' => 'position: fixed;top: 6px; right: 6px;bottom: 40px;overflow: hidden;padding: 0px;box-shadow: 2px 2px 15px #000;'
 	];
-	 
+
 	/*
 	 * HTML options for the miscellaneous pane
 	 */
@@ -54,7 +54,7 @@ class Chat extends BaseWidget
 		'style' => 'display:none',
 		'id' => 'chat-messages-pane',
 	];
-	 
+
 	/*
 	 * HTML options for the miscellaneous pane
 	 */
@@ -62,7 +62,7 @@ class Chat extends BaseWidget
 		'class' => 'fade',
 		'id' => 'chat-misc-pane'
 	];
-	
+
 	/*
 	 * HTML options for the navigation
 	 */
@@ -71,7 +71,7 @@ class Chat extends BaseWidget
 		'role' => 'tablist',
 		'id' => 'chat-navigation',
 	];
-	
+
 	/*
 	 * HTML options for the combining div for the mesages and form
 	 */
@@ -79,7 +79,7 @@ class Chat extends BaseWidget
 		'class' => 'tab-content',
 		'id' => 'chat-content',
 	];
-		
+
 	/*
 	 * Interval for updating new chat and chat info
 	 */
@@ -88,7 +88,7 @@ class Chat extends BaseWidget
 		"enabled" => true,
 		'url' => '/reply/get-new/chat/0'
 	];
-	
+
 	public function init()
 	{
 		$this->model = new RepliesModel([
@@ -105,7 +105,7 @@ class Chat extends BaseWidget
 		parent::init();
 		Asset::register($this->getView());
 	}
-	
+
 	public function run()
 	{
 		echo Html::tag('div',
@@ -113,16 +113,16 @@ class Chat extends BaseWidget
 			$this->options
 		);
 	}
-	
-	protected function getContent() 
+
+	protected function getContent()
 	{
-		$ret_val = Html::tag('div', 
+		$ret_val = Html::tag('div',
 			Html::tag('div',
 					Html::tag('div',
 						Html::tag('div', '', ['id' => 'chat-messages-container', 'style' => 'display:none']),
 						$this->chatOptions
 					)
-				, 
+				,
 				$this->chatPaneOptions
 			).
 			Html::tag('div', $this->miscPane['content'], $this->miscPaneOptions),
@@ -130,8 +130,8 @@ class Chat extends BaseWidget
 		);
 		return $ret_val;
 	}
-	
-	protected function getNavigation() 
+
+	protected function getNavigation()
 	{
 		$new = $this->model->hasNew();
 		switch($new >= 1)
@@ -140,7 +140,7 @@ class Chat extends BaseWidget
 				$newMessage = $new." new messages";
 				$newClass = "bg-success";
 				break;
-				
+
 				default:
 				$newMessage = 'No new messages';
 				$newClass = "bg-transparent";

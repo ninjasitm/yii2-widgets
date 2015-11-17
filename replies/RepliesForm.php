@@ -11,18 +11,18 @@ use Yii;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\redactor\widgets\Redactor;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 use nitm\widgets\models\Replies as RepliesModel;
 use kartik\icons\Icon;
 
 class RepliesForm extends BaseWidget
-{	
-	public $uniqid;	
+{
+	public $uniqid;
 	public $editor = 'redactor';
 	public $inline = true;
 	public $useModal = false;
 	public $hidden = false;
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -31,10 +31,10 @@ class RepliesForm extends BaseWidget
 		'role' => 'replyFormContainer',
 		'id' => 'messages-form'
 	];
-	
+
 	public $editorOptions = [
 	];
-	
+
 	public function init()
 	{
 		switch(1)
@@ -42,7 +42,7 @@ class RepliesForm extends BaseWidget
 			case !($this->model instanceof RepliesModel) && (($this->parentType == null) || ($this->parentId == null) || ($this->parentKey == null)):
 			$this->model = null;
 			break;
-			
+
 			default:
 			$this->model = ($this->model instanceof RepliesModel) ? $this->model : RepliesModel::findModel([$this->parentId, $this->parentType, $this->parentKey]);
 			break;
@@ -52,7 +52,7 @@ class RepliesForm extends BaseWidget
 		$this->options['id'] .= $this->uniqid;
 		Asset::register($this->getView());
 	}
-	
+
 	public function run()
 	{
 		switch(is_null($this->model))
@@ -60,8 +60,8 @@ class RepliesForm extends BaseWidget
 			case true:
 			return '';
 			break;
-			
-			default:		
+
+			default:
 			$this->model->setScenario('validateNew');
 			return $this->getView()->render('@nitm/widgets/views/replies/form/_form', [
 				'model' => $this->model,
@@ -70,7 +70,7 @@ class RepliesForm extends BaseWidget
 			break;
 		}
 	}
-	
+
 	/**
 	 * Get the actions supported for replying
 	 */
@@ -84,21 +84,21 @@ class RepliesForm extends BaseWidget
 			{
 				case 'submit':
 				$ret_val .= Html::submitButton(
-					Html::tag($action['tag'], $action['text'], $action['tagOptions']), 
+					Html::tag($action['tag'], $action['text'], $action['tagOptions']),
 					$action['options']
 				);
 				break;
-				
+
 				case 'reset':
 				$ret_val .= Html::resetButton(
-					Html::tag($action['tag'], $action['text'], $action['tagOptions']), 
+					Html::tag($action['tag'], $action['text'], $action['tagOptions']),
 					$action['options']
 				);
 				break;
 			}
 		}
-		return Html::tag('div', 
-			Html::tag('div', 
+		return Html::tag('div',
+			Html::tag('div',
 				$ret_val, [
 					'class' => 'btn-group'
 				]),
@@ -109,7 +109,7 @@ class RepliesForm extends BaseWidget
 			]
 		);
 	}
-	
+
 	private function defaultActions()
 	{
 		return [

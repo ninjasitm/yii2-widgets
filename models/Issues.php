@@ -22,16 +22,16 @@ use Yii;
  * @property integer $duplicate
  * @property integer $duplicate_id
  */
-class Issues extends BaseWidget
+class Issues extends BaseWidgetModel
 {
 	const COMMENT_PARAM = '__enComm';
-	
+
 	public static $statuses = [
 		'normal' => 'disabled',
 		'important' => 'info',
 		'critical' => 'error'
 	];
-	
+
     /**
      * @inheritdoc
      */
@@ -39,24 +39,24 @@ class Issues extends BaseWidget
     {
         return 'issues';
     }
-	
+
 	public function behaviors()
 	{
 		$behaviors = [
 		];
 		return array_merge(parent::behaviors(), $behaviors);
 	}
-	
+
 	public static function has()
 	{
 		$has = [
-			'created_at' => null, 
+			'created_at' => null,
 			'updated_at' => null,
 			'updates' => null
 		];
 		return array_merge(parent::has(), $has);
 	}
-	
+
 	public function scenarios()
 	{
 		$scenarios = [
@@ -106,7 +106,7 @@ class Issues extends BaseWidget
             'duplicate_id' => Yii::t('app', 'Duplicate ID'),
         ];
     }
-	
+
 	public function getStatus()
 	{
 		switch(1)
@@ -114,26 +114,26 @@ class Issues extends BaseWidget
 			case $this->duplicate:
 			$ret_val = 'duplicate'; //need to add duplicate css class
 			break;
-			
+
 			case $this->closed && $this->resolved:
 			$ret_val = 'success';
 			break;
-			
+
 			case $this->closed && !$this->resolved:
 			$ret_val = 'warning';
 			break;
-			
+
 			case !$this->closed && $this->resolved:
 			$ret_val = 'info';
 			break;
-			
+
 			default:
 			$ret_val = isset(self::$statuses[$this->status]) ? self::$statuses[$this->status] : 'default';
 			break;
 		}
 		return $ret_val;
 	}
-	
+
 	public static function getStatusLabels()
 	{
 		$statuses = array_keys(self::$statuses);

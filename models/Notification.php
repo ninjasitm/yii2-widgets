@@ -14,12 +14,12 @@ use Yii;
  * @property string $created_at
  * @property integer $read
  */
-class Notification extends BaseWidget
+class Notification extends BaseWidgetModel
 {
 	protected $link = [
 		'user_id' => 'user_id',
 	];
-	
+
 	public function init()
 	{
 		$this->_supportedConstraints['read'] = ['read'];
@@ -27,7 +27,7 @@ class Notification extends BaseWidget
 		parent::init();
 		$this->queryOptions['with'] = ['user'];
 	}
-	
+
     /**
      * @inheritdoc
      */
@@ -64,7 +64,7 @@ class Notification extends BaseWidget
             'read' => Yii::t('app', 'Read'),
         ];
     }
-	
+
 	public function getPriority()
 	{
 		switch($this->priority)
@@ -72,11 +72,11 @@ class Notification extends BaseWidget
 			case 'critical':
 			$ret_val = 'error';
 			break;
-			
+
 			case 'important':
 			$ret_val = 'info';
 			break;
-			
+
 			default:
 			$ret_val = 'default';
 			break;

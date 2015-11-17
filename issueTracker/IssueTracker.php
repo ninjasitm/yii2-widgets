@@ -13,7 +13,7 @@ use kartik\icons\Icon;
 use nitm\widgets\models\Replies;
 use nitm\widgets\models\Issues as IssuesModel;
 use nitm\widgets\models\search\Issues as IssuesSearch;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 
 /**the issues associated with a request with support for solving them
  */
@@ -29,7 +29,7 @@ class IssueTracker extends BaseWidget
 		'id' => 'issues',
 		'style' => 'font-size:smaller;'
 	];
-	
+
 	public function init()
 	{
 		parent::init();
@@ -38,11 +38,11 @@ class IssueTracker extends BaseWidget
 			case $this->parentType == 'all':
 			$this->model = new IssuesModel();
 			break;
-			
+
 			case !($this->model instanceof IssuesModel) && (($this->parentType == null) || ($this->parentId == null)):
 			$this->model = null;
 			break;
-			
+
 			default:
 			$this->model = ($this->model instanceof IssuesModel) ? $this->model : (new IssuesModel(['initSearchClass' => false]))->findModel([$this->parentId, $this->parentType]);
 			break;
@@ -51,7 +51,7 @@ class IssueTracker extends BaseWidget
 		$this->options['id'] .= $this->uniqid;
 		Asset::register($this->getView());
 	}
-	
+
 	public function run()
 	{
 		$dataProvdier = null;
@@ -68,7 +68,7 @@ class IssueTracker extends BaseWidget
 			case true:
 			$dataProvider = new \yii\data\ArrayDataProvider(["allModels" => $this->items]);
 			break;
-			
+
 			default:
 			switch(($this->model instanceof IssuesModel))
 			{
@@ -107,7 +107,7 @@ class IssueTracker extends BaseWidget
 				'enableComments' => $this->enableComments,
 			]);
 			break;
-			
+
 			default:
 			$issues = 'No Issues';
 			break;

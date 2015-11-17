@@ -24,8 +24,8 @@ use nitm\models\User;
  */
 class Alerts extends \nitm\models\Alerts
 {
-	use \nitm\widgets\traits\BaseWidget, \nitm\filemanager\traits\Relations;
-	
+	use \nitm\widgets\traits\BaseWidgetModel, \nitm\filemanager\traits\Relations;
+
 	public function init()
 	{
 		$this->setConstraints($this->constrain);
@@ -33,7 +33,7 @@ class Alerts extends \nitm\models\Alerts
 		$this->addWith(['author']);
 		if($this->initSearchClass)
 			//static::initCache($this->constrain, self::cacheKey($this->getId()));
-		
+
 		if(is_object(static::currentUser()))
 			static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive));
 	}

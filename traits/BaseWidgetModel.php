@@ -9,7 +9,7 @@ use nitm\helpers\ArrayHelper;
  * Traits defined for expanding active relation scopes until yii2 resolves traits issue
  */
 
-trait BaseWidget {
+trait BaseWidgetModel {
 
 	public $_value;
 	public $constrain;

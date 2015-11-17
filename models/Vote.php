@@ -14,7 +14,7 @@ use nitm\helpers\ArrayHelper;
  * @property string $parent_type
  * @property integer $parent_id
  */
-class Vote extends BaseWidget
+class Vote extends BaseWidgetModel
 {
 	public $_up;
 	public $_down;

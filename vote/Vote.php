@@ -12,7 +12,7 @@ use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use nitm\widgets\models\User;
 use nitm\widgets\models\Vote as VoteModel;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 use kartik\icons\Icon;
 
 class Vote extends BaseWidget

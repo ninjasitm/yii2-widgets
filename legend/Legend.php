@@ -8,7 +8,7 @@
 namespace nitm\widgets\legend;
 
 use yii\helpers\Html;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 
 /**
  * Alert widget renders a message from session flash. All flash messages are displayed
@@ -25,12 +25,12 @@ class Legend extends BaseWidget
 {
 	public $options = [
 	];
-	
+
 	/**
 	 * Array containing legend mappint for classes
 	 */
 	public $legend = [];
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -38,18 +38,18 @@ class Legend extends BaseWidget
 		'class' => 'label',
 		'role' => 'legend',
 	];
-	
+
 	public function init()
 	{
 		parent::init();
-		
+
 		$legend = Html::tag('span', 'Legend:&nbsp;', []);
 		foreach ($this->legend as $type => $message) {
 			/* initialize css class for each alert box */
 			$options['class'] = $this->labelOptions['class'].' label-'.$type;
 			if($type == 'normal')
 				$options['style'] = 'color:black';
-			else 
+			else
 				$options['style'] = '';
 
 			/* assign unique id to each alert box */

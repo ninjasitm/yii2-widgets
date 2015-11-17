@@ -9,7 +9,7 @@ namespace nitm\widgets\priority;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 
 class Priority extends BaseWidget
 {
@@ -17,12 +17,12 @@ class Priority extends BaseWidget
 	 * The active form model
 	 */
 	public $form;
-		
+
 	/**
 	 * Default size is normal
 	 */
 	public $size = 'default';
-	
+
 	/**
 	 * Default type is new
 	 * Specified in the following format:
@@ -39,25 +39,25 @@ class Priority extends BaseWidget
 	 * ];
 	 */
 	public $priorities;
-	
+
 	/**
 	 * The widget type to return
 	 */
 	public $type;
-	
+
 	/**
 	 * The addon type to return
 	 */
 	public $addonType;
 	public $inputsInline;
 	public $attribute = 'id';
-	
+
 	/*
 	 * User HTML options for generating the widget
 	 */
 	public $options = [
 	];
-	
+
 	/**
 	 * Default priorities
 	 */
@@ -84,7 +84,7 @@ class Priority extends BaseWidget
 			'title' => 'Normal'
 		]
 	];
-	
+
 	/**
 	 * The types of return data supported
 	 */
@@ -93,7 +93,7 @@ class Priority extends BaseWidget
 		'buttons',	//Return a widget using buttons
 		'text',		//Return a widgets using divs and text
 	];
-	
+
 	/**
 	 * The types of return data supported
 	 */
@@ -103,7 +103,7 @@ class Priority extends BaseWidget
 		'radios',	//Return a widgets using divs and text
 		'checkbox',	//Return a widgets using divs and text
 	];
-	
+
 	/**
 	 * Sizes supported
 	 */
@@ -113,7 +113,7 @@ class Priority extends BaseWidget
 		'default' => 'priority-default',
 		'large' => 'priority-lg',
 	];
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -122,12 +122,12 @@ class Priority extends BaseWidget
 		'role' => 'priorityIndicator',
 		'id' => 'priority'
 	];
-	
+
 	public function init()
 	{
 		$this->priorities = !is_array($this->priorities) ? $this->_defaultPriorities : $this->priorities;
 	}
-	
+
 	public function run()
 	{
 		switch($this->type)
@@ -135,17 +135,17 @@ class Priority extends BaseWidget
 			case 'buttons':
 			return $this->getAsButtons();
 			break;
-			
+
 			case 'addon':
 			return $this->getAsAddon();
 			break;
-			
+
 			default:
 			return $this->getAsText();
 			break;
 		}
 	}
-	
+
 	public function getAsAddon()
 	{
 		$ret_val = '';
@@ -166,7 +166,7 @@ class Priority extends BaseWidget
 				case 'radiolist':
 				$btnQualifier = 'btn';
 				break;
-				
+
 				default:
 				$btnQualifier = 'bg';
 				break;
@@ -177,11 +177,11 @@ class Priority extends BaseWidget
 				case 'tiny':
 				$options['class'] .= " $btnQualifier-xs";
 				break;
-				
+
 				case 'small':
 				$options['class'] .= " $btnQualifier-sm";
 				break;
-				
+
 				case 'large':
 				$options['class'] .= " $btnQualifier-lg";
 				break;
@@ -196,7 +196,7 @@ class Priority extends BaseWidget
 		}
 		$itemsLabels[$this->model->$attribute]['options']['class'] .= ' active';
 		$this->options['inline'] = $this->inputsInline;
-		
+
 		switch($this->addonType)
 		{
 			case 'dropdown':
@@ -208,13 +208,13 @@ class Priority extends BaseWidget
 				'options' => ['class'=>'btn-primary']
 			]);
 			break;
-			
+
 			case 'radiolist':
 			$this->options['data-toggle'] = 'buttons';
 			$this->options['class'] = 'btn-group';
 			$this->options['item'] = function ($index, $label, $name, $checked, $value) use ($itemsLabels) {
 				$itemOptions = [
-					'value' => $value	
+					'value' => $value
 				];
 				return Html::label(Html::radio($name, $checked, $itemOptions).' '. $label['label'], null, $itemsLabels[$value]['options']);
 			};
@@ -222,9 +222,9 @@ class Priority extends BaseWidget
 				->field($this->model, $this->attribute)
 				->radioList($itemsLabels, $this->options)
 				->label("Priority", ['class' => 'sr-only']);
-				
+
 			break;
-			
+
 			case 'checkboxlist':
 			$this->options['itemOptions'] = [
 				'labelOptions' => [
@@ -240,8 +240,8 @@ class Priority extends BaseWidget
 				])
 				->checkBoxList($items, $this->options);
 			break;
-			
-			default:	
+
+			default:
 			//Return as buttons by default
 			$model = $this->model;
 			$ret_val = implode(PHP_EOL, array_map(function ($item) use ($model, $form, $attribute){
@@ -253,7 +253,7 @@ class Priority extends BaseWidget
 		}
 		return $ret_val;
 	}
-	
+
 	protected function getAsButtons()
 	{
 		$ret_val = '';
@@ -270,7 +270,7 @@ class Priority extends BaseWidget
 				case 'small':
 				$options['class'] .= ' btn-sm';
 				break;
-				
+
 				case 'large':
 				$options['class'] .= ' btn-sm';
 				break;
@@ -281,7 +281,7 @@ class Priority extends BaseWidget
 		$this->options = array_merge($this->_defaultOptions, $this->options);
 		return Html::tag('div', $ret_val, $this->options);
 	}
-	
+
 	protected function getAsText()
 	{
 		$ret_val = '';

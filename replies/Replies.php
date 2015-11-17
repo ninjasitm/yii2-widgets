@@ -9,7 +9,7 @@ namespace nitm\widgets\replies;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 use nitm\widgets\models\User;
 use nitm\widgets\models\Replies as RepliesModel;
 use nitm\widgets\models\search\Replies as RepliesSearch;
@@ -18,7 +18,7 @@ use kartik\icons\Icon;
 class Replies extends BaseWidget
 {
 	public $noContainer;
-	public $uniqid;	
+	public $uniqid;
 	public $formOptions = [];
 	/*
 	 * HTML options for generating the widget
@@ -28,7 +28,7 @@ class Replies extends BaseWidget
 		'id' => 'messages',
 		'data-parent' => 'replyFormParent'
 	];
-	
+
 	public function init()
 	{
 		switch(1)
@@ -36,7 +36,7 @@ class Replies extends BaseWidget
 			case !($this->model instanceof RepliesModel) && (($this->parentType == null) || ($this->parentId == null) || ($this->parentKey == null)):
 			$this->model = null;
 			break;
-			
+
 			default:
 			$this->model = ($this->model instanceof RepliesModel) ? $this->model : (new RepliesModel(['initSearchClass' => false]))->findModel([$this->parentId, $this->parentType, $this->parentKey]);
 			break;
@@ -46,7 +46,7 @@ class Replies extends BaseWidget
 		$this->options['id'] .= $this->uniqid;
 		Asset::register($this->getView());
 	}
-	
+
 	public function run()
 	{
 		$dataProvider = null;
@@ -55,7 +55,7 @@ class Replies extends BaseWidget
 			case true:
 			$dataProvider = new \yii\data\ArrayDataProvider(["allModels" => $this->items]);
 			break;
-			
+
 			default:
 			switch(($this->model instanceof RepliesModel))
 			{
@@ -64,16 +64,16 @@ class Replies extends BaseWidget
 				$params = array_merge($get, $this->model->getConstraints());
 				unset($params['type']);
 				unset($params['id']);
-			
+
 				if(!\Yii::$app->user->identity->isAdmin())
 					$params['hidden'] = false;
-				
+
 				$searchModel = new RepliesSearch([
 					'queryOptions' => [
 						'with' => ['author', 'replyTo', 'count', 'last']
 					]
 				]);
-				
+
 				$dataProvider = $searchModel->search([$this->model->formName() => $params]);
 				$dataProvider->setSort([
 					'defaultOrder' => [
@@ -101,7 +101,7 @@ class Replies extends BaseWidget
 			]);
 			$replies = $this->getView()->render('@nitm/widgets/views/replies/index', $viewOptions);
 			break;
-			
+
 			default:
 			//$replies = Html::tag('h3', "No comments", ['class' => 'text-error']);
 			$replies = '';
@@ -109,7 +109,7 @@ class Replies extends BaseWidget
 		}
 		return $replies;
 	}
-	
+
 	protected function defaultOptions()
 	{
 		return  [
@@ -119,7 +119,7 @@ class Replies extends BaseWidget
 			'class' => 'messages'
 		];
 	}
-	
+
 	protected function defaultActions()
 	{
 		return [

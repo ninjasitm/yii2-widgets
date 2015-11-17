@@ -12,24 +12,24 @@ namespace nitm\widgets\models;
  * @property string $parent_type
  * @property integer $parent_id
  */
-class Revisions extends BaseWidget
-{	
+class Revisions extends BaseWidgetModel
+{
 	use \nitm\widgets\traits\relations\Revisions;
-	
+
 	/**
 	 * Time in minutes for updating/creating new revisions
 	 * Default is 10 minutes
 	 */
 	public $interval = 10;
-	
+
 	private $_lastActivity = '___lastActivity';
 	private $_dateFormat = "D M d Y h:iA";
-	
+
 	public function init()
 	{
 		parent::init();
 	}
-	
+
     /**
      * @inheritdoc
      */
@@ -37,7 +37,7 @@ class Revisions extends BaseWidget
     {
         return 'revisions';
     }
-	
+
 	public function scenarios()
 	{
 		$scenarios = [
@@ -45,7 +45,7 @@ class Revisions extends BaseWidget
 		];
 		return array_merge(parent::scenarios(), $scenarios);
 	}
-	
+
 	public function behaviors()
 	{
 		$behaviors = [
@@ -84,11 +84,11 @@ class Revisions extends BaseWidget
 			'disabled' => 'Disabled'
         ];
     }
-	
+
 	public static function has()
 	{
 		$has = [
-			'created_at' => null, 
+			'created_at' => null,
 			'updated_at' => null,
 			'updates' => null,
 		];
