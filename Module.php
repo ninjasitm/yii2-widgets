@@ -67,7 +67,8 @@ class Module extends \yii\base\Module implements \yii\base\BootstrapInterface
 		$parameters['type'] = $routeHelper->getControllerMap(['alerts', 'request']);
 		$parameters['action-only'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue', 'revision', 'request']);
 		$parameters['none'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue', 'revisions', 'request']);
-		return $routeHelper->create($parameters);
+		$routes = $routeHelper->create($parameters);
+		return $routes;
 	}
 
 	public function bootstrap($app)
