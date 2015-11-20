@@ -11,7 +11,7 @@ use Yii;
 use yii\helpers\Html;
 use yii\widgets\ActiveChat;
 use yii\redactor\widgets\Redactor;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 use nitm\widgets\models\Replies as RepliesModel;
 use kartik\icons\Icon;
 

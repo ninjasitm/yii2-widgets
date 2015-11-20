@@ -10,14 +10,14 @@ use nitm\widgets\models\Issues;
 
 class CommunicationCenter extends \yii\base\Widget
 {
-	public $items = [];	
-	public $chatItems = []; 
-	
+	public $items = [];
+	public $chatItems = [];
+
 	public $chatUpdateOptions = [];
 	public $notificationUpdateOptions = [];
-	
+
 	public $contentOptions = [];
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -31,7 +31,7 @@ class CommunicationCenter extends \yii\base\Widget
 		'class' => 'communication-center',
 		'style' => 'display: none'
 	];
-	
+
 	public function init()
 	{
 		parent::init();
@@ -40,8 +40,8 @@ class CommunicationCenter extends \yii\base\Widget
 		$this->contentOptions = array_merge($this->defaultContentOptions(), $this->contentOptions);
 		CommunicationCenterAsset::register($this->getView());
 	}
-	
-	public function run() 
+
+	public function run()
 	{
 		$chatModel = new \nitm\widgets\models\Replies([
 			'constrain' => [
@@ -57,7 +57,7 @@ class CommunicationCenter extends \yii\base\Widget
 			]
 		]);
 		$uniqid = uniqid();
-		
+
 		$chatWidget = Nav::widget([
 			'encodeLabels' => false,
 			'options' => [
@@ -84,7 +84,9 @@ class CommunicationCenter extends \yii\base\Widget
 					],
 					'items' => [
 						[
-							'label' => Html::tag('div', Html::tag('h2', 'Loading Messages...', ['class' => 'text-center']).Html::script('$("#communication-center-messages-button'.$uniqid.'").one("mouseover", function (event) {
+							'label' => Html::tag('div', Html::tag('h2', 'Loading Messages...', [
+								'class' => 'text-center'
+							]).Html::script('$("#communication-center-messages-button'.$uniqid.'").one("mouseover", function (event) {
 								$(this).trigger("click");
 							})', ['type' => 'text/javascript']), [
 								'role' => 'chatParent',
@@ -97,7 +99,7 @@ class CommunicationCenter extends \yii\base\Widget
 				],
 			]
 		]);
-		
+
 		$alertWidget = Nav::widget([
 			'encodeLabels' => false,
 			'options' => [
@@ -137,7 +139,7 @@ class CommunicationCenter extends \yii\base\Widget
 			]
 		]);
 		$widget = $alertWidget.$chatWidget;
-		
+
 		//$js = "\$nitm.onModuleLoad('communication-center', function (module) {
 		//	module.initChatTabs('#".$this->options['id']."');
 		//});";
@@ -146,7 +148,7 @@ class CommunicationCenter extends \yii\base\Widget
 			$js .= "\$nitm.onModuleLoad('polling', function (module) {
 				module.initPolling('chat', {
 					enabled: true,
-					url: '".$this->chatUpdateOptions['url']."', 
+					url: '".$this->chatUpdateOptions['url']."',
 					interval: ".$this->chatUpdateOptions['interval'].",
 					container: '#nitm-communication-center-widget".$uniqid."'
 				}, {object: \$nitm.module('replies'), method: 'chatStatus'});
@@ -162,19 +164,17 @@ class CommunicationCenter extends \yii\base\Widget
 				}, {object: \$nitm.module('notifications'), method: 'notificationStatus'});
 			});";
 		if($js)
-		{
-			$js = Html::script($js, ['type' => 'text/javascript']);
-		}
-		return $widget.$js;
+			$this->getView()->registerJs($js);
+		return $widget;
 	}
-	
+
 	protected function defaultContentOptions()
 	{
 		return [
 			'class' => 'col-md-4 col-lg-4 communication-center-item',
 		];
 	}
-	
+
 	/*
 	 * Interval for updating new chat and chat info
 	 */
@@ -186,7 +186,7 @@ class CommunicationCenter extends \yii\base\Widget
 			'url' => '/reply/get-new/chat/0'
 		];
 	}
-	
+
 	/*
 	 * Interval for updating new notifications info
 	 */

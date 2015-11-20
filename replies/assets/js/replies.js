@@ -2,7 +2,7 @@
 function Replies(items)
 {
 	NitmEntity.call(this, arguments);
-	
+
 	var self = this;
 	var editor;
 	this.id = 'replies';
@@ -58,81 +58,76 @@ function Replies(items)
 		'initEditor',
 		'initCreating'
 	];
-	
+
 	this.initEditor = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
+		var container = $nitm.getObj((containerId === undefined) ? 'body' : "[id='"+containerId+"']");
 		this.elements.allowEditor.map(function (v) {
 			container.find("[role='"+v+"']").map(function() {
-				$(this).off('click');
-				$(this).on('click', function (e) {
+				$(this).off('click').on('click', function (e) {
 					e.preventDefault();
 					$(this).addClass('hidden');
 					self.startEditor($(this).data('container'), '', this);
 				});
 			});
 		});
-	}
-	
+	};
+
 	this.resetForm = function (event) {
 		event.target.reset();
 		self.setEditorValue($(event.target).find("textarea").get(0), '', false, self.editor);
 		$(event.target).find(self.views.roles.replyToIndicator).html("");
-	}
-	
+	};
+
 	this.reply = function (event) {
 		event.preventDefault();
-		var $form = $(event.target);		
+		var $form = $(event.target);
 		$form.find('textarea').val(self.getEditorValue($form.find('textarea').attr('id'), self.editor));
 		self.operation(event.target);
 		return false;
-	}
-	
+	};
+
 	this.initCreating = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : "[id='"+containerId+"']");
+		var container = $nitm.getObj((containerId === undefined) ? 'body' : "[id='"+containerId+"']");
 		this.forms.allowCreate.map(function (v) {
 			container.find("form[role='"+v+"']").map(function() {
-				$(this).off('submit');
-				$(this).on('submit', self.reply);
-				$(this).on('reset', self.resetForm);
-			})
+				$(this).off('submit').on('submit', self.reply).on('reset', self.resetForm);
+			});
 		});
-	}
-	
+	};
+
 	this.initHiding = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		var container = $nitm.getObj((containerId === undefined) ? 'body' : containerId);
 		this.forms.allowHiding.map(function (v) {
 			container.find("[role='"+v+"']").map(function() {
-				$(this).off('click');
-				$(this).on('click', function (e) {
+				$(this).off('click').on('click', function (e) {
 					e.preventDefault();
 					self.hide(this);
 				});
 			});
 		});
-	}
-	
+	};
+
 	this.hide = function (event) {
 		event.preventDefault();
 		var elem = event.target;
 		var parent = $(elem).parents("[class~='message']:first");
-		$.post($(elem).attr('href'), 
+		$.post($(elem).attr('href'),
 			function (result) {
 				self.afterHide(result, parent.get(0), elem);
 			}, 'json');
-	}
-	
+	};
+
 	this.initReplying = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		var container = $nitm.getObj((containerId === undefined) ? 'body' : containerId);
 		this.forms.allowReplying.map(function (v) {
 			container.find("[role='"+v+"']").map(function() {
-				$(this).off('click');
-				$(this).on('click', function (e) {
+				$(this).off('click').on('click', function (e) {
 					self.replyTo(e);
 				});
 			});
 		});
-	}
-	
+	};
+
 	this.replyTo = function (event)
 	{
 		event.preventDefault();
@@ -144,10 +139,10 @@ function Replies(items)
 		msgField.val('').focus();
 		self.setEditorValue(msgField.get(0), '', false, self.editor);
 		$(self.views.roles.replyToIndicator).html("Replying to "+$elem.data('author'));
-	}
-	
+	};
+
 	this.initQuoting = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		var container = $nitm.getObj((containerId === undefined) ? 'body' : containerId);
 		this.forms.allowQuoting.map(function (v) {
 			container.find("[role='"+v+"']").map(function() {
 				$(this).on('click', function (e) {
@@ -155,8 +150,8 @@ function Replies(items)
 				});
 			});
 		});
-	}
-	
+	};
+
 	this.quote = function (event){
 		event.preventDefault();
 		var $elem = $(event.target);
@@ -175,8 +170,8 @@ function Replies(items)
 		var msgField = form.find("textarea");
 		self.setEditorValue(msgField.get(0), quoteString, true, self.editor);
 		$(self.views.roles.replyToIndicator).html("Replying to "+$elem.data('author'));
-	}
-	
+	};
+
 	this.chatStatus = function (update, result, container) {
 		$nitm.getObj(container).find('[id="chat\-messages-nav"]').each(function(index, element) {
 			var tab = $(element);
@@ -187,11 +182,11 @@ function Replies(items)
 				container.find('[id="chat\-updates"]').html('');
 				tab.removeClass('bg-success');
 				break;
-				
+
 				default:
 				var badge = tab.find('[class="badge"]');
 				tab.addClass('bg-success');
-				if(badge.get(0) != undefined){
+				if(badge.get(0) !== undefined){
 					badge.html(result.count);
 				}
 				else {
@@ -205,8 +200,8 @@ function Replies(items)
 				break;
 			}
 		});
-	}
-	
+	};
+
 	this.afterCreate = function(result, index, form, element) {
 		switch(result.success)
 		{
@@ -222,13 +217,13 @@ function Replies(items)
 			self.setEditorValue($form.find('textarea').get(0), '', false, self.editor);
 			$form.find(self.views.roles.replyToIndicator).html("");
 			break;
-			
+
 			default:
 			$nitm.notify('Unable to add message', 'alert '+self.classes.error, form);
 			break;
 		}
-	}
-	
+	};
+
 	this.afterHide = function (result, element, activator) {
 		if(result.success)
 		{
@@ -237,8 +232,8 @@ function Replies(items)
 				case true:
 				$(element).addClass(self.classes.hidden);
 				break;
-				
-				default:  
+
+				default:
 				$(element).removeClass(self.classes.hidden);
 				break;
 			}
@@ -247,8 +242,8 @@ function Replies(items)
 					$(element).html(result.action);
 				});;*/
 		}
-	}
-	
+	};
+
 	this.startEditor = function (containerId, value, button) {
 		var activator = $(button);
 		var containers = $nitm.getObj(containerId);
@@ -264,7 +259,7 @@ function Replies(items)
 				switch(activator.data('use-modal'))
 				{
 					case true:
-					if(container.find('.modal').get(0) == undefined)
+					if(container.find('.modal').get(0) === undefined)
 					{
 						$nitm.dialog(textarea, {
 							title: "<h3>Your message:</h3>",
@@ -282,7 +277,7 @@ function Replies(items)
 						self.closeEditor(container.attr('id'));
 					});
 					break;
-					
+
 					default:
 					textarea.insertBefore(actions);
 					break;
@@ -304,7 +299,7 @@ function Replies(items)
 							focus: true,
 							autoresize: true,
 							initCallback: function(value){
-								if(value != undefined) {
+								if(value !== undefined) {
 									this.insert.set(value);
 								}
 							},
@@ -321,19 +316,19 @@ function Replies(items)
 			textarea.parents('form').find("[role='startEditor']").remove();
 		});
 		self.initCreating(containerId);
-	}
-	
+	};
+
 	this.closeEditor = function (containerId) {
 		var containers = $(containerId);
 		containers.each(function(index, element) {
 			var container = $(element);
 			var content = $(container.attr('id')).find('.modal-dialog');
-			switch(content.get(0) == undefined) 
+			switch(content.get(0) === undefined)
 			{
 				//if there is a modal
 				case false:
 				//destroy the editor
-				var textarea = content.find("textarea"); 
+				var textarea = content.find("textarea");
 				var type = $nitm.getObj(field).parents('form').data('editor');
 				switch(type)
 				{
@@ -357,8 +352,8 @@ function Replies(items)
 		});
 		//need to reinit click to reply button since not doing so casues form to submit
 		self.initEditor(containerId);
-	}
-	
+	};
+
 	this.setEditorValue = function (field, value, quote) {
 		var type = $nitm.getObj(field).parents('form').data('editor');
 		switch(type)
@@ -370,26 +365,26 @@ function Replies(items)
 				case true:
 				editor.editable().setHtml(value);
 				break;
-				
+
 				default:
 				editor.data(value);
 				break;
 			}
 			editor.resize("100%", editor.config.height, true);
 			break;
-			
+
 			case 'redactor':
 			$nitm.getObj(field).redactor('code.set', value, false);
 			break;
-			
+
 			default:
 			var msgField = $nitm.getObj(field);
 			msgField.val(value);
 			break;
 		}
 		this.setEditorFocus(field);
-	}
-	
+	};
+
 	this.getEditorValue = function (field) {
 		var ret_val = '';
 		var type = $nitm.getObj(field).parent('form').data('editor');
@@ -399,18 +394,18 @@ function Replies(items)
 			var editor = CKEDITOR.instances[field];
 			ret_val = editor.getData();
 			break;
-			
+
 			case 'redactor':
 			ret_val = $nitm.getObj(field).redactor('get');
 			break;
-			
+
 			default:
 			ret_val = $nitm.getObj(field).val();
 			break;
 		}
 		return ret_val;
-	}
-	
+	};
+
 	this.setEditorFocus = function (field) {
 		var type = $nitm.getObj(field).parent('form').data('editor');
 		switch(type)
@@ -419,18 +414,18 @@ function Replies(items)
 			var editor = CKEDITOR.instances[field];
 			editor.focus();
 			break;
-			
+
 			case 'redactor':
 			$nitm.getObj(field).redactor('focus.setEnd');
 			break;
-			
+
 			default:
 			$nitm.getObj(field).get(0).focus();
 			break;
 		}
-	}
-	
-	this.charsLeft = function(field, cntfield, maxlimit) 
+	};
+
+	this.charsLeft = function(field, cntfield, maxlimit)
 	{
 		field = this.getObj(field).get(0);
 		cntfield = this.getObj(cntfield).get(0);
@@ -441,12 +436,12 @@ function Replies(items)
 			cntfield.innerHTML = maxlimit - field.value.length;
 			alert("You've maxed out the "+maxlimit+" character limit\n\nPlease shorten your message. :-).");
 			break;
-				
+
 			default:
 			cntfield.innerHTML = maxlimit - field.value.length;
 			break;
 		}
-	}
+	};
 }
 
 $nitm.onModuleLoad('entity', function (module) {

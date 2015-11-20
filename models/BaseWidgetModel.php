@@ -53,7 +53,7 @@ class BaseWidgetModel extends \nitm\models\Entity
 	public function indexUrl($baseUrl=null, $extraParams = [])
 	{
 		$urlParams = [];
-		$baseUrl = is_null($baseUrl) ? $this->isWhat() : $baseUrl.'/index';
+		$baseUrl = (is_null($baseUrl) ? $this->isWhat() : $baseUrl).'/index';
 		$urlParams['__format'] = isset($extraParams['__format']) ? $extraParams['__format'] : 'prepared';
 		$attributes = array_intersect_key($this->link, array_flip(['parent_type', 'parent_id', 'remote_type', 'remote_id']));
 		return \Yii::$app->urlManager->createUrl(array_merge([rtrim($baseUrl, '/').'/'.implode('/', $this->getAttributes($attributes))], $urlParams, $extraParams));

@@ -50,6 +50,7 @@ class Module extends \yii\base\Module implements \yii\base\BootstrapInterface
 			'moduleId' => $id,
 			'map' => [
 				'type-id-key' => '<controller:%controllers%>/<action>/<type>/<id:\d+>/<key>',
+				'type-id-no-action' => ['<controller:%controllers%>/<type>/<id:\d+>' => '<controller>/index'],
 				'type-id' => '<controller:%controllers%>/<action>/<type>/<id:\d+>',
 				'id' => '<controller:%controllers%>/<action>/<id:\d+>',
 				'type' => '<controller:%controllers%>/<action>/<type>',
@@ -61,12 +62,13 @@ class Module extends \yii\base\Module implements \yii\base\BootstrapInterface
 			]
 		]);
 		$routeHelper->pluralize();
-		$parameters['type-id-Key'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue']);
+		$parameters['type-id-key'] = $routeHelper->getControllerMap(['alert', 'reply', 'issue']);
+		$parameters['type-id-no-action'] = $routeHelper->getControllers();
 		$parameters['type-id'] = $routeHelper->getControllers();
-		$parameters['id'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue', 'revision', 'request']);
-		$parameters['type'] = $routeHelper->getControllerMap(['alerts', 'request']);
+		$parameters['id'] = $routeHelper->getControllerMap(['alert', 'reply', 'issue', 'revision', 'request']);
+		$parameters['type'] = $routeHelper->getControllerMap(['alert', 'request']);
 		$parameters['action-only'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue', 'revision', 'request']);
-		$parameters['none'] = $routeHelper->getControllerMap(['alerts', 'reply', 'issue', 'revisions', 'request']);
+		$parameters['none'] = $routeHelper->getControllerMap(['alert', 'reply', 'issue', 'revision', 'request']);
 		$routes = $routeHelper->create($parameters);
 		return $routes;
 	}
