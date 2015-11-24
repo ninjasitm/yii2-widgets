@@ -133,6 +133,34 @@ echo GridView::widget([
 			],
 		]);
 
+		//Extra information section
+		$follow = \nitm\widgets\alerts\Follow::widget([
+			'model' => $model->follow(),
+			'buttonOptions' => [
+				'size' => 'normal'
+			]
+		]);
+		$files = \nitm\filemanager\widgets\FilesCount::widget([
+			'model' => $model->file(),
+			"parentId" => $model->getId(),
+			"parentType" => $model->isWhat(),
+			'fullDetails' => false,
+		]);
+		$images = \nitm\filemanager\widgets\ImagesCount::widget([
+			'model' => $model->image(),
+			"parentId" => $model->getId(),
+			"parentType" => $model->isWhat(),
+			'fullDetails' => false,
+		]);
+
+		$activityInfo = "<br>".Html::tag('div',
+			Html::tag('div', $files, ['class' => 'col-md-4 col-lg-4 col-sm-4 center-block']).
+			Html::tag('div', $images, ['class' => 'col-md-4 col-lg-4 col-sm-4 center-block']).
+			Html::tag('div', $follow, ['class' => 'col-md-4 col-lg-4 col-sm-4 center-block']), [
+			'class' => 'center-block clearfix',
+			'style' => 'margin-bottom: 15px'
+		]);
+
 		$metaInfo = empty($statusInfo) ? $shortLink : $statusInfo.$shortLink;
 		/*$issues = $this->context->issueCountWidget([
 			"model" => $model->issues,
@@ -140,7 +168,7 @@ echo GridView::widget([
 		return Html::tag('tr',
 			Html::tag(
 				'td',
-				$metaInfo,
+				$metaInfo.$activityInfo,
 				[
 					'colspan' => 6,
 					'rowspan' => 1,

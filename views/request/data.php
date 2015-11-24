@@ -231,16 +231,32 @@ $this->params['breadcrumbs'][] = $this->title;
 				'size' => 'normal'
 			]
 		]);
+
+		$files = \nitm\filemanager\widgets\FilesCount::widget([
+			'model' => $model->file(),
+			"parentId" => $model->getId(),
+			"parentType" => $model->isWhat(),
+			'fullDetails' => false,
+		]);
+		$images = \nitm\filemanager\widgets\ImagesCount::widget([
+			'model' => $model->image(),
+			"parentId" => $model->getId(),
+			"parentType" => $model->isWhat(),
+			'fullDetails' => false,
+		]);
+		
 		$title = Html::tag(
 			'h4',
 			$model->title
 		);
 
 		$activityInfo = Html::tag('div',
-			Html::tag('div', $replies, ['class' => 'col-md-3 col-lg-3 center-block']).
-			Html::tag('div', $revisions, ['class' => 'col-md-3 col-lg-3 center-block']).
-			Html::tag('div', $issues, ['class' => 'col-md-3 col-lg-3 center-block']).
-			Html::tag('div', $follow, ['class' => 'col-md-3 col-lg-3 center-block']),
+			Html::tag('div', $replies, ['class' => 'col-md-2 col-lg-2 col-sm-4 center-block']).
+			Html::tag('div', $revisions, ['class' => 'col-md-2 col-lg-2 col-sm-4 center-block']).
+			Html::tag('div', $issues, ['class' => 'col-md-2 col-lg-2 col-sm-4 center-block']).
+			Html::tag('div', $files, ['class' => 'col-md-2 col-lg-2 col-sm-4 center-block']).
+			Html::tag('div', $images, ['class' => 'col-md-2 col-lg-2 col-sm-4 center-block']).
+			Html::tag('div', $follow, ['class' => 'col-md-2 col-lg-2 col-sm-4 center-block']),
 			[
 				'class' => 'row'
 			]
