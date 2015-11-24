@@ -387,13 +387,25 @@ class AlertsController extends \nitm\controllers\DefaultController
 				case 'any':
 				case 'create':
 				case 'update':
-				case 'i_create':
-				case 'i_update':
 				case 'complete':
 				case 'resolve':
+				case 'close':
+				case 'verify':
+				case 'approve':
+				case 'i_create':
+				case 'i_update':
+				case 'i_complete':
+				case 'i_resolve':
+				case 'i_verify':
+				case 'i_close':
+				case 'i_approve':
+				case 'create_my':
 				case 'update_my':
-				case 'resolve_my':
 				case 'complete_my':
+				case 'resolve_my':
+				case 'verify_my':
+				case 'close_my':
+				case 'approve_my':
 				case 'requestAttentionFor':
 				case 'requestAttentionFor_my':
 				$types = (array)$this->model->setting('allowed');
