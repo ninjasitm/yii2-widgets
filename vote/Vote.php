@@ -177,8 +177,9 @@ class Vote extends BaseWidget
 		);
 		$vote .= $this->getActions();
 		$this->widgetOptions['id'] .= $this->parentId.$this->uniqid;
-		$script = \yii::$app->request->isAjax ? new \yii\web\JsExpression("\$nitm.onModuleLoad('vote', function (module) {module.init('".$this->widgetOptions['id']."');});") : '';
-		$script .= new \yii\web\JsExpression("\$nitm.module('vote').colors = ".json_encode($this->colors).";");
+		$script = \yii::$app->request->isAjax ? "module.init('".$this->widgetOptions['id']."');" : '';
+		$script .= "module.colors = ".json_encode($this->colors).";";
+		$script = new \yii\web\JsExpression("\$nitm.onModuleLoad('vote', function (module) {".$script."});");
 		$this->getView()->registerJs($script, \yii\web\View::POS_READY, 'vote-init');
 		return Html::tag('div', $vote, $this->widgetOptions);
 	}
