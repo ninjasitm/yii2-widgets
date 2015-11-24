@@ -14,17 +14,16 @@ $deleteUrl = \Yii::$app->urlManager->createUrl(['/alerts/delete/'.$model->getId(
 $remoteUrl = \Yii::$app->urlManager->createUrl(['/'.$model->remote_type.'/view/'.$model->remote_id, '__format' => 'modal']);
 
 ?>
-<?php if(!isset($notAsListItem)): ?>
 <li id="alert<?= $model->getId(); ?>" class="<?= \nitm\helpers\Statuses::getListIndicator($model->getPriority()) ?>">
-<?php endif;?>
 <div class="row">
-	<div class="col-md-3 col-lg-3">
+	<div class="col-md-3 col-lg-3 col-sm-3">
 		<?= $model->setting('actions.'.$model->action) ?>
 	</div>
-	<div class="col-md-2 col-lg-2">
+	<div class="col-md-2 col-lg-2 col-sm-3">
 		<?php
 			echo "<b>".$model->setting('allowed.'.$model->remote_type)."</b>";
-			if(!is_null($model->remote_for) && ($model->remote_for != 'any')) echo " for <b>".$model->setting('for.'.$model->remote_for)."</b>";
+			if(!is_null($model->remote_for) && ($model->remote_for != 'any'))
+				echo " for <b>".$model->setting('for.'.$model->remote_for)."</b>";
 			if(!is_null($model->remote_id)) {
 				echo " with id <b>".$model->remote_id. "</b> ";
 				echo \nitm\widgets\modal\Modal::widget([
@@ -40,13 +39,13 @@ $remoteUrl = \Yii::$app->urlManager->createUrl(['/'.$model->remote_type.'/view/'
 			}
 		?>
 	</div>
-	<div class="col-md-3 col-lg-3">
+	<div class="col-md-3 col-lg-3 col-sm-3">
 		that has a priority of <b><?= !empty($model->priority) ? $model->setting('priorities.'.$model->priority) : 'Normal' ?></b>
 	</div>
-	<div class="col-md-2 col-lg-2">
+	<div class="col-md-2 col-lg-2 col-sm-3">
 		alert me using <b><?= $model->methods; ?></b>
 	</div>
-	<div class="col-md-2 col-lg-2">
+	<div class="col-md-2 col-lg-2 col-sm-3">
 		<?= \nitm\widgets\modal\Modal::widget([
 				'size' => 'large',
 				'toggleButton' => [
@@ -67,6 +66,4 @@ $remoteUrl = \Yii::$app->urlManager->createUrl(['/'.$model->remote_type.'/view/'
 			]); ?>
 	</div>
 </div>
-<?php if(!isset($notAsListItem)): ?>
 </li>
-<?php endif; ?>

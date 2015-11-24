@@ -14,6 +14,7 @@ $model->setScenario($action);
 $uniqid = uniqid();
 $formOptions = array_replace_recursive($formOptions, [
 	"type" => ActiveForm::TYPE_INLINE,
+	'enableAjaxValidation' => true,
 	'fieldConfig' => [
 		'inputOptions' => ['class' => 'form-control'],
 		'template' => "{label}\n<div class=\"\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
@@ -21,7 +22,7 @@ $formOptions = array_replace_recursive($formOptions, [
 	],
 	'action' => '/alerts/'.$action.($action == 'create' ? '' : '/'.$model->getId()),
 	'options' => [
-		"role" => "ajaxForm"
+		"role" => $action."Alert"
 	],
 ]);
 
@@ -31,27 +32,36 @@ $formOptions = array_replace_recursive($formOptions, [
 	<div class="col-md-12 col-lg-12">
     <?php $form = include(\Yii::getAlias("@nitm/views/layouts/form/header.php")); ?>
 	<?=
-		$form->field($model, 'action')->widget(Select2::className(), [
+		$form->field($model, 'action', [
+				'options' => [
+					'class' => 'col-lg-3 col-md-3 col-sm-6'
+				]
+			])->widget(Select2::className(), [
 			'data' => $model->setting('actions'),
 			'theme' => Select2::THEME_KRAJEE,
 			'options' => [
-				'id' => 'alert-action'.$uniqid, 
-				'placeholder' => 'Alert me...', 
+				'id' => 'alert-action'.$uniqid,
+				'placeholder' => 'Alert me...',
 				"allowClear" => true,
+				'class' => 'col-sm-6'
 			]
 		])->label("Action");
-	?>    
+	?>
 	<?=
-		$form->field($model, 'remote_type')->widget(DepDrop::className(), [
+		$form->field($model, 'remote_type', [
+				'options' => [
+					'class' => 'col-lg-2 col-md-3 col-sm-6'
+				]
+			])->widget(DepDrop::className(), [
 			'value' => $model->remote_type,
 			'data' => [$model->remote_type => $model->properName($model->remote_type)],
 			'options' => [
-				'placeholder' => ' select something ', 
+				'placeholder' => ' select something ',
 				'id' => 'alert-type'.$uniqid
 			],
 			'type' => DepDrop::TYPE_SELECT2,
 			'select2Options'=>[
-				'id' => 'alert-remote-type'.$uniqid, 
+				'id' => 'alert-remote-type'.$uniqid,
 				'pluginOptions'=>['allowClear'=>true]
 			],
 			'pluginOptions'=>[
@@ -61,13 +71,17 @@ $formOptions = array_replace_recursive($formOptions, [
 				'placeholder' => ' type of '
 			]
 		])->label("Remote Type");
-	?>    
+	?>
 	<?=
-		$form->field($model, 'remote_for')->widget(DepDrop::className(), [
+		$form->field($model, 'remote_for', [
+				'options' => [
+					'class' => 'col-lg-2 col-md-3 col-sm-6'
+				]
+			])->widget(DepDrop::className(), [
 			'value' => $model->remote_for,
 			'data' => [$model->remote_for => $model->properName($model->remote_for)],
 			'options' => [
-				'placeholder' => ' for ', 
+				'placeholder' => ' for ',
 				'id' => 'alert-for'.$uniqid
 			],
 			'type' => DepDrop::TYPE_SELECT2,
@@ -81,7 +95,11 @@ $formOptions = array_replace_recursive($formOptions, [
 		])->label("Remote For");
 	?>
 	<?=
-		$form->field($model, 'priority')->widget(DepDrop::className(), [
+		$form->field($model, 'priority', [
+				'options' => [
+					'class' => 'col-lg-2 col-md-3 col-sm-6'
+				]
+			])->widget(DepDrop::className(), [
 			'value' => $model->priority,
 			'data' => [$model->priority => $model->properName($model->priority)],
 			'options' => ['placeholder' => ' and it if has a priority of ', 'id' => 'priority'.$uniqid],
@@ -96,21 +114,28 @@ $formOptions = array_replace_recursive($formOptions, [
 		])->label("Priority");
 	?>
 	<?=
-		$form->field($model, 'methods')->widget(Select2::className(), [
+		$form->field($model, 'methods', [
+				'options' => [
+					'class' => 'col-lg-2 col-md-3 col-sm-6'
+				]
+			])->widget(Select2::className(), [
 			'value' => explode(',', $model->methods),
 			'options' => ['id' => 'alert-methods'.$uniqid, 'placeholder' => ' then alert me using'],
 			'data' => \Yii::$app->getModule('nitm')->alerts->store()->supportedMethods(),
-			
+
 		])->label("Priority");
 	?>
-	
-		
+
+
 	<?php if(!\Yii::$app->request->isAjax): ?>
-	<div class="btn-group">
-		<?= Html::submitButton(ucfirst($action), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+	<div class="btn-group col-md-3 col-lg-1 col-sm-12">
+		<?= Html::submitButton(ucfirst($action), [
+			'class' => 'btn '.($model->isNewRecord ? 'btn-success' : 'btn-primary'),
+			'style' => 'width: 100%'
+		]) ?>
 	</div>
 	<?php endif; ?>
-	
+
 	<?php ActiveForm::end(); ?>
 	</div>
 </div><br>

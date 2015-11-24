@@ -17,21 +17,19 @@ $alertsModel = new Alerts();
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?= $this->render("_form", [
-		"model" => $alertsModel, 
+		"model" => $alertsModel,
 		'formOptions' => $formOptions
 	]);  ?>
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
 		'itemView' => function ($model, $key, $index, $widget) {
-			$widget->itemOptions['id'] = 'alert'.$model->getId();
-			$widget->itemOptions['class'] =  \nitm\helpers\Statuses::getListIndicator($model->getPriority());
-			return $this->render('view', ['model' => $model, 'notAsListItem' => true]);
+			return $this->render('view', ['model' => $model]);
 		},
 		'summary' => false,
 		"layout" => "{summary}\n{items}",
 		'itemOptions' => [
-			'tag' => 'li'
+			'tag' => false
 		],
 		'options' => [
 			'id' => 'alerts-list-container',

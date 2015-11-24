@@ -1,7 +1,7 @@
 function Alerts () {
-	
+
 	NitmEntity.call(this, arguments);
-	
+
 	var self = this;
 	this.id = 'alerts';
 	this.defaultInit = [
@@ -14,24 +14,25 @@ function Alerts () {
 			update: 'updateAlert'
 		}
 	};
-	
+
 	this.buttons = {
 		create: 'newAlert',
 		remove: 'removeAlert',
 		disable: 'disableAlert',
 	};
-	
+
 	this.views = {
 		listFormContainer: "[role~='alertsListForm']",
 		container: "[role~='alertsList']",
 		itemId: "alert"
 	};
-	
+
 	this.initAlerts = function(containerId) {
 		var containerId = (containerId == undefined) ? self.views.listFormContainer : containerId;
 		var container = $nitm.getObj(containerId);
-		
+
 		//Initializing the remove button here
+		console.log("Initing alerts...");
 		container.find("[role~='"+self.buttons.remove+"']").each(function () {
 			$(this).on('click',function(event) {
 				event.preventDefault();
@@ -44,10 +45,11 @@ function Alerts () {
 			});
 		});
 	}
-	
-	this.afterCreate = function (result, form) {
+
+	this.afterCreate = function (result, currentIndex, form) {
 		if(result.success)
 		{
+			console.log(form);
 			$(form).get(0).reset();
 			$(form).find('select').each(function () {
 				try {
@@ -55,7 +57,6 @@ function Alerts () {
 				} catch (error) {
 				}
 			});
-			$nitm.notify("Success! You can add another or view the newly added one", $nitm.classes.success, $(form).parents('div').find('#alert').last());
 			if(result.data)
 			{
 				var element = $(result.data);
@@ -64,12 +65,8 @@ function Alerts () {
 				element.addClass($nitm.classes.success).delay(5000).queue(function () {
 					$(this).removeClass($nitm.classes.success, 5000);
 				});
+				self.init(self.views.itemId+result.id);
 			}
-			self.init(self.views.itemId+result.id);
-			/*$nitm.getObj(self.views.itemId+result.id).addClass('list-group-item-success', 400, 'easeInBack').delay(1000).queue(function(next){
-				 $(this).removeClass('list-group-item-success', 400, 'easeOutBack');
-				 next();
-			});*/
 			return true;
 		}
 		else
@@ -78,7 +75,7 @@ function Alerts () {
 			return false;
 		}
 	}
-	
+
 	this.afterUpdate = function (result, form) {
 		switch(result.success)
 		{
@@ -90,13 +87,13 @@ function Alerts () {
 				 next();
 			});*/
 			break;
-			
+
 			default:
 			$nitm.notify(!result.message ? "Couldnt update your alert" : result.message, $nitm.classes.success, $(form).parents('div').find('#alert').last());
-			break
+			break;
 		}
 	}
-	
+
 	this.afterDelete = function (result, elem) {
 		switch(result.success)
 		{
@@ -108,7 +105,7 @@ function Alerts () {
 				container.hide('slow').remove();
 			}
 			break;
-			
+
 			default:
 			$nitm.notify("Couldn't delete alert", $nitm.classes.error, $(elem).parents('div').find('#alert').last());
 			return false;

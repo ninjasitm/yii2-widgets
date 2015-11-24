@@ -14,14 +14,14 @@ use nitm\helpers\Response;
  * AlertsController implements the CRUD actions for Alerts model.
  */
 class AlertsController extends \nitm\controllers\DefaultController
-{	
+{
 	public function init()
 	{
 		$this->logCollection = 'nitm-log';
 		$this->model = new Alerts(['scenario' => 'default']);
 		parent::init();
 	}
-	
+
 	public function beforeAction($action)
 	{
 		switch($action->id)
@@ -40,8 +40,8 @@ class AlertsController extends \nitm\controllers\DefaultController
 				'rules' => [
 					[
 						'actions' => [
-							'notifications', 
-							'mark-notification-read', 
+							'notifications',
+							'mark-notification-read',
 							'get-new-notifications',
 							'un-follow',
 							'follow',
@@ -62,7 +62,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		];
 		return array_merge_recursive(parent::behaviors(), $behaviors);
     }
-	
+
     /**
      * Lists all Alerts models.
      * @return mixed
@@ -73,7 +73,21 @@ class AlertsController extends \nitm\controllers\DefaultController
 		$this->setResponseFormat('html');
 		return $this->renderResponse(null, Response::viewOptions(), \Yii::$app->request->isAjax);
     }
-	
+
+	public function actionCreate()
+	{
+		$result = parent::actionCreate();
+		if(ArrayHelper::getValue($result, 'success', false) === true)
+			$result = array_merge($result, [
+				'data' => $this->renderPartial('view', [
+					'model' => $this->model,
+					'asListItem' => true
+				]),
+				'message' => 'Sucessfully created new alert!'
+			]);
+		return $result;
+	}
+
     /**
      * Lists all Notifications models.
      * @return mixed
@@ -86,7 +100,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		$this->setResponseFormat('html');
 		return $this->renderResponse(null, Response::viewOptions(), \Yii::$app->request->isAjax);
     }
-	
+
     /**
      * Mark notification read.
      * @return mixed
@@ -106,7 +120,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		$this->setResponseFormat('json');
 		return $this->renderResponse($ret_val, Response::viewOptions(), \Yii::$app->request->isAjax);
     }
-	
+
 	public function actionFollow($type, $id, $key)
 	{
 		$_REQUEST['do'] = true;
@@ -133,11 +147,11 @@ class AlertsController extends \nitm\controllers\DefaultController
 					case 'email':
 					$methods = 'envelope';
 					break;
-					
+
 					case 'mobile':
 					$methods = 'mobile';
 					break;
-					
+
 					default:
 					$methods = 'send';
 					break;
@@ -145,7 +159,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 				$ret_val['actionHtml'] = 'Unfollow '.\nitm\helpers\Icon::show($methods);
 				$ret_val['class'] = 'btn-success';
 			}
-			
+
 		} catch(\Exception $e) {
 			if(YII_DEBUG)
 				throw $e;
@@ -154,7 +168,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 			$this->model->setCachedRelation(['remote_id', 'remote_type'], $this->model->className());
 		return $ret_val;
 	}
-	
+
 	public function actionUnFollow($id)
 	{
 		$ret_val = [
@@ -175,7 +189,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		$ret_val['class'] = 'btn-default';
 		return $ret_val;
 	}
-	
+
     public static function booleanActions()
 	{
 		return array_merge(parent::booleanActions(), [
@@ -193,7 +207,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 			]
 		]);
 	}
-	
+
 	public function actionSendOneFor($type, $id)
 	{
 		$module = \Yii::$app->getModule('nitm');
@@ -218,7 +232,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		}
 		return $ret_val;
 	}
-	
+
 	/**
      * Lists all new Replies models according to user activity.
 	 * @param string $type The parent type of the issue
@@ -270,7 +284,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 				]
 			]);
 			break;
-			
+
 			default:
 			Response::viewOptions(null, [
 				'args' => [
@@ -282,7 +296,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 		$this->setResponseFormat(\Yii::$app->request->isAjax ? 'json' : 'html');
 		return $this->renderResponse($ret_val, null, \Yii::$app->request->isAjax);
     }
-	
+
 	/*
 	 * Get the forms associated with this controller
 	 * @param string $param What are we getting this form for?
@@ -311,14 +325,14 @@ class AlertsController extends \nitm\controllers\DefaultController
 		$options['force'] = true;
 		return parent::actionForm($type, $id, $options);
 	}
-	
+
 	public function actionList($type)
 	{
 		$this->setResponseFormat('json');
 		$types = [];
 		$dependsOn = \Yii::$app->request->post('depdrop_parents')[0];
 		switch($type)
-		{	
+		{
 			case 'for':
 			switch($dependsOn)
 			{
@@ -331,18 +345,18 @@ class AlertsController extends \nitm\controllers\DefaultController
 							'id' => $key,
 							'name' => $value
 						];
-					}, array_keys($types), array_values($types)), 
+					}, array_keys($types), array_values($types)),
 					"selected" => 0
 				];
 				array_unshift($ret_val['output'], ['id' => 0, 'name' => " for one of the following "]);
 				break;
-				
+
 				default:
 				$ret_val = ["output" => [['id' => 'any', 'name' => "then ignore what its for"]], "selected" => 'any'];
 				break;
 			}
-			break;	
-			
+			break;
+
 			case 'priority':
 			switch(1)
 			{
@@ -355,18 +369,18 @@ class AlertsController extends \nitm\controllers\DefaultController
 							'id' => $key,
 							'name' => $value
 						];
-					}, array_keys($types), array_values($types)), 
+					}, array_keys($types), array_values($types)),
 					"selected" => ''
 				];
 				array_unshift($ret_val['output'], ['id' => 0, 'name' => " but if the priority is "]);
 				break;
-				
+
 				default:
 				$ret_val = ["output" => [['id' => 'any', 'name' => "and ignore the priority"]], "selected" => "any"];
 				break;
 			}
 			break;
-			
+
 			case 'types':
 			switch($dependsOn)
 			{
@@ -384,13 +398,13 @@ class AlertsController extends \nitm\controllers\DefaultController
 				case 'requestAttentionFor_my':
 				$types = (array)$this->model->setting('allowed');
 				break;
-				
+
 				case 'reply_my':
 				case 'reply':
 				$types =(array) $this->model->setting('reply_allowed');
 				$types['chat'] = 'Chat';
 				break;
-			
+
 				default:
 				$types = ['any' => 'Anything'];
 				break;
@@ -402,7 +416,7 @@ class AlertsController extends \nitm\controllers\DefaultController
 						'id' => $key,
 						'name' => $value
 					];
-				}, array_keys($types), array_values($types)), 
+				}, array_keys($types), array_values($types)),
 				"selected" => ''
 			];
 			//array_unshift($ret_val['output'], ['id' => 'any', 'name' => "Anything"]);
