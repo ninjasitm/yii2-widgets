@@ -6,6 +6,7 @@ use Yii;
 use nitm\widgets\models\Issues;
 use nitm\widgets\models\search\Issues as IssuesSearch;
 use nitm\helpers\Response;
+use nitm\helpers\ArrayHelper;
 use nitm\helpers\Icon;
 use nitm\widgets\issueTracker\IssueTracker;
 use yii\web\NotFoundHttpException;
@@ -18,22 +19,22 @@ use yii\data\ArrayDataProvider;
 class IssueController extends \nitm\controllers\DefaultController
 {
 	use \nitm\traits\Controller;
-	
+
 	public $legend = [
 		'success' => 'Closed and Resolved',
 		'warning' => 'Closed and Unresolved',
 	];
-	
+
 	protected $result;
 	protected $enableComments;
-	
+
 	public function init()
 	{
 		parent::init();
 		$this->model = new Issues(['scenario' => 'default']);
 		$this->enableComments = (\Yii::$app->request->get(Issues::COMMENT_PARAM) == true) ? true : false;
 	}
-	
+
     public function behaviors()
     {
 		$behaviors = [
@@ -49,7 +50,7 @@ class IssueController extends \nitm\controllers\DefaultController
 		];
         return array_merge_recursive(parent::behaviors(), $behaviors);
     }
-	
+
 	public static function has()
 	{
 		$has = [
@@ -69,7 +70,7 @@ class IssueController extends \nitm\controllers\DefaultController
 		Response::viewOptions(null, [
 			'args' => [
 				"content" => IssueTracker::widget([
-					"parentId" => $id, 
+					"parentId" => $id,
 					"parentType" => $type,
 					'useModal' => false,
 					'enableComments' => \Yii::$app->request->get(Issues::COMMENT_PARAM)
@@ -85,6 +86,20 @@ class IssueController extends \nitm\controllers\DefaultController
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);
     }
 
+	public function actionCreate()
+	{
+		$result = parent::actionCreate();
+		if(ArrayHelper::getValue($result, 'success', false) === true)
+			$result = array_merge($result, [
+				'data' => $this->renderPartial('view', [
+					'model' => $this->model,
+					'asListItem' => true
+				]),
+				'message' => 'Sucessfully created new issue!'
+			]);
+		return $result;
+	}
+
     /**
      * Displays a single Issues model.
      * @param integer $id
@@ -97,8 +112,8 @@ class IssueController extends \nitm\controllers\DefaultController
 			case 'all':
 			$this->model = new Issues();
 			break;
-			
-			default:	
+
+			default:
 			$this->model = Issues::findModel([$id, $type]);
 			break;
 		}
@@ -110,7 +125,7 @@ class IssueController extends \nitm\controllers\DefaultController
 		$get = \Yii::$app->request->getQueryParams();
 		$params = array_merge($get, $this->model->constraints);
 		unset($params['type'], $params['id'], $params['key']);
-		
+
 		$options = [
 			'enableComments' => $this->enableComments
 		];
@@ -120,27 +135,27 @@ class IssueController extends \nitm\controllers\DefaultController
 			$params = array_merge($params, ['duplicate' => true]);
 			$orderBy = ['id' => SORT_DESC];
 			break;
-			
+
 			case 'closed':
 			$params = array_merge($params, ['closed' => true]);
 			$orderBy = ['closed_at' => SORT_DESC];
 			break;
-			
+
 			case 'open':
 			$params = array_merge($params, ['closed' => false]);
 			$orderBy = ['id' => SORT_DESC];
 			break;
-			
+
 			case 'resolved':
 			$params = array_merge($params, ['resolved' => true]);
 			$orderBy = ['resolved_at' => SORT_DESC];
 			break;
-			
+
 			case 'unresolved':
 			$params = array_merge($params, ['resolved' => false]);
 			$orderBy = ['id' => SORT_DESC];
 			break;
-			
+
 			default:
 			$orderBy = [];
 			break;
@@ -161,7 +176,7 @@ class IssueController extends \nitm\controllers\DefaultController
 			],
 			'modalOptions' => [
 				'contentOnly' => true
-			], 
+			],
 			'js' => (\Yii::$app->request->isAjax ? new \yii\web\JsExpression('$nitm.onModuleLoad("issue-tracker", function (module) {
 				module.initDefaults("#issues-'.$key.'-list'.$id.'", "issue-tracker");
 			});') : '')
@@ -169,12 +184,12 @@ class IssueController extends \nitm\controllers\DefaultController
 		//$this->setResponseFormat(\Yii::$app->request->isAjax ? 'modal' : 'html');
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);
     }
-	
+
 	public function actionDuplicate($id)
 	{
 		return $this->booleanAction($this->action->id, $id);
 	}
-	
+
     public static function booleanActions()
 	{
 		return array_merge(parent::booleanActions(), [
