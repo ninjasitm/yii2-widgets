@@ -7,7 +7,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 /**
- * This class makes it easier to instantiate an editor widget by providing options 
+ * This class makes it easier to instantiate an editor widget by providing options
  * for differrent types of widgets. THis class is based on the Redactor editor
  * by imperavi
  *
@@ -21,29 +21,29 @@ class Editor extends \yii\imperavi\Widget
 	public $size;
 	public $toolbarSize;
 	public $toolbarFixed;
-	
+
 	public $enableAutoSave;
-	
+
 	/**
 	 * Autosave path handler. With trailing slash
 	 */
 	public $autoSavePath;
-	
+
 	/**
 	 * Autosave every X seconds
 	 */
 	public $autoSaveInterval = 60;
-	
+
 	/**
 	 * The name of the autosave field
 	 */
 	public $autoSaveName;
-	
+
 	public $options = [];
 	public $htmlOptions = [];
-	
+
 	protected $modelId;
-	
+
 	public function init()
 	{
 		parent::init();
@@ -54,7 +54,7 @@ class Editor extends \yii\imperavi\Widget
 		$this->initFiles();
 		$this->initAutoSave();
 	}
-	
+
 	public function run()
 	{
 		$this->options = array_merge($this->defaultOptions(), $this->options);
@@ -63,7 +63,7 @@ class Editor extends \yii\imperavi\Widget
 			$this->options['toolbarFixedTarget'] = '#'.$this->htmlOptions['id'];
 		$this->htmlOptions = array_merge($this->defaultHtmlOptions(), $this->htmlOptions);
 		$buttonParam = isset($this->options['airButtons']) && ($this->options['airButtons'] == true) ? 'airButtons' : 'buttons';
-		
+
 		switch($this->toolbarSize)
 		{
 			case 'full':
@@ -74,59 +74,64 @@ class Editor extends \yii\imperavi\Widget
 				'image', 'video', 'file', 'table', 'link', 'alignment', 'horizontalrule'
 			];
 			break;
-			
+
 			case 'medium':
 			$this->options[$buttonParam] = [
 				'bold', 'italic', 'underline', 'deleted', 'fontsize', 'fontcolor', 'backcolor', '|',
-				'unorderedlist', 'orderedlist', '|', 
+				'unorderedlist', 'orderedlist', '|',
 				'image', 'video', 'file', 'table', 'link'
 			];
 			break;
-			
+
 			default:
 			$this->options[$buttonParam] = [
 				'bold', 'italic', 'underline', 'deleted', 'link'
 			];
 			break;
 		}
-		
+
 		switch($this->size)
 		{
 			case 'full':
 			$this->htmlOptions['style'] = "height: 100%";
 			break;
-			
+
 			case 'large':
 			$this->htmlOptions['rows'] = 12;
 			break;
-			
+
 			case 'medium':
 			$this->htmlOptions['rows'] = 6;
 			break;
-			
+
 			default:
 			$this->htmlOptions['rows'] = 3;
 			break;
 		}
-			
+
 		$this->htmlOptions['role'] = $this->role;
+
+		$this->getView()->registerJs(new \yii\web\JsExpression("$(window).on('beforeunload', function () {
+		    return 'Are you sure you want to leave? If so please make sure to save your pending changes!';
+		});"));
+
 		return parent::run().\yii\helpers\Html::style("#redactor_modal_overlay, #redactor_modal, .redactor_dropdown {z-index: 10000 !important;}");
 	}
-	
+
 	protected function initFiles()
 	{
 		if($this->enableFiles) {
 			array_push($this->plugins, 'imagemanager', 'filemanager');
 			$this->options['imageUpload'] = ArrayHelper::getValue($this->options, 'imageUpload', \Yii::$app->urlManager->createUrl(['/image/save/'.$this->model->isWhat().'/'.$this->modelId, 'imageParam' => 'file']));
 			$this->options['imageManagerJson'] = \Yii::$app->urlManager->createUrl(['/image/index/'.$this->model->isWhat().'/'.$this->modelId, '__format' => 'json']);
-			
+
 			$this->options['fileUpload'] = ArrayHelper::getValue($this->options, 'fileUpload', \Yii::$app->urlManager->createUrl(['/files/save/'.$this->model->isWhat().'/'.$this->modelId, 'fileParam' => 'file']));
 			$this->options['fileManagerJson'] = \Yii::$app->urlManager->createUrl(['/files/index/'.$this->model->isWhat().'/'.$this->modelId, '__format' => 'json']);
 		}
 	}
-	
+
 	protected function initAutoSave()
-	{		
+	{
 		if($this->enableAutoSave && $this->autoSavePath)
 		{
 			$this->options += [
@@ -154,7 +159,7 @@ class Editor extends \yii\imperavi\Widget
 				];
 		}
 	}
-	
+
 	protected function defaultOptions()
 	{
 		return [
@@ -164,15 +169,15 @@ class Editor extends \yii\imperavi\Widget
 			]
 		];
 	}
-	
-	protected function defaultHtmlOptions() 
+
+	protected function defaultHtmlOptions()
 	{
 		return [
 			'style' => 'z-index: 99999',
 			'rows' => 3,
 		];
 	}
-	
+
 	protected function redactorAutosaveFix() {
 		return new \yii\web\JsExpression("function () {
 			var autosaveLoadFix = function() {
@@ -182,26 +187,26 @@ class Editor extends \yii\imperavi\Widget
 					case this.opts.autosaveInterval >= ((Date.now() - this.autosave.last)/1000):
 					return;
 					break;
-					
+
 					default:
 					this.autosave.inProgress = true;
 					this.autosave.source = this.code.get();
-	
+
 					if (this.autosave.html === this.autosave.source) return;
-	
+
 					// data
 					var data = {};
 					data['name'] = this.autosave.name;
 					data[this.autosave.name] = this.autosave.source;
 					data = this.autosave.getHiddenFields(data);
-	
+
 					// ajax
 					var jsxhr = $.ajax({
 						url: this.opts.autosave,
 						type: 'post',
 						data: data
 					});
-					
+
 					jsxhr.done(function (data) {
 						this.autosave.success(data);
 						this.autosave.inProgress = false;
