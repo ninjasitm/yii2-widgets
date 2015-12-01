@@ -15,7 +15,7 @@ use nitm\models\User;
  * @property boolean $revoked Has the token been revoked? Thhis is bad since it means it was forcefully disabled
  * @property Timestamp $revoked_on The date the token was revoked on
  */
-class Token extends \nitm\widgets\models\BaseWidget
+class Token extends \nitm\widgets\models\BaseWidgetModel
 {
 	public $message;
 	public $name;
@@ -26,7 +26,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 	private $_tokenKey;
 
 	protected $is = 'token';
-	
+
 	const LEVEL_READ = 0;
 	const LEVEL_WRITE = 1;
 
@@ -40,7 +40,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 	{
 		return 'access_tokens';
 	}
-	
+
 	public function rules()
 	{
 		$rules = [
@@ -57,7 +57,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 		];
 		return array_merge(parent::rules(), $rules);
 	}
-	
+
 	public function scenarios()
 	{
 		$scenarios = [
@@ -85,7 +85,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 			'revoked_on' => 'Revoked On',
 		];
 	}
-	
+
 	/**
      * Get the token levels
 	 * @param Token $token object
@@ -96,19 +96,19 @@ class Token extends \nitm\widgets\models\BaseWidget
 		$levels = static::getLevels();
 		return $levels[$token->level];
 	}
-	
+
 	/**
      * Get the supported token levels
      */
 	public static function getLevels()
 	{
 		$levels = [
-			static::LEVEL_READ => 'Read', 
-			static::LEVEL_WRITE => 'Write', 
+			static::LEVEL_READ => 'Read',
+			static::LEVEL_WRITE => 'Write',
 		];
 		return $levels;
 	}
-	
+
 	/**
 	 * Get the status value for a user
 	 * @param Token $token object
@@ -131,7 +131,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 		}
 		return $status;
 	}
-	
+
 	/*
 	 * Parse an array for token information
 	 * @param mixed $array
@@ -152,7 +152,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 				}
 				continue;
 				break;
-				
+
 				default:
 				switch(($array['toggle'][$idx] == 1) && ($array['revoke'][$idx] != 'on') && ($max === false) && ($array['token_is_active'][$idx] == ''))
 				{
@@ -185,7 +185,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 			}
 		}
 	}
-	
+
 	public function create()
 	{
 		$ret_val = false;
@@ -214,7 +214,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 		}
 		return $ret_val;
 	}
-	
+
 	public function update($validate=true, $attributes=null)
 	{
 		$ret_val = false;
@@ -247,7 +247,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 		}
 		return $ret_val;
 	}
-	
+
 	public function revoke()
 	{
 		$ret_val = false;
@@ -267,7 +267,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 			$cond = array("key" => array_keys($data), "data" => array_values($data));
 		}
 	}
-	
+
 	public function toggle()
 	{
 		$ret_val = false;
@@ -287,7 +287,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 			$cond = array("key" => array_keys($data), "data" => array_values($data));
 		}
 	}
-	
+
 	/*
 	 * Get a unique token for a specific user
 	 */
@@ -308,7 +308,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 		}
 		return \yii\helpers\Security::hashData(uniqid(), $user->api_key, 'fnv164');
 	}
-	
+
 	/*
 	 * Get tokens for a specific user
 	 */
@@ -339,7 +339,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 		}
 		return $ret_val;
 	}
-	
+
 	/*
 	 * Get the token count for the current user
 	 *
@@ -357,7 +357,7 @@ class Token extends \nitm\widgets\models\BaseWidget
 			])->count();
 			$this->_max = ($this->_count >= $this->settings[static::isWhat()]['globals']['max']) ? true : false;
 			break;
-			
+
 			default:
 			$this->_max = false;
 			break;

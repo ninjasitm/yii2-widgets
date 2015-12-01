@@ -12,7 +12,7 @@ use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use nitm\widgets\models\User;
 use nitm\widgets\models\Revisions as RevisionsModel;
-use nitm\widgets\helpers\BaseWidget;
+use nitm\widgets\BaseWidget;
 use kartik\icons\Icon;
 
 class Tokens extends BaseWidget
@@ -21,7 +21,7 @@ class Tokens extends BaseWidget
 	 * Either a user object or a userid
 	 */
 	public $identity;
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -30,16 +30,16 @@ class Tokens extends BaseWidget
 		'role' => 'entityMessages',
 		'id' => 'messages'
 	];
-	
-	
+
+
 	public function init()
-	{	
+	{
 		if ($this->identity === null) {
 			throw new InvalidConfigException('Need some user info in order to work');
 		}
 		$this->identity = ($this->identity instanceof User) ? $this->identity : User::find($this->identity);
 	}
-	
+
 	public function run()
 	{
 		switch($this->identity->hasApiTokens())
@@ -70,7 +70,7 @@ class Tokens extends BaseWidget
 				],
 			]);
 			break;
-		
+
 			default:
 			echo Html::tag('div', "No tokens found");
 			break;
