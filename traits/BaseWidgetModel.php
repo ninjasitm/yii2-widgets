@@ -275,6 +275,12 @@ trait BaseWidgetModel {
 		return static::$currentUser;
 	}
 
+	protected function updateCurrentUserActivity()
+	{
+		if(is_object(static::currentUser()))
+			static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive));
+	}
+
 	protected function populateMetadata()
 	{
 		switch(!isset($this->count) && !isset($this->hasNew))

@@ -25,10 +25,8 @@ class Category extends \nitm\models\Category
 		$this->setConstraints($this->constrain);
 		parent::init();
 		$this->addWith(['author']);
-		if($this->initSearchClass)
+		//if($this->initSearchClass)
 			//static::initCache($this->constrain, self::cacheKey($this->getId()));
-
-		if(is_object(static::currentUser()))
-			static::$userLastActive = date('Y-m-d G:i:s', strtotime(is_null(static::$userLastActive) ? static::currentUser()->lastActive() : static::$userLastActive));
+		static::updateCurrentUserActivity();
 	}
 }
