@@ -15,7 +15,7 @@ use nitm\widgets\editor\Editor;
 $action = ($model->getIsNewRecord()) ? "create" : "update";
 $model->setScenario($action);
 
-switch(1) 
+switch(1)
 {
 	case isset($useModal) && ($useModal == true):
 	\yii\bootstrap\Modal::begin([
@@ -34,7 +34,7 @@ switch(1)
 ?>
 <div class="chat-form chat-form-container" id='chat-form<?= $parentId ?>'>
 	<?= \nitm\widgets\alert\Alert::widget(); ?>
-	<?php 
+	<?php
 		$form = ActiveForm::begin([
 			'id' => 'chat-form0',
 			"action" => "/reply/new/chat/0",
@@ -52,7 +52,7 @@ switch(1)
 		]);
 	?>
 	<?php
-		switch(isset($inline) && ($inline == true)) 
+		switch(isset($inline) && ($inline == true))
 		{
 			case false:
 			echo Html::button(
@@ -67,7 +67,7 @@ switch(1)
 				]
 			);
 			break;
-			
+
 			default:
 			echo $form->field($model, 'title', [
 					'addon' => [
@@ -104,14 +104,8 @@ switch(1)
 		echo Html::tag("div", '', ["role" => "replyToIndicator", "class" => "message-reply-to"]).$widget->getActions($useModal || !$inline);
 	?>
 	<?= Html::activeHiddenInput($model, "reply_to", ['value' =>  null, "role" => "replyTo"]); ?>
-    <?php 
+    <?php
 		ActiveForm::end();
 	?>
-
-<script type='text/javascript'>
-$nitm.onModuleLoad('replies', function () {
-	$nitm.module('replies').initCreating('chat-form<?= $parentId ?>');
-});
-</script>
 </div>
 <?php if(isset($useModal) && ($useModal == true))  \yii\bootstrap\Modal::end(); ?>

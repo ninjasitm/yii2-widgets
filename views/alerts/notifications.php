@@ -13,10 +13,10 @@ $this->title = Yii::t('app', 'Alerts');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php if(isset($contentOnly) && $contentOnly === false || !isset($contentOnly)): ?>
-<div id='notification-index' class="absolute full full-width full-height" role="notificationListForm">
+<div id='notification-index' class="full full-width full-height" role="notificationListForm">
 	<div class="col-md-6 col-lg-6">
 		<h1>
-			<?= 
+			<?=
 				Html::encode($this->title);
 			?>
 		</h1>
@@ -25,14 +25,14 @@ $this->params['breadcrumbs'][] = $this->title;
 		<h1>
 			<?=
 				Html::a(
-					Icon::show('refresh'), 
+					Icon::show('refresh'),
 					\Yii::$app->urlManager->createUrl(['/alerts/notifications', '__format' => 'html', '__contentOnly' => true]),
 					[
 						'role' => 'dynamicValue',
 						'data-id' => 'notification-list-container',
 						'data-type' => 'html',
 						'class' => 'pull-right'
-					]); 
+					]);
 			?>
 		</h1>
 	</div>

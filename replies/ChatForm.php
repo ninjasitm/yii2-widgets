@@ -16,19 +16,19 @@ use nitm\widgets\models\Replies as RepliesModel;
 use kartik\icons\Icon;
 
 class ChatForm extends BaseWidget
-{	
+{
 	public $editor = 'redactor';
 	public $inline = true;
 	public $useModal = false;
 	public $hidden = false;
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
 	public $options = [];
-	
+
 	public $editorOptions = [];
-	
+
 	/**
 	 * The actions that are supported
 	 */
@@ -65,7 +65,7 @@ class ChatForm extends BaseWidget
 			]
 		],
 	];
-	
+
 	public function init()
 	{
 		$this->model = ($this->model instanceof RepliesModel) ? $this->model : new RepliesModel([
@@ -76,11 +76,11 @@ class ChatForm extends BaseWidget
 		$this->model->maxLength = 140;
 		$this->editorOptions = array_merge($this->defaultEditorOptions(), $this->editorOptions);
 		$this->options = array_merge($this->defaultOptions(), $this->options);
-		
+
 		parent::init();
 		Asset::register($this->getView());
 	}
-	
+
 	public function run()
 	{
 		switch(is_null($this->model))
@@ -88,8 +88,8 @@ class ChatForm extends BaseWidget
 			case true:
 			return '';
 			break;
-			
-			default:		
+
+			default:
 			$this->model->setScenario('validateNew');
 			return $this->getView()->render('@nitm/widgets/views/chat/form/_form', [
 				'model' => $this->model,
@@ -105,7 +105,7 @@ class ChatForm extends BaseWidget
 			break;
 		}
 	}
-	
+
 	/**
 	 * Get the actions supported for replying
 	 */
@@ -118,20 +118,20 @@ class ChatForm extends BaseWidget
 			{
 				case 'reset':
 				$ret_val .= Html::resetButton(
-						Html::tag($action['tag'], $action['text'], $action['tagOptions']), 
+						Html::tag($action['tag'], $action['text'], $action['tagOptions']),
 						$action['options']
 					);
 				break;
-				
+
 				case 'submit':
 				$ret_val .= Html::submitButton(
-						Html::tag($action['tag'], $action['text'], $action['tagOptions']), 
+						Html::tag($action['tag'], $action['text'], $action['tagOptions']),
 						$action['options']
 					);
 				break;
 			}
 		}
-		return Html::tag('div', 
+		return Html::tag('div',
 			$ret_val,
 			[
 				'role' => 'replyActions',
@@ -139,7 +139,7 @@ class ChatForm extends BaseWidget
 			]
 		);
 	}
-	
+
 	protected function defaultEditorOptions()
 	{
 		return [
@@ -153,7 +153,7 @@ class ChatForm extends BaseWidget
 			]
 		];
 	}
-	
+
 	protected function defaultOptions()
 	{
 		return [

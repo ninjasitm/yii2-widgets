@@ -77,7 +77,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 	 * @param string $key The key of the parent
      * @return mixed
      */
-    public function actionIndex($type, $id, $key=null)
+    public function actionIndex($type=null, $id=null, $key=null)
     {
 		$this->model = new Replies(['constrain' => [$id, $type]]);
 		switch($type)
@@ -107,7 +107,7 @@ class ReplyController extends \nitm\controllers\DefaultController
 			]);
 			break;
 		}
-		
+
 		Response::viewOptions(null, [
 			'args' => [
 				"content" => $replies,

@@ -12,7 +12,9 @@ use yii\data\ActiveDataProvider;
 class BaseSearch extends \nitm\search\BaseSearch
 {
 	use \nitm\traits\Nitm, \nitm\traits\Relations,\nitm\traits\Cache,
-		\nitm\widgets\traits\BaseWidgetModel, \nitm\widgets\traits\Relations;
+		\nitm\widgets\traits\BaseWidgetModel, \nitm\widgets\traits\Relations {
+			\nitm\widgets\traits\BaseWidgetModel::getCount insteadof \nitm\traits\Relations;
+		}
 
 	public $engine = 'db';
 	public static $namespace = '\nitm\widgets\models\\';

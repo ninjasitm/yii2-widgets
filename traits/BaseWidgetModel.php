@@ -86,7 +86,8 @@ trait BaseWidgetModel {
 					switch($attribute)
 					{
 						case 'parent_type':
-						$using[$attr] = strtolower(array_pop(explode('\\', $using[$attr])));
+						$value = explode('\\', $using[$attr]);
+						$using[$attr] = strtolower(array_pop($value));
 						break;
 					}
 					$this->constraints[$attribute] = $using[$attr];
@@ -129,10 +130,10 @@ trait BaseWidgetModel {
 	 * Get the count for the current parameters
 	 * @return \yii\db\ActiveQuery
 	 */
-	 public function getCount()
+	 public function getCount($link=null)
 	 {
 		$primaryKey = $this->primaryKey()[0];
-		$ret_val = parent::getCount($this->link);
+		$ret_val = parent::getCount($link ?: $this->link);
 		switch(isset($this->queryOptions['ahdWhere']['value']))
 		{
 			case true:

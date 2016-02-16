@@ -28,25 +28,25 @@ class ParentList extends Widget
 {
 	public $model;
 	public $viewOnly = false;
-	
+
 	public $options = [
 		'tag' => 'ul',
 		'role' => 'parentList',
 	];
-	
+
 	public $containerOptions = [];
 	public $listOptions = [];
-	
+
 	public $itemOptions = [
 		'tag' => 'li',
 		'class' => 'list-group-item'
 	];
-	
+
 	/**
 	 * Array containing legend mappint for classes
 	 */
 	public $parents = [];
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -57,9 +57,9 @@ class ParentList extends Widget
 	 * HTML options for generating the label container
 	 */
 	public $labelContainerOptions = [];
-	
+
 	public $dataProvider;
-	
+
 	public function init()
 	{
 		parent::init();
@@ -67,11 +67,11 @@ class ParentList extends Widget
 		if(!isset($this->model))
 			throw new \yii\base\ErrorException(__CLASS__.'->'.__FUNCTION__."() needs a model for the parents list!");
 		$this->dataProvider = new \yii\data\ArrayDataProvider([
-			'allModels' => (array)$this->parents
+			'allModels' => (array)$this->model->parents
 		]);
 	}
-		
-	
+
+
 	public function run()
 	{
 		$header = Html::tag(ArrayHelper::remove($this->labelOptions, 'tag', 'h4'), 'Parents', $this->labelOptions);
@@ -84,9 +84,9 @@ class ParentList extends Widget
 			'itemOptions' => $this->itemOptions,
 			'dataProvider' => $this->dataProvider,
 			'itemView' => function ($model, $key, $index, $widget) {
-				return $model->name.(!$this->viewOnly ? 
+				return $model->name.(!$this->viewOnly ?
 					Html::tag('span',
-						Html::a("Remove ".Icon::show('remove'), 
+						Html::a("Remove ".Icon::show('remove'),
 							'/'.$this->model->isWhat()."/remove-parent/".$this->model->getId().'/'.$model['id'], [
 							'role' => 'parentListItem',
 							'style' => 'color:white'

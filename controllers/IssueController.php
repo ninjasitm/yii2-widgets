@@ -65,7 +65,7 @@ class IssueController extends \nitm\controllers\DefaultController
 	 * @param int $id The id of the parent
      * @return mixed
      */
-    public function actionIndex($type, $id)
+    public function actionIndex($type=null, $id=null)
     {
 		Response::viewOptions(null, [
 			'args' => [
@@ -78,17 +78,14 @@ class IssueController extends \nitm\controllers\DefaultController
 			],
 			'modalOptions' => [
 				'contentOnly' => true
-			],
-			'js' => (\Yii::$app->request->isAjax ? new \yii\web\JsExpression('$nitm.onModuleLoad("tools", function (module) {
-				module.initDefaults("[role=\"entityIssues\"]");
-			});') : '')
+			]
 		], true);
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);
     }
 
-	public function actionCreate()
+	public function actionCreate($modelClass=null, $viewOptions=[])
 	{
-		$result = parent::actionCreate();
+		$result = parent::actionCreate($modelClass, $viewOptions);
 		if(ArrayHelper::getValue($result, 'success', false) === true)
 			$result = array_merge($result, [
 				'data' => $this->renderPartial('view', [
@@ -119,7 +116,7 @@ class IssueController extends \nitm\controllers\DefaultController
 		}
 		$searchModel = new IssuesSearch([
 			'queryOptions' => [
-				'with' => ['closedBy', 'resolvedBy']
+				'with' => ['closedBy', 'resolvedBy', 'count']
 			]
 		]);
 		$get = \Yii::$app->request->getQueryParams();
@@ -176,10 +173,7 @@ class IssueController extends \nitm\controllers\DefaultController
 			],
 			'modalOptions' => [
 				'contentOnly' => true
-			],
-			'js' => (\Yii::$app->request->isAjax ? new \yii\web\JsExpression('$nitm.onModuleLoad("issue-tracker", function (module) {
-				module.initDefaults("#issues-'.$key.'-list'.$id.'", "issue-tracker");
-			});') : '')
+			]
 		], true);
 		//$this->setResponseFormat(\Yii::$app->request->isAjax ? 'modal' : 'html');
 		return $this->renderResponse(null, null, \Yii::$app->request->isAjax);

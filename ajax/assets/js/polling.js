@@ -1,32 +1,34 @@
-function Polling()
-{
-	NitmEntity.call(this, arguments);
-	var self = this;
-	this.id = 'polling';
-	this.polling = {};
+'use strict';
 
-	this.initPolling = function (name, options, callback) {
+class Polling extends NitmEntity
+{
+	constructor() {
+		super('polling');
+		this.polling = {};
+	}
+
+	initPolling(name, options, callback) {
 		this.polling[name] = options;
 		this.initActivity(name, options.container, callback);
 	}
 
-	this.getAjaxMethod = function(name) {
+	getAjaxMethod(name) {
 		if(this.polling[name].hasOwnProperty('method'))
 			return this.polling[name].method;
 		else
 			return 'get';
 	};
 
-	this.initActivity = function(name, containerId, callback) {
+	initActivity(name, containerId, callback) {
 		if(this.polling[name].enabled == true)
 		{
 			var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-			setInterval(function () {
+			setInterval(() => {
 				$.ajax({
-					url: self.polling[name].url,
+					url: this.polling[name].url,
 					dataType: 'json',
-					method: self.getAjaxMethod(name)
-				}).done(function (result) {
+					method: this.getAjaxMethod(name)
+				}).done((result) => {
 					if((result != false)) {
 						switch(typeof callback)
 						{

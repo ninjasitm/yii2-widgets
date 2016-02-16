@@ -14,11 +14,11 @@ use nitm\widgets\models\search\Notification as NotificationSearch;
 use kartik\icons\Icon;
 
 class Notifications extends \yii\base\Widget
-{	
+{
 	public $model;
 	public $inline = true;
 	public $contentOnly;
-	
+
 	/*
 	 * HTML options for generating the widget
 	 */
@@ -27,14 +27,14 @@ class Notifications extends \yii\base\Widget
 		'role' => 'notificationListContainer',
 		'id' => 'notificationList'
 	];
-	
+
 	public function init()
 	{
 		$this->model = ($this->model instanceof Notification) ? $this->model : new Notification();
 		parent::init();
 		NotificationAsset::register($this->getView());
 	}
-	
+
 	public function run()
 	{
 		switch(($this->model instanceof Notification))
@@ -45,7 +45,7 @@ class Notifications extends \yii\base\Widget
 			$get = \Yii::$app->request->getQueryParams();
 			$params = $get;
 			unset($params['type'], $params['id']);
-	
+
 			$dataProvider = $searchModel->search([$this->model->formName() => $params]);
 			$dataProvider->query->andWhere([
 				'read' => false
@@ -62,6 +62,7 @@ class Notifications extends \yii\base\Widget
 				'dataProvider' => $dataProvider,
 				'searchModel' => $searchModel,
 				'widget' => $this,
+				'contentOnly' => $this->contentOnly
 			]);
 			break;
 		}

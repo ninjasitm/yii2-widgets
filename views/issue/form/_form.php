@@ -19,7 +19,7 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 <div class="issues-form row" id='issues-form<?=$uniqid?>'>
 	<div class="col-lg-12 col-md-12">
 		<?= \nitm\widgets\alert\Alert::widget(); ?>
-	
+
 		<?php $form = ActiveForm::begin([
 			"type" => ActiveForm::TYPE_VERTICAL,
 			'action' => \Yii::$app->urlManager->createUrl(['/issue/'.$action.($model->getIsNewRecord() ? "" : "/".$model->getId()), Issues::COMMENT_PARAM => $enableComments]),
@@ -33,7 +33,7 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 			],
 			'enableAjaxValidation' => true
 		]); ?>
-	
+
 		<?= $form->field($model, 'title', [
 				'addon' => [
 					'prepend' => [
@@ -62,7 +62,7 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 				'placeholder' => "Title for this issue",
 				'tag' => 'span'
 			])->label("Title", ['class' => 'sr-only']); ?>
-		
+
 		<?= $form->field($model, 'notes')->textarea()->label("Issue", ['class' => 'sr-only']) ?>
 		<?php
 			if($model->isNewRecord)
@@ -71,7 +71,7 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 				echo Html::activeHiddenInput($model, 'parent_type', ['value' => $parentType]);
 			}
 		?>
-			
+
 		<div class="pull-right">
 			<?= Html::submitButton(ucfirst($action), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
 		</div>
@@ -79,9 +79,3 @@ $enableComments = isset($enableComments) ? $enableComments : \Yii::$app->request
 	</div>
 </div>
 <br>
-
-<script type='text/javascript'>
-$nitm.onModuleLoad('issue-tracker', function (module) {
-	//module.initModule('#<?=$form->options['id']?>');
-});
-</script>

@@ -28,6 +28,13 @@ class BaseWidgetModel extends \nitm\models\Entity
 		'parent_id' => 'parent_id'
 	];
 
+	public function attributes()
+	{
+		return array_merge(parent::attributes(), [
+			'_count', '_new'
+		]);
+	}
+
 	public function init()
 	{
 		$this->setConstraints($this->constrain);

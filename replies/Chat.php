@@ -191,7 +191,7 @@ class Chat extends BaseWidget
 			]
 		]);
 		if(isset($this->updateOptions['enable']) && $this->updateOptions['enable'])
-			$ret_val .= Html::script("\$nitm.module('replies').initChatActivity(\"[role='chatParent']\", '".$this->updateOptions['url']."', ".$this->updateOptions['interval'].")");
+			$this->getView()->registerJs(new \yii\web\JsExpression('$nitm.module("replies").initChatActivity("[role=\'chatParent\']", "'.$this->updateOptions['url'].'", '.$this->updateOptions['interval'].')'));
 		return $ret_val;
 	}
 }

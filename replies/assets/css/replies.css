@@ -19,10 +19,13 @@
 .messages .message-reply-to, .chat .message-reply-to {
 	width: auto;
 	float: left;
-	font-size: larger;
+	font-size: .9em;
 	line-height: 28px;
 }
 
+.chat-container .popover-content {
+	padding: 0px;
+}
 .chat .message,
 .messages .message {
 	width: 100%;
@@ -33,7 +36,7 @@
 	padding: 6px;
 	border-bottom: solid thin gray;
 	white-space: normal;
-	font-size: larger;
+	font-size: 1em;
 }
 
 .chat .message {
@@ -45,7 +48,7 @@
 }
 
 .message .date {
-	font-size: 11px;
+	font-size: .75em;
 	float: right;
 	line-height: 12px;
 	padding-bottom: 6px;
@@ -53,14 +56,14 @@
 }
 
 .message .author, .message .reply-to-author {
-	font-size: normal;
+	font-size: .9em;
 	font-weight: bold !important;
 }
 
 .message .message-avatar {
 	width: 44px;
 	height: auto;
-	font-size: 6px;
+	font-size: .5em;
 	padding: 2px;
 	float: left;
 }
@@ -78,7 +81,7 @@
 .message .message-header {
 	width: 100%;
 	right: 0;
-	font-size: small;
+	font-size: .75em;
 	vertical-align: middle;
 	text-align: right;
 	clear: right;
@@ -121,14 +124,14 @@
 .message .message-footer * {
 	position: relative;
 	width: auto;
-	font-size: smaller;
+	font-size: .75em;
 	clear: none;
 	padding: 0 6px;
 }
 
 .message .message-meta {
 	float: left;
-	font-size: smaller;
+	font-size: .75em;
 	display: table-cell;
 	vertical-align: middle;
 }
@@ -138,7 +141,7 @@
 }
 
 .message .message-actions a {
-	font-size: small;
+	font-size: .75em;
 	padding: 2px 4px;
 	font-weight: bold;
 }
@@ -162,6 +165,7 @@
 	padding: 0px !important;
 	z-index: 10000;
 	color: #000;
+	width: 100%;
 }
 
 .chat.dark {
@@ -185,7 +189,6 @@
 
 .chat .chat-messages-container {
 	display: block;
-	position: absolute;
 	overflow-y: auto;
 	height: 78%;
 	top: 0; right: 0; left : 0;
@@ -219,7 +222,7 @@
 }
 
 .chat .message-actions a {
-	font-size: smaller !important;
+	font-size: .75em !important;
 	font-weight: bold !important;
 }
 
@@ -256,5 +259,5 @@
 	color: white;
 	padding: 6px 10px;
 	height: auto !important;
-	line-height: 1em !important;
+	line-height: .9em !important;
 }

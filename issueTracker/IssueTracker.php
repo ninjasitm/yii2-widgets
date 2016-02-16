@@ -57,11 +57,11 @@ class IssueTracker extends BaseWidget
 		$dataProvdier = null;
 		$searchModel = new IssuesSearch([
 			'queryOptions' => [
-				'with' => ['author', 'editor', 'closedBy', 'resolvedBy']
+				'with' => ['author', 'editor', 'closedBy', 'resolvedBy', 'count']
 			]
 		]);
 		$get = \Yii::$app->request->getQueryParams();
-		$params = array_merge($get, $this->model->getConstraints());
+		$params = array_filter(array_merge($get, $this->model->getConstraints()));
 		$params['closed'] = false;
 		switch(is_array($this->items) && !empty($this->items))
 		{

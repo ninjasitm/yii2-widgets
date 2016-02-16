@@ -67,14 +67,14 @@ class AlertsController extends \nitm\controllers\DefaultController
      * Lists all Alerts models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($type=null, $id=null)
     {
         Response::viewOptions('args.content', \nitm\widgets\alerts\Alerts::widget());
 		$this->setResponseFormat('html');
 		return $this->renderResponse(null, Response::viewOptions(), \Yii::$app->request->isAjax);
     }
 
-	public function actionCreate()
+	public function actionCreate($modelClass=[], $viewOptions=[])
 	{
 		$result = parent::actionCreate();
 		if(ArrayHelper::getValue($result, 'success', false) === true)
@@ -303,11 +303,10 @@ class AlertsController extends \nitm\controllers\DefaultController
 	 * @param int $unique The id to load data for
 	 * @return string | json
 	 */
-	public function actionForm($type=null, $id=null)
+	public function actionForm($type=null, $id=null, $options=[], $returnData=false)
 	{
-		$options = [
-			'modelOptions' => [
-			],
+		$options = array_merge([
+			'modelOptions' => [],
 			'title' => function ($model) {
 				if($model->isNewRecord)
 					return "Create Alert";
@@ -321,9 +320,9 @@ class AlertsController extends \nitm\controllers\DefaultController
 						$header .= ' '.(!$model->remote_id ? 'with Any id' : ' with id '.$model->remote_id);
 					return $header;
 			}
-		];
+		], $options);
 		$options['force'] = true;
-		return parent::actionForm($type, $id, $options);
+		return parent::actionForm($type, $id, $options, $returnData);
 	}
 
 	public function actionList($type)

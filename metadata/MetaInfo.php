@@ -48,6 +48,7 @@ class MetaInfo extends \yii\base\Widget
 			case 'grid':
 			$this->items = is_array($this->items) ? $this->items : [$this->items];
 			$this->widgetOptions = array_merge([
+				'export' => false,
 				'summary' => false,
 				'layout' => '{items}',
 				'showHeader' => $this->header,
@@ -133,7 +134,8 @@ class MetaInfo extends \yii\base\Widget
 			if(isset($priority) && !is_null($priority))
 				echo Html::tag('strong', $priority).' - &nbsp;';
 			if(!$this->valuesOnly)
-				echo Html::tag('strong', ucfirst($title)).':&nbsp;'.Html::tag('em', $value);
+				echo Html::tag('strong', ucfirst($title)).':&nbsp;';
+			echo Html::tag('em', $value);
 			echo "</$tag>";
 			$item = ob_get_contents();
 			ob_end_clean();
@@ -172,6 +174,14 @@ class MetaInfo extends \yii\base\Widget
 		return $ret_val;
 	}
 
+	/**
+	 * [getParts description]
+	 * @param  model $model   [description]
+	 * @param  mixed $k       [description]
+	 * @param  mixed $v       [description]
+	 * @param  int $counter [description]
+	 * @return [type]          [description]
+	 */
 	private function getParts($model, $k, $v, $counter)
 	{
 		$value = is_string($k) ? $v : null;
@@ -198,10 +208,10 @@ class MetaInfo extends \yii\base\Widget
 				case sizeof($parts) >= 2:
 				if(is_array($model))
 					$ret_val = ArrayHelper::getValue($model, implode('.', $parts), '(not found)');
-				else if (is_object($model))
+				else if (is_object($model)) {
 					foreach($parts as $prop)
 					{
-						if(is_object($model) && property_exists($model, $prop)) {
+						if(is_object($model) && $model->hasAttribute($prop) || $model->isRelationPopulated($prop)) {
 							$model = ArrayHelper::getValue($model, $prop);
 						} else if(is_object($model) && method_exists($model, $prop)) {
 							$obj = call_user_func([$model, $prop]);
@@ -212,9 +222,12 @@ class MetaInfo extends \yii\base\Widget
 								break;
 							}
 						}
-						else
+						else {
 							$ret_val = ArrayHelper::getValue($model, $prop, $model);
+						}
 					}
+					$ret_val = $model;
+				}
 				break;
 
 				default:
@@ -229,14 +242,15 @@ class MetaInfo extends \yii\base\Widget
 					break;
 
 					default:
-					$ret_val = ($valueIsPart === true) ? $parts[0] : $model->$parts[0];
+					if(method_exists($model, $parts[0]))
+						$ret_val = call_user_func([$model, $parts[0]]);
+					else if(property_exists($model, $parts[0]))
+						$ret_val = $model->{$parts[0]};
+					else
+						$ret_val = $parts[0];
 					break;
 				}
 				break;
-			}
-			if(is_object($ret_val)){
-			print_r($ret_val);
-			exit;
 			}
 			return $ret_val;
 		};
@@ -261,12 +275,16 @@ class MetaInfo extends \yii\base\Widget
 
 	private function getItemOptions($model, $options=[])
 	{
+		if(is_a($model, \nitm\models\Data::className()))
+			$unique = $model->isWhat().$model->getId();
+		else
+			$unique = uniqid();
 		switch($this->displayAs)
 		{
 			case 'list':
 			$defaultOptions = [
 				'class' => 'list-group-item list-group-item-default',
-				'id' => $model->isWhat().$model->getId()
+				'id' => $unique
 			];
 			break;
 
@@ -274,7 +292,7 @@ class MetaInfo extends \yii\base\Widget
 			$defaultOptions =  [
 				'tag' => 'a',
 				'style' => 'border: solid thin #ccc; padding: 5px; margin: 5px 5px 0 0; text-decoration: none; border-radius: 6px; display: inline-block',
-				'id' => $model->isWhat().$model->getId()
+				'id' => $unique
 			];
 			break;
 

@@ -55,7 +55,7 @@ $widget->withForm = isset($widget->withForm) ? $widget->withForm : \Yii::$app->r
 	{
 		case false:
 		$messages = Html::tag('div', $messages, [
-			'id' => 'chat-messages-container', 
+			'id' => 'chat-messages-container',
 			'class' => 'chat-messages-container'
 		]);
 		$messages = Html::tag('div', $messages.$form, $widget->options);
@@ -63,11 +63,3 @@ $widget->withForm = isset($widget->withForm) ? $widget->withForm : \Yii::$app->r
 	}
 	echo $messages;
 ?>
-<script type="text/javascript">
-$nitm.onModuleLoad('replies', function () {
-	<?php if(\Yii::$app->request->isAjax): ?>
-	$nitm.module('nitm-ias').initIas("<?= $widget->options['id']?>");
-	<?php endif; ?>
-	$nitm.module('replies').initDefaults("<?= $widget->options['id']?>");
-});
-</script>

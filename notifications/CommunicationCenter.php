@@ -3,9 +3,10 @@ namespace nitm\widgets\notifications;
 
 use Yii;
 use yii\helpers\Html;
-use nitm\helpers\Icon;
 use yii\bootstrap\Tabs;
 use yii\bootstrap\Nav;
+use kartik\popover\PopoverX;
+use nitm\helpers\Icon;
 use nitm\widgets\models\Issues;
 
 class CommunicationCenter extends \yii\base\Widget
@@ -62,15 +63,30 @@ class CommunicationCenter extends \yii\base\Widget
 			'encodeLabels' => false,
 			'options' => [
 				'id' => 'communication-center-messages-wrapper'.$uniqid,
-				'class' => 'nav navbar-right navbar-nav'
+				'class' => 'nav navbar-right navbar-nav chat-container'
 			],
 			'items' => [
-				[
-					'label' => Icon::show('comment').Html::tag('span', $chatModel->hasNew(),['class' => 'badge']),
-					'options' => [
-						'class' => !$chatModel->hasNew() ? 'text-disabled' : 'text-success',
-					],
-					'linkOptions' => [
+				Html::tag('li', PopoverX::widget([
+					'header' => '&nbsp;',
+					'type' => 'info',
+					'size' => 'lg',
+					'placement' => 'bottom bottom-right',
+					'content' => Html::tag('div', Html::tag('h2', 'Loading Messages...', [
+							'class' => 'text-center'
+						])
+						/*.Html::script('$("#communication-center-messages-button'.$uniqid.'").one("mouseover", function (event) {
+							$(this).trigger("click");
+						})', ['type' => 'text/javascript'])*/, [
+							'role' => 'chatParent',
+							'id' => 'chat'.$uniqid,
+							'class' => '',
+						]),
+					'toggleButton' => [
+						'tag' => 'a',
+						'label' => Icon::show('comment').Html::tag('span', $chatModel->hasNew(), [
+							'class' => 'badge'
+						]).Html::tag('span', '', ['class' => 'caret']),
+						'class' => 'dropdown-toggle '.(!$chatModel->hasNew() ? 'text-disabled' : 'text-success'),
 						'id' => 'communication-center-messages-button'.$uniqid,
 						'title' => 'Click here again to refresh the info',
 						'role' => 'dynamicValue',
@@ -81,22 +97,10 @@ class CommunicationCenter extends \yii\base\Widget
 						'data-id' => '#chat'.$uniqid,
 						//'data-on' => '#communication-center-messages'.$uniqid.':visible',
 						'data-url' => \Yii::$app->urlManager->createUrl(['/reply/index/chat/0', '__format' => 'html', \nitm\widgets\models\Replies::FORM_PARAM => true]),
-					],
-					'items' => [
-						[
-							'label' => Html::tag('div', Html::tag('h2', 'Loading Messages...', [
-								'class' => 'text-center'
-							]).Html::script('$("#communication-center-messages-button'.$uniqid.'").one("mouseover", function (event) {
-								$(this).trigger("click");
-							})', ['type' => 'text/javascript']), [
-								'role' => 'chatParent',
-								'id' => 'chat'.$uniqid,
-								'class' => '',
-							]),
-							'options' => $this->contentOptions
-						]
 					]
-				],
+				]), [
+					'class' => 'dropdown'
+				])
 			]
 		]);
 
@@ -107,12 +111,17 @@ class CommunicationCenter extends \yii\base\Widget
 				'class' => 'nav navbar-right navbar-nav'
 			],
 			'items' => [
-				[
-					'label' => Icon::show('bell').Html::tag('span', $notificationModel->count(), ['class' => 'badge']),
-					'options' => [
-						'class' => !$notificationModel->count() ? 'bg-disabled' : 'bg-success',
-					],
-					'linkOptions' => [
+				Html::tag('li', PopoverX::widget([
+					'header' => '&nbsp;',
+					'type' => 'info',
+					'size' => 'lg',
+					'placement' => 'bottom bottom-right',
+					'toggleButton' => [
+						'tag' => 'a',
+						'label' => Icon::show('bell').Html::tag('span', $notificationModel->count(), [
+							'class' => 'badge'
+						]).Html::tag('span', '', ['class' => 'caret']),
+						'class' => 'dropdown-toggle '.(!$notificationModel->count() ? 'text-disabled' : 'text-success'),
 						'id' => 'communication-center-notifications-button'.$uniqid,
 						'title' => 'Click here again to refresh the info',
 						'role' => 'dynamicValue',
@@ -124,18 +133,20 @@ class CommunicationCenter extends \yii\base\Widget
 						'data-id' => '#communication-center-notifications'.$uniqid,
 						'data-url' => \Yii::$app->urlManager->createUrl(['/alerts/notifications', '__format' => 'html']),
 					],
-					'items' => [
-						[
-							'label' => Html::tag('div', Html::tag('h2', 'Loading Alerts...', ['class' => 'text-center']).Html::script('$("#communication-center-notifications-button'.$uniqid.'").one("mouseover", function (event) {
-								$(this).trigger("click");
-							})', ['type' => 'text/javascript']), [
-								'id' => 'communication-center-notifications'.$uniqid,
-								'class' => '',
-							]),
-							'options' => $this->contentOptions
-						]
-					]
-				],
+					'content' => Html::tag('div', Html::tag('h2', 'Loading Alerts...', [
+							'class' => 'text-center'
+						])
+						/*.Html::script('$("#communication-center-notifications-button'.$uniqid.'").one("mouseover", function (event) {
+							$(this).trigger("click");
+						})', [
+							'type' => 'text/javascript'
+						])*/, [
+							'id' => 'communication-center-notifications'.$uniqid,
+							'class' => '',
+						]),
+					]), [
+					'class' => 'dropdown'
+				]),
 			]
 		]);
 		$widget = $alertWidget.$chatWidget;

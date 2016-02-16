@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $title;
 		'itemOptions' => ['tag' => false],
 		'itemView' => function ($model, $key, $index, $_widget) use($widget) {
 				return $widget->render('@nitm/widgets/views/replies/view',[
-					'model' => $model, 
+					'model' => $model,
 					'uniqid' => $widget->uniqid,
 					'formId' => '#messages-form'.$widget->uniqid
 				]);
@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $title;
 			'triggerText' => 'More messages',
 			'noneLeftText' => 'No more messages'
 		]
-	
+
 	]);
 	$form = !isset($widget->formOptions['enabled']) || (isset($widget->formOptions['enabled']) && $widget->formOptions['enabled'] !== false) ? \nitm\widgets\replies\RepliesForm::widget($widget->formOptions) : '';
 	switch(isset($widget->noContainer) && $widget->noContainer == true)
@@ -67,9 +67,3 @@ $this->params['breadcrumbs'][] = $title;
 ?>
 </div>
 <?php if(\Yii::$app->request->isAjax ): ?>
-<script type="text/javascript">
-$nitm.onModuleLoad('replies', function () {
-	//$nitm.module('replies').init("<?=$widget->options['id']?>");
-});
-</script>
-<?php endif; ?>

@@ -1,22 +1,25 @@
+'use strict';
+
 /**
  * NITM Javascript Tools
  * Custom IAS handler, as Yii2-scroll-pager creates too many IAS obejcts
  * © NITM 2014
  */
 
-function NitmIas ()
+class NitmIas extends NitmEntity
 {
-	var self = this;
-	this.id = 'nitm-ias';
-	this.defaultInit = [
-		'initIas'
-	];
+	constructor() {
+		super('nitm-ias');
+		this.defaultInit = [
+			'initIas'
+		];
+	}
 
-	this.initIas = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-		container.find("[role~='iasContainer']").each(function() {
-			var element = $nitm.getObj(this);
-			var data = element.data('ias');
+	initIas(containerId) {
+		var $container = $(containerId || 'body');
+		$container.find("[role~='iasContainer']").each((i, elem) => {
+			var $element = $(elem);
+			var data = $element.data('ias');
 			var options = data.ias;
 			delete data.ias;
 
@@ -38,13 +41,6 @@ function NitmIas ()
 					} catch (error) {};
 				}
 			}
-			ias.on('rendered', function (items) {
-				/**
-				 * Initialize loaded items using $nitm Tools
-				 */
-				$nitm.module('tools').init($(items));
-				$nitm.module('entity').init($(items), 'entity', ['initMetaActions', 'initForms']);
-			});
 			for(var event in data.events)
 			{
 				try {

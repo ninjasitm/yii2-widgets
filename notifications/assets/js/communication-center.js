@@ -1,24 +1,24 @@
+'use strict';
 
-function CommunicationCenter(items)
-{	
-	NitmEntity.call(this, arguments);
-	
-	var self = this;
-	this.id = 'communication-center';
-	this.defaultInit = [
-		'initChatTabs',
-	];
-	
-	this.initChatTabs = function (containerId) {
-		var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
-		$nitm.getObj(containerId).find('[data-toggle="tab"]').map(function() {
-			$(this).on('click', function (e) {
-				var tab = $(this);
-				self.chatStatus(false, null, container);
-				if(tab.parent('li').hasClass('active')){
+class CommunicationCenter extends NitmEntity
+{
+	constructor() {
+		super('communication-center');
+		this.defaultInit = [
+			'initChatTabs',
+		];
+	}
+
+	initChatTabs(containerId) {
+		var $container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+		$container.find('[data-toggle="tab"]').map((elem) => {
+			let $elem = $(elem);
+			$elem.on('click', function (e) {
+				this.chatStatus(false, null, $container);
+				if($elem.parent('li').hasClass('active')){
 					window.setTimeout(function(){
 						$(".tab-pane").toggleClass('active', false, 500, 'linear');
-						tab.parent('li').toggleClass('active', false, 500, 'linear');
+						$elem.parent('li').toggleClass('active', false, 500, 'linear');
 					}, 1);
 				}
 			});
