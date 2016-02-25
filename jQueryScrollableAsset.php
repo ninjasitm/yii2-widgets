@@ -17,9 +17,10 @@ class jQueryScrollableAsset extends AssetBundle
 {
 	public $sourcePath = '@nitm/widgets/assets';
 	public $css = [
+		"https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css"
 	];
 	public $js = [
-		'js/jquery-plugins/jquery-ui/ui/widget.js',
+		'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js',
 		'js/jquery-plugins/jquery-ui-scrollable/jquery-ui-scrollable.js'
 	];
 	public $jsOptions = ['position' => \yii\web\View::POS_END];

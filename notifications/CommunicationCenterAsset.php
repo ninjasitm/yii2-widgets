@@ -17,13 +17,13 @@ class CommunicationCenterAsset extends AssetBundle
 	public $js = [
 		'notifications/assets/js/communication-center.js',
 		'replies/assets/js/replies.js',
-		'ajax/assets/js/polling.js',
 		'alerts/assets/js/notifications.js',
 	];
 	public $css = [
 		'notifications/assets/css/communication-center.css',
-	];	
+	];
 	public $depends = [
 		'nitm\assets\AppAsset',
+		'nitm\widgets\ajax\AjaxWidgetAsset',
 	];
 }

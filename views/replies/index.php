@@ -66,4 +66,3 @@ $this->params['breadcrumbs'][] = $title;
 	echo $messages;
 ?>
 </div>
-<?php if(\Yii::$app->request->isAjax ): ?>

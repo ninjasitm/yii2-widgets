@@ -190,7 +190,7 @@ trait BaseWidgetModel {
 
 	public function fetchedValue($key=null)
 	{
-		$ret_val = \nitm\helpers\Relations::getRelatedRecord('fetchedValue', $this, static::className(), [
+		$ret_val = \nitm\helpers\Relations::getRelatedRecord($this, 'fetchedValue', static::className(), [
 			'_value' => 0,
 			'_up' => 0,
 			'_down' => 0
@@ -201,7 +201,7 @@ trait BaseWidgetModel {
 
 	public function hasNew()
 	{
-		return \nitm\helpers\Relations::getRelatedRecord('newCount', $this, static::className(), [
+		return \nitm\helpers\Relations::getRelatedRecord($this, 'newCount', static::className(), [
 			'_new' => 0
 		])['_new'];
 	}

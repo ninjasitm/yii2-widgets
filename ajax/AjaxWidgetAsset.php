@@ -20,6 +20,7 @@ class AjaxWidgetAsset extends AssetBundle
 	];
 	public $js = [
 		'js/ajax-widget.js',
+		'js/polling.js',
 	];
 	public $jsOptions = ['position' => \yii\web\View::POS_END];
 	public $depends = [

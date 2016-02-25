@@ -192,7 +192,7 @@ class CommunicationCenter extends \yii\base\Widget
 	protected function defaultChatUpdateOptions()
 	{
 		return [
-			"interval" => 30000,
+			"interval" => 60000,
 			"enabled" => true,
 			'url' => '/reply/get-new/chat/0'
 		];

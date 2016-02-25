@@ -12,38 +12,43 @@ class Polling extends NitmEntity
 		this.initActivity(name, options.container, callback);
 	}
 
-	getAjaxMethod(name) {
-		if(this.polling[name].hasOwnProperty('method'))
-			return this.polling[name].method;
+	getValue(name, key, defaultValue) {
+		if(this.polling[name].hasOwnProperty(key))
+			return this.polling[name][key];
 		else
-			return 'get';
+			return defaultValue;
 	};
 
 	initActivity(name, containerId, callback) {
 		if(this.polling[name].enabled == true)
 		{
-			var container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
+			var container = $nitm.getObj(containerId || 'body');
+			this.poll(name, containerId, callback);
 			setInterval(() => {
-				$.ajax({
-					url: this.polling[name].url,
-					dataType: 'json',
-					method: this.getAjaxMethod(name)
-				}).done((result) => {
-					if((result != false)) {
-						switch(typeof callback)
-						{
-							case 'function':
-							callback(true, result, containerId);
-							break;
-
-							case 'object':
-							callback.object.call(callback.method, [true, result, containerId]);
-							break;
-						}
-					}
-				});
+				this.poll(name, containerId, callback);
 			}, this.polling[name].interval);
 		}
+	}
+
+	poll(name, containerId, callback) {
+		$.ajax({
+			url: this.polling[name].url,
+			dataType: this.getValue(name, 'dataType', 'json'),
+			method: this.getValue(name, 'method', 'get')
+		}).done((result) => {
+			if((result != false)) {
+				switch(typeof callback)
+				{
+					case 'function':
+					callback(true, result, containerId);
+					break;
+
+					case 'object':
+					callback.object.call(callback.method, [true, result, containerId]);
+					break;
+				}
+			}
+		});
 	}
 }
 

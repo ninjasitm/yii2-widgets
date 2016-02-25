@@ -18,7 +18,7 @@ use nitm\helpers\Cache;
  */
 class Category extends \nitm\models\Category
 {
-	use \nitm\widgets\traits\BaseWidgetModel, \nitm\filemanager\traits\Relations;
+	use \nitm\widgets\traits\BaseWidgetModel;
 
 	public function init()
 	{
