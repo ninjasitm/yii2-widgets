@@ -10,7 +10,9 @@ namespace nitm\widgets\metadata;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\builder\Form;
+use kartik\builder\TabularForm;
 use nitm\helpers\Icon;
+use nitm\helpers\ArrayHelper;
 
 /**
  * ShortLink widget renders the address of a short link and a modal view button
@@ -20,28 +22,34 @@ class MetadataInfo extends \yii\base\Widget
 	public $header;
 	public $type;
 	public $model;
-	public $form;
+	public $formOptions;
+	/**
+	 * Extra options for the \kartik\builder\Form widget
+	 * @var array
+	 */
+	public $formBuilder;
 	public static $controllerRoute;
 	public $options = [
 		'class' => 'table table-condensed'
 	];
+	public $createButton = [];
 	public $items = [];
 	/*
 	 * 'attributes' => [
 			'attribute', // attribute (in plain text)
 			'description:html', // description attribute in HTML
-			[ 
+			[
 				'label' => 'Label',
 				'value' => $value,
 			],
 	* ]*/
 	public $attributes = [];
-	public $formAttributes = [];
+	public $independentForms = false;
 	public $asForm = false;
 	public $withForm = false;
-	
+
 	protected $uniqid;
-	
+
 	public function init()
 	{
 		$this->uniqid = uniqid();
@@ -49,8 +57,8 @@ class MetadataInfo extends \yii\base\Widget
 		$this->items = is_array($this->items) ? $this->items : [$this->items];
 		assets\MetadataAsset::register($this->getView());
 	}
-	
-	public function run () 
+
+	public function run ()
 	{
 		$title = Html::tag('h2', $this->header);
 		switch($this->asForm)
@@ -58,114 +66,204 @@ class MetadataInfo extends \yii\base\Widget
 			case true:
 			$metadata = $this->getAsForm();
 			break;
-			
+
 			default:
 			$metadata = $this->getAsGrid();
 			break;
 		}
-		$script = Html::script(new \yii\web\JsExpression('$nitm.onModuleLoad("entity:metadata", function (module) {
-			module.initDefaults("#'.$this->options['id'].'");
-		});'));
-		return $title.$metadata.$script;
+		return $title.$metadata;
 	}
-	
+
 	protected function getAsForm()
 	{
 		$ret_val = '';
 		$this->items['lastMetadataItem'] = $this->model;
-		$columnSize = floor(11/sizeof($this->attributes));
-		$attributes = [];
+		$attributeCount = count($this->attributes);
+		$invisible = 0;
+		array_walk($this->attributes, function ($attr) use(&$invisible) {
+			if(ArrayHelper::getValue($attr, 'columnOptions.visible', true) === false) {
+				$invisible--;
+			}
+		});
+		$columnSize = floor(11/($attributeCount + $invisible));
+		$attributes = $builderAttribtues = [];
 		$type = $this->type;
+		$items = array_filter($this->items);
 		foreach($this->items as $idx=>$item)
 		{
 			$item->setScenario('update');
-			array_walk($this->attributes, function ($value, $attribute) use (&$attributes, $columnSize, $type, $item, $idx){
-				$attribute = is_array($value) ? $value['label'] : $value;
+			array_walk($this->attributes, function ($value, $attribute) use (&$attributes, $columnSize, $type, $item, $idx, $ret_val) {
+				$attribute = ArrayHelper::getValue($value, 'label', !$attribute ? $value : $attribute);
 				$value = is_array($value) ? $value : ['value' => $item->$attribute];
 				$value = array_merge([
-					'options' => ['class' => 'form-control form-inline'], 
+					'options' => ['class' => 'form-control form-inline'],
 					'label' => null,
 				], $value);
-				$value['label'] = !empty($value['label']) ? $value['label'] : ucFirst($attribute);
-				$value['columnOptions'] = isset($value['columnOptions']) ? $value['columnOptions'] : [
+				$value['label'] = ArrayHelper::getValue($value, 'label', ucfirst(ArrayHelper::getValue($attribute, 'label', $attribute)));
+				$value['columnOptions'] = ArrayHelper::getValue($value, 'columnOptions', [
 					'class' => "col-md-$columnSize col-lg-$columnSize"
-				];
-				$value['options']['name'] = !empty($type) ? $item->formName()."[$type][$attribute][]" : $item->formName()."[$attribute][]";
-				if($idx === 'lastMetadataItem') {
+				]);
+				$value['options']['name'] = !empty($type) ? $item->formName()."[$type][$attribute]" : $item->formName()."[$attribute]";
+				if(!$this->independentForms)
+					$value['options']['name'] .= '[]';
+				if($idx === 'lastMetadataItem' && !ArrayHelper::remove($value, 'keep', false)) {
 					$value['options']['value'] = '';
 				} else {
-					$value['options']['value'] = !isset($value['value']) ? $item->$attribute : @$value['value'];
+					$value['options']['value'] = ArrayHelper::remove($value, 'value', $item->$attribute);
 				}
-				unset($value['value']);
-				$value['type'] = isset($value['type']) ? $value['type'] : Form::INPUT_TEXT;
+				//unset($value['value']);
+				$value['type'] = ArrayHelper::getValue($value, 'type', Form::INPUT_TEXT);
 				$attributes[strtolower($attribute)] = $value;
 			});
-			if((string)$idx == 'lastMetadataItem')
-			{
-				$deleteAction = 'delete';
-				$role = 'deleteMetadata';
-				$dataParent = 'tr';
+			if($this->independentForms) {
+				$this->setActions($item, $attributes, $idx);
+				$ret_val .= $this->getItemAsForm($attributes, $item, $idx, $item);
 			} else {
-				$deleteAction = 'ban';
-				$role = 'disableParent';
-				$dataParent = '#data-item'.$item->getId();
+				$builderAttribtues[$idx] = $attributes;
 			}
-			$attributes['delete'] = [
-				'type' => Form::INPUT_RAW,
-				'value' => Html::a(Icon::forAction($deleteAction), \Yii::$app->urlManager->createUrl([$this->model->isWhat()]), [
-					'title' => \Yii::t('yii', 'Delete Metadata'),
-					'data-pjax' => '0',
-					'role' => $role,
-					'inline' => true,
-					'data-parent' => $dataParent,
-					'data-depth' => 0
-				]).
-				Html::activeHiddenInput($item, 'id', [
-					'name' => !empty($type) ? $item->formName()."[$type][id][]" : $item->formName()."[id][]",
-					'role' => 'metadataId'
-				]),
-				'columnOptions' => [
-					'class' => 'col-md-1 col-lg-1'
-				]
-			];
-			$ret_val .= Html::tag('tr',  
-				Html::tag('td', 
-					Form::widget([
-						'model' => $this->model,
-						'form' => $this->form,
-						'columns' => sizeof($attributes)+1,
-						'attributes' => $attributes
-					]),
-					[
-						'colspan' => sizeof($attributes)+1
-					]
-				),
-				[
-					'class' => (($idx === 'lastMetadataItem') ? 'hidden' : 'visible bg-success'),
-					'id' => (($idx === 'lastMetadataItem') ? 'metadata-template'.$this->uniqid : 'data-item'.$item->getId()),
-					'role' => (($idx === 'lastMetadataItem') ? 'metadataTemplate' : 'metadataItem'.$item->getId()),
-					
-				]
-			);
 		}
-		$appender = '';
-		if($this->withForm)
-			$appender = 
-			Html::tag('tr',
-				Html::tag('td',
-					Html::a(Icon::forAction('plus').' '.$this->header, \Yii::$app->urlManager->createUrl([$this->model->isWhat()]), [
-						'title' => \Yii::t('yii', 'Add '.$this->header),
-						'class' => 'btn btn-success btn-sm pull-right',
-						'role' => 'createMetadata',
-						'data-pjax' => '0'
-					]),
-					['colspan' => sizeof($this->attributes)+1]
-				)
-			);
-			
-		return Html::tag('table', $ret_val.$appender, $this->options);
+		if($this->independentForms) {
+			return Html::tag('div', $ret_val.$this->getAppender(), [
+				'class' => 'row'
+			]);
+		} else {
+			$ret_val = TabularForm::widget([
+				'form' => $this->form,
+				'attributes' => $builderAttribtues,
+				'gridSettings' => [
+					'rowOptions' => function ($item, $idx) {
+						return [
+							'class' => ($idx === 'lastMetadataItem') ? 'hidden' : 'visible bg-success',
+							'id' => ($idx === 'lastMetadataItem') ? 'metadata-template'.uniqid() : 'metadata-item'.$item->getId(),
+							'role' => ($idx === 'lastMetadataItem') ? 'metadataTemplate' : 'metadataItem'
+						];
+					}
+				]
+			]);
+			return Html::tag('table', $ret_val.$this->getAppender(), $this->options);
+		}
 	}
-	
+
+	protected function getForm($options=[], $model=null)
+	{
+		$options = array_merge($this->formOptions, $options);
+		$action = ArrayHelper::getValue($options, 'action');
+		if($action && is_callable($action))
+			$options['action'] = $action($model);
+		$class = ArrayHelper::remove($options, 'class', \kartik\widgets\ActiveForm::className());
+		return $class::begin(array_merge([
+			'options' => [
+				'role' => 'ajaxForm',
+				'id' => 'metadata-form'.uniqid()
+			]
+		], (array)$options));
+	}
+
+	private function getAppender()
+	{
+		if($this->withForm) {
+			$title = Icon::forAction('plus').' '.ArrayHelper::remove($this->createButton, 'text', Html::tag('span', 'New '.$this->model->properName(), ['class' => 'hide-md']));
+			$ret_val = Html::beginTag('div', [
+				'class' => 'col-sm-12 text-right'
+			]);
+				$ret_val .= Html::a($title, \Yii::$app->urlManager->createUrl([$this->model->isWhat()]), array_merge([
+					'title' => \Yii::t('yii', 'Add '.$this->header),
+					'class' => 'btn btn-default pull-right',
+					'data-pjax' => '0'
+				], $this->createButton, [
+					'role' => 'createMetadata',
+				]));
+			$ret_val .= Html::endTag('div');
+			return $ret_val;
+		}
+		return '';
+	}
+
+	private function getItemAsForm($attributes, $item, $idx, $model=null)
+	{
+		$options = [
+			'id' => ($idx === 'lastMetadataItem') ? 'metadata-template'.uniqid() : 'metadata-item'.$item->getId(),
+			'role' => ($idx === 'lastMetadataItem') ? 'metadataTemplate' : 'metadataItem'
+		];
+
+		if($this->independentForms)
+			$options = array_merge($options, $this->options);
+
+		Html::addCssClass($options, ($idx === 'lastMetadataItem') ? 'hidden' : 'visible bg-success');
+
+		$ret_val = $this->independentForms ? Html::beginTag('table', $options) : '' ;
+			$ret_val .= Html::beginTag('tr', $this->independentForms ? [] : $options);
+				$ret_val .= Html::beginTag('td', [
+					'colspan' => sizeof($attributes)+1
+				]);
+					ob_start();
+					$widget = Form::begin(array_merge([
+						'model' => $model ?: $this->model,
+						'form' => $this->getForm([], $model ?: $this->model),
+						'columns' => sizeof($attributes)+1,
+						'attributes' => $attributes,
+						'options' => ['tag' => 'div']
+					], (array)$this->formBuilder));
+					$widget->end();
+					$widget->form->end();
+					$ret_val .= ob_get_contents();
+					ob_end_clean();
+				$ret_val .= Html::endTag('td');
+			$ret_val .= Html::endTag('tr');
+		$ret_val .= $this->independentForms ? Html::endTag('table') : '' ;
+		return $ret_val;
+	}
+
+	private function setActions($item, &$attributes, $idx)
+	{
+		$idName = !empty($type) ? $item->formName()."[$type][id]" : $item->formName()."[id]";
+		if(!$this->independentForms)
+			$idName .= '[]';
+		$attributes['id'] = [
+			'type' => FORM::INPUT_RAW,
+			'value' => Html::activeHiddenInput($item, 'id', [
+				'name' => $idName,
+				'role' => 'metadataId'
+			])
+		];
+		$saveAction = $item->isNewRecord ? 'create' : 'update';
+		$saveRole = $item->isNewRecord ? 'saveMetadata' : 'udpateMetadata';
+		$deleteAction = $idx == 'lastMetadataItem' ? 'delete' : 'disable';
+		$deleteRole = $idx == 'lastMetadataItem' ? 'deleteMetadata' : 'disableParent';
+		$attributes['actions'] = [
+			'type' => Form::INPUT_RAW,
+			'label' => 'Delete',
+			'value' => \yii\bootstrap\ButtonGroup::widget([
+				'encodeLabels' => false,
+				'buttons' => [
+					[
+						'label' => Html::a(Icon::forAction($saveAction)),
+						'options' => [
+							'href' => \Yii::$app->urlManager->createUrl([$this->model->isWhat()]),
+							'title' => \Yii::t('yii', 'Save Metadata'),
+							'data-pjax' => 0,
+							'role' => $saveRole,
+							'class' => 'btn btn-'.($item->isNewRecord ? 'success' : 'info'),
+							'type' => $this->independentForms ? 'submit' : 'button'
+						]
+					], [
+						'label' => Html::a(Icon::forAction($deleteAction)),
+						'options' => [
+							'href' => \Yii::$app->urlManager->createUrl([$this->model->isWhat()]),
+							'title' => \Yii::t('yii', 'Delete Metadata'),
+							'data-pjax' => 0,
+							'role' => $deleteRole,
+							'inline' => true,
+							'data-parent' => '[role~="metadataItem"]',
+							'data-depth' => 1,
+							'class' => 'btn btn-danger'
+						]
+					]
+				]
+			])
+		];
+	}
+
 	protected function getAsGrid()
 	{
 		return GridView::widget([
@@ -188,7 +286,7 @@ class MetadataInfo extends \yii\base\Widget
 							return \nitm\widgets\modal\Modal::widget([
 								'toggleButton' => [
 									'tag' => 'a',
-									'label' => Icon::forAction('pencil'), 
+									'label' => Icon::forAction('pencil'),
 									'href' => \Yii::$app->urlManager->createUrl([$url, '__format' => 'modal']),
 									'title' => \Yii::t('yii', 'Edit '),
 									'role' => 'dynamicAction updateAction disabledOnClose',
@@ -199,8 +297,8 @@ class MetadataInfo extends \yii\base\Widget
 							return Html::a(Icon::forAction('delete'), \Yii::$app->urlManager->createUrl([$url]), [
 								'title' => \Yii::t('yii', 'Delete Metadata'),
 								'role' => 'metaAction deleteAction',
-								'data-depth' => 0,
-								'data-parent' => 'tr',
+								'data-depth' => 1,
+								'data-parent' => '[role~="metadataItem"]',
 								'data-pjax' => '0',
 								'data-force' => 1
 							]);
