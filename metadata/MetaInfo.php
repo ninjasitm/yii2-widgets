@@ -78,13 +78,17 @@ class MetaInfo extends \yii\base\Widget
 			$ret_val = [];
 			foreach($this->items as $index=>$item)
 				$ret_val[] = $this->renderCsvItem($item, $index);
-			$ret_val = Html::tag('div', implode(', ', $ret_val));
+			$tag = ArrayHelper::remove($this->options, 'tag', false);
+			if($tag)
+				$ret_val = Html::tag($tag, implode(', ', $ret_val), $this->options);
 			break;
 
 			case 'tags':
 			foreach($this->items as $index=>$item)
 				$ret_val .= $this->renderTagItem($item, $index);
-			$ret_val = Html::tag('div', $ret_val);
+			$tag = ArrayHelper::remove($this->options, 'tag', false);
+			if($tag)
+				$ret_val = Html::tag($tag, $ret_val, $this->options);
 			break;
 
 			default:
@@ -102,7 +106,7 @@ class MetaInfo extends \yii\base\Widget
 		return $ret_val;
 	}
 
-	protected function renderCsvItem($model, $index)
+	public function renderCsvItem($model, $index)
 	{
 		$ret_val = '';
 		$counter = $index+1;
@@ -121,7 +125,7 @@ class MetaInfo extends \yii\base\Widget
 		return $ret_val;
 	}
 
-	protected function renderTagItem($model, $index)
+	public function renderTagItem($model, $index)
 	{
 		$ret_val = '';
 		$counter = $index+1;
@@ -130,12 +134,18 @@ class MetaInfo extends \yii\base\Widget
 			list($title, $value, $priority, $options) = $this->getParts($model, $k, $v, $counter);
 			ob_start();
 			$tag = ArrayHelper::remove($options, 'tag', 'span');
-			echo "<$tag ".Html::renderTagAttributes($options).">";
+			$before = ArrayHelper::remove($options, 'before', null);
+			$after = ArrayHelper::remove($options, 'after', null);
+			echo Html::beginTag($tag, $options);
+			if(is_string($before))
+				echo $before;
 			if(isset($priority) && !is_null($priority))
 				echo Html::tag('strong', $priority).' - &nbsp;';
 			if(!$this->valuesOnly)
 				echo Html::tag('strong', ucfirst($title)).':&nbsp;';
 			echo Html::tag('em', $value);
+			if(is_string($after))
+				echo "&nbsp;".$after;
 			echo "</$tag>";
 			$item = ob_get_contents();
 			ob_end_clean();
@@ -144,7 +154,7 @@ class MetaInfo extends \yii\base\Widget
 		return $ret_val;
 	}
 
-	protected function renderListItem($model, $key, $index, $widget)
+	public function renderListItem($model, $key, $index, $widget)
 	{
 		$ret_val = '';
 		$counter = $index+1;
@@ -205,7 +215,7 @@ class MetaInfo extends \yii\base\Widget
 			$ret_val = '';
 			switch(1)
 			{
-				case sizeof($parts) >= 2:
+				case sizeof($parts) >= 1:
 				if(is_array($model))
 					$ret_val = ArrayHelper::getValue($model, implode('.', $parts), '(not found)');
 				else if (is_object($model)) {

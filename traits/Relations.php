@@ -60,7 +60,7 @@ trait Relations {
 			'parent_type' => $this->isWhat()
 		];
 		$idKey = is_null($idKey) ? ['getId', 'isWhat'] : $idKey;
-		return RelationsHelper::getRelatedRecord($relation, $this, $className, $options, $many);
+		return RelationsHelper::getRelatedRecord($this, $relation, $className, $options, $many);
 	}
 
 	public function reply()
