@@ -30,7 +30,7 @@ class MetadataInfo extends \yii\base\Widget
 	public $formBuilder;
 	public static $controllerRoute;
 	public $options = [
-		'class' => 'table table-condensed'
+		'class' => 'row'
 	];
 	public $createButton = [];
 	public $items = [];
@@ -54,6 +54,7 @@ class MetadataInfo extends \yii\base\Widget
 	{
 		$this->uniqid = uniqid();
 		$this->options['id'] = 'metadata'.$this->uniqid;
+		$this->options['role'] = 'metadata';
 		$this->items = is_array($this->items) ? $this->items : [$this->items];
 		assets\MetadataAsset::register($this->getView());
 	}
@@ -123,9 +124,7 @@ class MetadataInfo extends \yii\base\Widget
 			}
 		}
 		if($this->independentForms) {
-			return Html::tag('div', $ret_val.$this->getAppender(), [
-				'class' => 'row'
-			]);
+			return Html::tag('div', $ret_val.$this->getAppender(), $this->options);
 		} else {
 			$ret_val = TabularForm::widget([
 				'form' => $this->form,
@@ -164,7 +163,7 @@ class MetadataInfo extends \yii\base\Widget
 		if($this->withForm) {
 			$title = Icon::forAction('plus').' '.ArrayHelper::remove($this->createButton, 'text', Html::tag('span', 'New '.$this->model->properName(), ['class' => 'hide-md']));
 			$ret_val = Html::beginTag('div', [
-				'class' => 'col-sm-12 text-right'
+				'class' => 'text-right'
 			]);
 				$ret_val .= Html::a($title, \Yii::$app->urlManager->createUrl([$this->model->isWhat()]), array_merge([
 					'title' => \Yii::t('yii', 'Add '.$this->header),
@@ -183,34 +182,27 @@ class MetadataInfo extends \yii\base\Widget
 	{
 		$options = [
 			'id' => ($idx === 'lastMetadataItem') ? 'metadata-template'.uniqid() : 'metadata-item'.$item->getId(),
-			'role' => ($idx === 'lastMetadataItem') ? 'metadataTemplate' : 'metadataItem'
+			'role' => ($idx === 'lastMetadataItem') ? 'metadataTemplate' : 'metadataItem',
+			'tag' => 'div',
+			'style' => 'padding-top: 15px',
+			'class' => 'col-sm-12'
 		];
 
-		if($this->independentForms)
-			$options = array_merge($options, $this->options);
-
 		Html::addCssClass($options, ($idx === 'lastMetadataItem') ? 'hidden' : 'visible bg-success');
-
-		$ret_val = $this->independentForms ? Html::beginTag('table', $options) : '' ;
-			$ret_val .= Html::beginTag('tr', $this->independentForms ? [] : $options);
-				$ret_val .= Html::beginTag('td', [
-					'colspan' => sizeof($attributes)+1
-				]);
-					ob_start();
-					$widget = Form::begin(array_merge([
-						'model' => $model ?: $this->model,
-						'form' => $this->getForm([], $model ?: $this->model),
-						'columns' => sizeof($attributes)+1,
-						'attributes' => $attributes,
-						'options' => ['tag' => 'div']
-					], (array)$this->formBuilder));
-					$widget->end();
-					$widget->form->end();
-					$ret_val .= ob_get_contents();
-					ob_end_clean();
-				$ret_val .= Html::endTag('td');
-			$ret_val .= Html::endTag('tr');
-		$ret_val .= $this->independentForms ? Html::endTag('table') : '' ;
+		$ret_val = $this->independentForms ? Html::beginTag('div', $options) : '' ;
+			ob_start();
+			$widget = Form::begin(array_merge([
+				'model' => $model ?: $this->model,
+				'form' => $this->getForm([], $model ?: $this->model),
+				'columns' => sizeof($attributes)+1,
+				'attributes' => $attributes,
+				'options' => ['tag' => false]
+			], (array)$this->formBuilder));
+			$widget->end();
+			$widget->form->end();
+			$ret_val .= ob_get_contents();
+			ob_end_clean();
+		$ret_val .= $this->independentForms ? Html::endTag('div') : '' ;
 		return $ret_val;
 	}
 
@@ -233,6 +225,9 @@ class MetadataInfo extends \yii\base\Widget
 		$attributes['actions'] = [
 			'type' => Form::INPUT_RAW,
 			'label' => 'Delete',
+			'columnOptions' => [
+				'colspan' => 2
+			],
 			'value' => \yii\bootstrap\ButtonGroup::widget([
 				'encodeLabels' => false,
 				'buttons' => [

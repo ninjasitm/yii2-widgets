@@ -4,7 +4,7 @@
 
 class Metadata extends NitmEntity {
     constructor() {
-        super('entity:metadata');
+        super('metadata');
         this.buttons = {
             roles: {
                 create: 'createMetadata',
@@ -21,7 +21,7 @@ class Metadata extends NitmEntity {
 
         Object.assign(this.views, {
             itemId: 'data',
-            containerId: 'metadata',
+            containerId: '[role~="metadata"]',
             roles: {
                 item: 'metadataItem',
                 template: 'metadataTemplate'
@@ -35,6 +35,7 @@ class Metadata extends NitmEntity {
     }
 
     initCreating(containerId, currentIndex) {
+    console.log(containerId);
         var $container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
         $container.find("[role~='" + this.buttons.roles.create + "']").map((i, elem) => {
             let $elem = $(elem);
