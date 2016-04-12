@@ -35,7 +35,6 @@ class Metadata extends NitmEntity {
     }
 
     initCreating(containerId, currentIndex) {
-    console.log(containerId);
         var $container = $nitm.getObj((containerId == undefined) ? 'body' : containerId);
         $container.find("[role~='" + this.buttons.roles.create + "']").map((i, elem) => {
             let $elem = $(elem);
